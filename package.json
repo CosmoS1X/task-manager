@@ -5,9 +5,11 @@
   "main": "dist/src/index.js",
   "types": "dist/src/index.d.ts",
   "scripts": {
-    "test": "npx jest",
-    "build": "npx tsc",
-    "type-check": "npx tsc --noEmit"
+    "test": "jest",
+    "build": "tsc",
+    "type-check": "tsc --noEmit",
+    "lint": "eslint . --ext .ts",
+    "lint:fix": "eslint . --ext .ts --fix"
   },
   "jest": {
     "preset": "ts-jest"
