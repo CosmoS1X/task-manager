@@ -2,8 +2,11 @@
   "name": "new-typescript-project",
   "version": "0.1.0",
   "description": "New Typescript Project Template",
-  "main": "dist/src/index.js",
-  "types": "dist/src/index.d.ts",
+  "main": "dist/server/index.js",
+  "type": "commonjs",
+  "bin": {
+    "task-manager": "dist/bin/index.js"
+  },
   "scripts": {
     "test": "jest",
     "build": "tsc",
