@@ -9,10 +9,18 @@
   },
   "scripts": {
     "test": "jest",
-    "build": "tsc",
     "type-check": "tsc --noEmit",
-    "lint": "eslint . --ext .ts",
-    "lint:fix": "eslint . --ext .ts --fix"
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "client": "webpack serve",
+    "server": "DEBUG=server:* nodemon --exec ts-node bin/index.ts",
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "clean": "rm -rf dist",
+    "build:client": "webpack",
+    "build:server": "tsc -p server/tsconfig.json",
+    "build:bin": "tsc -p bin/tsconfig.json",
+    "build": "npm run clean && npm run build:bin && npm run build:client",
+    "start": "DEBUG=* node dist/bin/index.js"
   },
   "jest": {
     "preset": "ts-jest"
