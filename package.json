@@ -9,7 +9,7 @@
   },
   "scripts": {
     "test": "jest",
-    "type-check": "tsc --noEmit",
+    "type-check": "tsc --noEmit -p server/tsconfig.json && tsc --noEmit -p src/tsconfig.json && tsc --noEmit -p bin/tsconfig.json",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "client": "webpack serve",
