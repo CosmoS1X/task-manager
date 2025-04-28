@@ -3,13 +3,15 @@
     "esModuleInterop": true,
     "strict": true,
     "target": "ES5",
-    "lib": ["esnext"],
-    "module": "CommonJS",
-    "outDir": "dist",
     "sourceMap": true,
     "declaration": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"],
+      "@server/*": ["./server/*"]
+    }
   },
-  "include": ["src", "bin"],
   "exclude": ["*.test.ts"]
 }

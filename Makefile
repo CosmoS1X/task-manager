@@ -19,4 +19,10 @@ check: type-check test lint
 build:
 	npm run build
 
+start: build
+	npm run start
+
+dev:
+	npm run dev
+
 .PHONY: test
