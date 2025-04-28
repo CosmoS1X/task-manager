@@ -1,5 +1,5 @@
 import axios from 'axios';
-import app from '../server';
+import app from '../src/server';
 
 test('Server should start without errors', async () => {
   const port = process.env.PORT || 5000;

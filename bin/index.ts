@@ -1,7 +1,6 @@
-#!/usr/bin/env node
 import 'dotenv/config';
 import debug from 'debug';
-import app from '../server';
+import app from '../src/server';
 
 const port = process.env.PORT || 5000;
 const log = debug('server:start');

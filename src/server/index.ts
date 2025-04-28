@@ -12,7 +12,7 @@ app.use(bodyParser.json());
 app.use('/api', apiRouter);
 
 if (process.env.NODE_ENV === 'production') {
-  const clientPath = path.join(__dirname, '..');
+  const clientPath = path.join(__dirname, '..', '..');
 
   app.use(express.static(clientPath));
 
