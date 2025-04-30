@@ -6,6 +6,7 @@ enum Endpoints {
   Statuses = '/statuses',
   Labels = '/labels',
   Tasks = '/tasks',
+  Wildcard = '*',
 }
 
 export default Endpoints;
