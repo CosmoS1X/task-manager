@@ -21,3 +21,4 @@ parserOptions:
 rules:
   no-console: 'warn'
   object-curly-newline: 'off'
+  import/extensions: 'off'
