@@ -4,9 +4,6 @@
   "description": "New Typescript Project Template",
   "main": "dist/server/index.js",
   "type": "commonjs",
-  "bin": {
-    "task-manager": "dist/bin/index.js"
-  },
   "scripts": {
     "test": "jest",
     "type-check": "tsc --noEmit -p src/server/tsconfig.json && tsc --noEmit -p src/tsconfig.json && tsc --noEmit -p bin/tsconfig.json",
@@ -40,19 +37,21 @@
     "body-parser": "^2.2.0",
     "bootstrap": "^5.3.5",
     "bootstrap-icons": "^1.11.3",
+    "classnames": "^2.5.1",
     "cors": "^2.8.5",
     "debug": "^4.4.0",
     "dotenv": "^16.5.0",
     "express": "^5.1.0",
     "react": "^19.1.0",
-    "react-dom": "^19.1.0"
+    "react-dom": "^19.1.0",
+    "react-router-dom": "^7.5.3",
+    "zod": "^3.24.3"
   },
   "devDependencies": {
     "@babel/core": "^7.26.10",
     "@babel/preset-env": "^7.26.9",
     "@babel/preset-react": "^7.26.3",
     "@babel/preset-typescript": "^7.27.0",
-    "@types/axios": "^0.9.36",
     "@types/bootstrap": "^5.2.10",
     "@types/cors": "^2.8.17",
     "@types/debug": "^4.1.12",
