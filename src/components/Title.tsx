@@ -5,8 +5,8 @@ const propsSchema = z.object({
   text: z.string(),
 });
 
-type TitleProps = z.infer<typeof propsSchema>;
+type Props = z.infer<typeof propsSchema>;
 
-export default function Title({ text }: TitleProps) {
+export default function Title({ text }: Props) {
   return <h1 className="display-4 fw-bold mt-4">{text}</h1>;
 }
