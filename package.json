@@ -6,7 +6,7 @@
   "type": "commonjs",
   "scripts": {
     "test": "jest",
-    "type-check": "tsc --noEmit -p src/server/tsconfig.json && tsc --noEmit -p src/tsconfig.json && tsc --noEmit -p bin/tsconfig.json",
+    "type-check": "tsc --noEmit -p server/tsconfig.json && tsc --noEmit -p src/tsconfig.json && tsc --noEmit -p bin/tsconfig.json",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "client": "webpack serve",
@@ -14,10 +14,11 @@
     "dev": "concurrently \"npm run server\" \"npm run client\"",
     "clean": "rm -rf dist",
     "build:client": "webpack",
-    "build:server": "tsc -p src/server/tsconfig.json",
-    "build:bin": "tsc -p bin/tsconfig.json",
-    "build": "npm run clean && npm run build:bin && npm run build:client",
-    "start": "DEBUG=* node dist/bin/index.js"
+    "build:server": "tsc -p bin/tsconfig.json",
+    "build": "npm run clean && npm run build:server && npm run build:client",
+    "start": "DEBUG=* node dist/bin/index.js",
+    "migrate": "knex migrate:latest --knexfile=./dist/knexfile.js --env production",
+    "migrate:dev": "tsx node_modules/.bin/knex migrate:latest"
   },
   "jest": {
     "preset": "ts-jest"
