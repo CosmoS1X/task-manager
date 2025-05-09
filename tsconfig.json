@@ -3,6 +3,7 @@
     "esModuleInterop": true,
     "strict": true,
     "target": "ES5",
+    "module": "CommonJS",
     "sourceMap": true,
     "declaration": true,
     "skipLibCheck": true,
@@ -10,8 +11,7 @@
     "forceConsistentCasingInFileNames": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"],
-      "@server/*": ["./server/*"]
+      "@/*": ["./src/*"]
     }
   },
   "exclude": ["*.test.ts"]
