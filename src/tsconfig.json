@@ -5,6 +5,7 @@
     "jsx": "react",
     "module": "ESNext",
     "outDir": "../dist",
+    "rootDir": "../",
   },
   "include": ["**/*.ts", "**/*.tsx"]
 }
