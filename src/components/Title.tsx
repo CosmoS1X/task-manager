@@ -5,5 +5,5 @@ type Props = {
 };
 
 export default function Title({ text }: Props) {
-  return <h1 className="display-4 fw-bold mt-4">{text}</h1>;
+  return <h1 className="display-4 fw-bold my-4 text-center">{text}</h1>;
 }
