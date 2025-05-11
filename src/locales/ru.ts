@@ -1,0 +1,62 @@
+export default {
+  translation: {
+    appName: 'Менеджер задач',
+    navbar: {
+      users: 'Пользователи',
+      statuses: 'Статусы',
+      labels: 'Метки',
+      tasks: 'Задачи',
+      signIn: 'Вход',
+      signUp: 'Регистрация',
+      signOut: 'Выход',
+    },
+    titles: {
+      users: 'Пользователи',
+      statuses: 'Статусы',
+      labels: 'Метки',
+      tasks: 'Задачи',
+      createStatus: 'Создание статуса',
+      createLabel: 'Создание метки',
+      createTask: 'Создание задачи',
+      editUser: 'Изменение пользователя',
+      editStatus: 'Изменение статуса',
+      editLabel: 'Изменение метки',
+      signUp: 'Регистрация',
+      login: 'Вход',
+    },
+    tableCols: {
+      id: 'ID',
+      fullName: 'Полное имя',
+      email: 'Email',
+      name: 'Наименование',
+      status: 'Статус',
+      creator: 'Автор',
+      executor: 'Исполнитель',
+      createdAt: 'Дата создания',
+      actions: 'Действия',
+    },
+    buttons: {
+      edit: 'Изменить',
+      delete: 'Удалить',
+      send: 'Отправить',
+      sending: 'Отправка...',
+    },
+    form: {
+      inputs: {
+        firstName: 'Имя',
+        lastName: 'Фамилия',
+        email: 'Email',
+        password: 'Пароль',
+      },
+      errors: {
+        min_one: 'Должно быть не меньше {{count}} символа',
+        min_few: 'Должно быть не меньше {{count}} символов',
+        min_many: 'Должно быть не меньше {{count}} символов',
+        email: {
+          invalid: 'Неверный email',
+          exists: 'Email уже занят',
+        },
+      },
+    },
+  },
+};

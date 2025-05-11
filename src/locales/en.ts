@@ -1,0 +1,61 @@
+export default {
+  translation: {
+    appName: 'Task Manager',
+    navbar: {
+      users: 'Users',
+      statuses: 'Statuses',
+      labels: 'Labels',
+      tasks: 'Tasks',
+      signIn: 'Login',
+      signUp: 'Sign-up',
+      signOut: 'Logout',
+    },
+    titles: {
+      users: 'Users',
+      statuses: 'Statuses',
+      labels: 'Labels',
+      tasks: 'Tasks',
+      createStatus: 'Status creation',
+      createLabel: 'Label creation',
+      createTask: 'Task creation',
+      editUser: 'Edit user',
+      editStatus: 'Edit status',
+      editLabel: 'Edit label',
+      signUp: 'Sign-up',
+      login: 'Login',
+    },
+    tableCols: {
+      id: 'ID',
+      fullName: 'Full name',
+      email: 'Email',
+      name: 'Name',
+      status: 'Status',
+      creator: 'Author',
+      executor: 'Executor',
+      createdAt: 'Created at',
+      actions: 'Actions',
+    },
+    buttons: {
+      edit: 'Edit',
+      delete: 'Delete',
+      send: 'Send',
+      sending: 'Sending...',
+    },
+    form: {
+      inputs: {
+        firstName: 'First Name',
+        lastName: 'Last Name',
+        email: 'Email',
+        password: 'Password',
+      },
+      errors: {
+        min_one: 'Must be at least {{count}} character',
+        min_other: 'Must be at least {{count}} characters',
+        email: {
+          invalid: 'Invalid email',
+          exists: 'Email is already exists',
+        },
+      },
+    },
+  },
+};
