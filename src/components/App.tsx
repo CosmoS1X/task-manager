@@ -9,6 +9,7 @@ import {
   SignUpPage,
   LoginPage,
   UsersPage,
+  EditUserPage,
   StatusesPage,
   LabelsPage,
   TasksPage,
@@ -25,6 +26,7 @@ export default function App() {
             <Route path={Endpoints.SignUp} element={<SignUpPage />} />
             <Route path={Endpoints.Login} element={<LoginPage />} />
             <Route path={Endpoints.Users} element={<UsersPage />} />
+            <Route path={Endpoints.UserEdit} element={<EditUserPage />} />
             <Route path={Endpoints.Statuses} element={<StatusesPage />} />
             <Route path={Endpoints.Labels} element={<LabelsPage />} />
             <Route path={Endpoints.Tasks} element={<TasksPage />} />
