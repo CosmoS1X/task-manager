@@ -1,6 +1,9 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import Title from '@/components/Title';
 
 export default function LoginPage() {
-  return <Title text="Login" />;
+  const { t } = useTranslation();
+
+  return <Title text={t('titles.login')} />;
 }
