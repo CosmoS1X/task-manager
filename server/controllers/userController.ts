@@ -46,4 +46,19 @@ export default () => ({
 
     res.status(204).end();
   },
+  checkEmailAvailability: async (req: Request, res: Response) => {
+    const { email } = req.query;
+
+    if (!email || typeof email !== 'string') {
+      res.status(400).json({ error: 'Invalid Email' });
+      return;
+    }
+
+    try {
+      const user = await User.query().where('email', email).first();
+      res.status(200).json({ isAvailable: !user });
+    } catch (error) {
+      res.status(500).json({ error: 'Internal server error' });
+    }
+  },
 });

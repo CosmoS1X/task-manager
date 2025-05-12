@@ -9,5 +9,6 @@ router.get('/users/:id', controller.getItem);
 router.post('/users', controller.create);
 router.patch('/users/:id', controller.update);
 router.delete('/users/:id', controller.delete);
+router.get('/check-email', controller.checkEmailAvailability);
 
 export default router;
