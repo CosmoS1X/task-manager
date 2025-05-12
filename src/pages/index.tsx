@@ -1,11 +1,12 @@
 import MainPage from './Main';
 import NotFoundPage from './NotFound';
-import SignUpPage from './SignUp';
+import SignUpPage from './users/SignUp';
 import LoginPage from './Login';
-import UsersPage from './Users';
-import StatusesPage from './Statuses';
-import LabelsPage from './Labels';
-import TasksPage from './Tasks';
+import UsersPage from './users';
+import StatusesPage from './statuses';
+import LabelsPage from './labels';
+import TasksPage from './tasks';
+import EditUserPage from './users/Edit';
 
 export {
   MainPage,
@@ -16,4 +17,5 @@ export {
   StatusesPage,
   LabelsPage,
   TasksPage,
+  EditUserPage,
 };

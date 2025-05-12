@@ -3,6 +3,7 @@ enum Endpoints {
   Login = '/login',
   SignUp = '/signup',
   Users = '/users',
+  UserEdit = '/users/:id/edit',
   Statuses = '/statuses',
   Labels = '/labels',
   Tasks = '/tasks',

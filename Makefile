@@ -19,7 +19,10 @@ check: type-check test lint
 build:
 	npm run build
 
-start: build
+migrate:
+	npm run migrate
+
+start: build migrate
 	npm run start
 
 dev:

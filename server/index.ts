@@ -1,18 +1,19 @@
 import express from 'express';
 import cors from 'cors';
 import bodyParser from 'body-parser';
+import morgan from 'morgan';
 import path from 'path';
-import 'dotenv/config';
+import usersRouter from './routes/users';
 
 const app = express();
-const apiRouter = express.Router();
 
+app.use(morgan('dev'));
 app.use(cors());
 app.use(bodyParser.json());
-app.use('/api', apiRouter);
+app.use('/api', usersRouter);
 
 if (process.env.NODE_ENV === 'production') {
-  const clientPath = path.join(__dirname, '..', '..');
+  const clientPath = path.join(__dirname, '..');
 
   app.use(express.static(clientPath));
 
@@ -20,10 +21,5 @@ if (process.env.NODE_ENV === 'production') {
     res.sendFile(path.join(clientPath, 'index.html'));
   });
 }
-
-apiRouter.get('/hello', (req, res) => {
-  res.setHeader('Content-Type', 'application/json');
-  res.json({ message: 'Hello from Express with TypeScript!' });
-});
 
 export default app;

@@ -22,3 +22,9 @@ rules:
   no-console: 'warn'
   object-curly-newline: 'off'
   import/extensions: 'off'
+  jsx-a11y/label-has-associated-control:
+  - error
+  - controlComponents:
+    - Input
+    assert: htmlFor
+    depth: 3

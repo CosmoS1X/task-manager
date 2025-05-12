@@ -6,7 +6,7 @@
   "type": "commonjs",
   "scripts": {
     "test": "jest",
-    "type-check": "tsc --noEmit -p src/server/tsconfig.json && tsc --noEmit -p src/tsconfig.json && tsc --noEmit -p bin/tsconfig.json",
+    "type-check": "tsc --noEmit -p server/tsconfig.json && tsc --noEmit -p src/tsconfig.json && tsc --noEmit -p bin/tsconfig.json",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "client": "webpack serve",
@@ -14,10 +14,11 @@
     "dev": "concurrently \"npm run server\" \"npm run client\"",
     "clean": "rm -rf dist",
     "build:client": "webpack",
-    "build:server": "tsc -p src/server/tsconfig.json",
-    "build:bin": "tsc -p bin/tsconfig.json",
-    "build": "npm run clean && npm run build:bin && npm run build:client",
-    "start": "DEBUG=* node dist/bin/index.js"
+    "build:server": "tsc -p bin/tsconfig.json",
+    "build": "npm run clean && npm run build:server && npm run build:client",
+    "start": "DEBUG=* node dist/bin/index.js",
+    "migrate": "knex migrate:latest --knexfile=./dist/knexfile.js --env production",
+    "migrate:dev": "tsx node_modules/.bin/knex migrate:latest"
   },
   "jest": {
     "preset": "ts-jest"
@@ -33,6 +34,8 @@
   },
   "homepage": "https://github.com/CosmoS1X/new-typescript-project#readme",
   "dependencies": {
+    "@hookform/resolvers": "^5.0.1",
+    "@reduxjs/toolkit": "^2.7.0",
     "axios": "^1.9.0",
     "body-parser": "^2.2.0",
     "bootstrap": "^5.3.5",
@@ -42,9 +45,20 @@
     "debug": "^4.4.0",
     "dotenv": "^16.5.0",
     "express": "^5.1.0",
+    "i18next": "^25.1.1",
+    "i18next-browser-languagedetector": "^8.1.0",
+    "knex": "^3.1.0",
+    "morgan": "^1.10.0",
+    "objection": "^3.1.5",
+    "pg": "^8.15.6",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
+    "react-hook-form": "^7.56.2",
+    "react-i18next": "^15.5.1",
+    "react-redux": "^9.2.0",
     "react-router-dom": "^7.5.3",
+    "sqlite3": "^5.1.7",
+    "use-debounce": "^10.0.4",
     "zod": "^3.24.3"
   },
   "devDependencies": {
@@ -57,6 +71,7 @@
     "@types/debug": "^4.1.12",
     "@types/express": "^5.0.1",
     "@types/jest": "^29.5.14",
+    "@types/morgan": "^1.9.9",
     "@types/node": "^22.14.1",
     "@types/react": "^19.1.2",
     "@types/react-dom": "^19.1.2",
@@ -82,6 +97,7 @@
     "style-loader": "^4.0.0",
     "ts-jest": "^29.3.2",
     "ts-node": "^10.9.2",
+    "tsx": "^4.19.4",
     "typescript": "^5.5.4",
     "webpack": "^5.99.6",
     "webpack-cli": "^6.0.1",
