@@ -59,7 +59,7 @@ export default function UserForm({ currentUser, onSubmit, isEditing = false }: P
     handleSubmit,
     watch,
     reset,
-    formState: { errors, isSubmitting, isValid },
+    formState: { errors, isSubmitting, isValid, dirtyFields },
   } = useForm<FormValues>({
     resolver: zodResolver(formSchema(t, isEditing)),
     mode: 'onChange',

@@ -8,10 +8,21 @@ type Props = {
   registration: UseFormRegisterReturn;
   error?: string | null;
   defaultValue?: string;
+  isDirty?: boolean;
 };
 
-export default function Input({ type, placeholder, registration, error, defaultValue }: Props) {
-  const inputClasses = cn('form-control', { 'is-invalid': !!error });
+export default function Input({
+  type,
+  placeholder,
+  registration,
+  error,
+  defaultValue,
+  isDirty,
+}: Props) {
+  const inputClasses = cn('form-control', {
+    'is-valid': !error && isDirty,
+    'is-invalid': !!error,
+  });
 
   return (
     <div className="form-floating mb-3">
@@ -35,4 +46,5 @@ export default function Input({ type, placeholder, registration, error, defaultV
 Input.defaultProps = {
   error: null,
   defaultValue: undefined,
+  isDirty: false,
 };
