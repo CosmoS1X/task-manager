@@ -16,18 +16,28 @@ const formSchema = (t: TFunction, isEditing: boolean) => {
   const passwordLength = 5;
 
   const baseSchema = z.object({
-    firstName: z.string().min(firstNameLength, t('form.errors.min', { count: firstNameLength })),
-    lastName: z.string().min(lastNameLength, t('form.errors.min', { count: lastNameLength })),
-    email: z.string().email(t('form.errors.email.invalid')),
+    firstName: z
+      .string()
+      .min(firstNameLength, t('form.errors.min', { count: firstNameLength }))
+      .transform((value) => value.trim()),
+    lastName: z
+      .string()
+      .min(lastNameLength, t('form.errors.min', { count: lastNameLength }))
+      .transform((value) => value.trim()),
+    email: z
+      .string()
+      .email(t('form.errors.email.invalid'))
+      .transform((value) => value.trim().toLowerCase()),
   });
 
+  const passwordBaseSchema = z
+    .string()
+    .min(passwordLength, t('form.errors.min', { count: passwordLength }))
+    .transform((value) => value.trim());
+
   const passwordSchema = isEditing
-    ? z.object({
-      password: z.string().min(passwordLength, t('form.errors.min', { count: passwordLength })).optional(),
-    })
-    : z.object({
-      password: z.string().min(passwordLength, t('form.errors.min', { count: passwordLength })),
-    });
+    ? z.object({ password: passwordBaseSchema.optional() })
+    : z.object({ password: passwordBaseSchema });
 
   return baseSchema.merge(passwordSchema);
 };

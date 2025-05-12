@@ -6,7 +6,6 @@ import UserForm from '@/components/UserForm';
 import { useGetUserByIdQuery, useUpdateUserMutation } from '@/services/usersApi';
 import type { FormValues } from '@/components/UserForm';
 import Endpoints from '@/endpoints';
-import { normalizeData } from '@/helpers';
 
 export default function EditUserPage() {
   const { t } = useTranslation();
@@ -16,9 +15,7 @@ export default function EditUserPage() {
   const navigate = useNavigate();
 
   const onSubmit = async (data: FormValues) => {
-    const normalizedData = normalizeData(data);
-
-    await updateUser({ ...normalizedData, id: Number(id) }).unwrap();
+    await updateUser({ ...data, id: Number(id) }).unwrap();
     navigate(Endpoints.Users);
   };
 

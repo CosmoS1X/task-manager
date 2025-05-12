@@ -7,7 +7,6 @@ import UserForm from '@/components/UserForm';
 import { useCreateUserMutation } from '@/services/usersApi';
 import type { FormValues } from '@/components/UserForm';
 import Endpoints from '@/endpoints';
-import { normalizeData } from '@/helpers';
 
 export default function SignUpPage() {
   const { t } = useTranslation();
@@ -15,9 +14,7 @@ export default function SignUpPage() {
   const navigate = useNavigate();
 
   const onSubmit = async (data: FormValues) => {
-    const normalizedData = normalizeData(data);
-
-    await createUser(normalizedData).unwrap();
+    await createUser(data).unwrap();
     navigate(Endpoints.Users);
   };
 

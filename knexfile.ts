@@ -2,12 +2,14 @@ import path from 'path';
 import type { Knex } from 'knex';
 import { knexSnakeCaseMappers } from 'objection';
 
+type EnvironmentUnion = 'production' | 'development' | 'test';
+
 const migrations = {
   directory: path.resolve(__dirname, 'server', 'migrations'),
   extension: 'ts',
 };
 
-const config: { [key: string]: Knex.Config } = {
+const config: Record<EnvironmentUnion, Knex.Config> = {
   production: {
     client: 'pg',
     connection: {
