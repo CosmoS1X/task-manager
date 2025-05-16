@@ -40,3 +40,5 @@ export default class User extends Model {
     return encrypt(password) === this.passwordDigest;
   }
 }
+
+export type UserType = User;
