@@ -35,4 +35,8 @@ export default class User extends Model {
   set password(password: string) {
     this.passwordDigest = encrypt(password);
   }
+
+  verifyPassword(password: string) {
+    return encrypt(password) === this.passwordDigest;
+  }
 }
