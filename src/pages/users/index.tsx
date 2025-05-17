@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import Title from '@/components/Title';
 import Table from '@/components/Table';
 import Spinner from '@/components/Spinner';
-import { useGetUsersQuery, useDeleteUserMutation } from '@/services/usersApi';
+import { useGetUsersQuery, useDeleteUserMutation } from '@/api/usersApi';
 import type { ColNamesUnion } from '@/types';
 
 export default function UsersPage() {

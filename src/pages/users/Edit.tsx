@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import Title from '@/components/Title';
 import UserForm from '@/components/UserForm';
-import { useGetUserByIdQuery, useUpdateUserMutation } from '@/services/usersApi';
+import { useGetUserByIdQuery, useUpdateUserMutation } from '@/api/usersApi';
 import type { FormValues } from '@/components/UserForm';
 import Endpoints from '@/endpoints';
 
