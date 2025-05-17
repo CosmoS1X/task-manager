@@ -6,6 +6,6 @@ const controller = sessionController();
 
 router.post('/login', controller.login);
 router.get('/check-auth', controller.checkAuth);
-router.get('/logout', controller.logout);
+router.post('/logout', controller.logout);
 
 export default router;
