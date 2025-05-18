@@ -25,6 +25,7 @@ export const authApi = createApi({
       query: () => ({
         url: '/check-auth',
       }),
+      keepUnusedDataFor: 0,
     }),
   }),
 });
