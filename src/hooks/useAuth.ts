@@ -1,5 +1,5 @@
 import { useEffect, useMemo } from 'react';
-import { useCheckAuthQuery, useLoginMutation, useLogoutMutation } from '@/api/authApi';
+import { useCheckAuthQuery, useLoginMutation, useLogoutMutation, authUtil } from '@/api/authApi';
 import { useAppDispatch, useAppSelector } from '@/store';
 import { setUser, clearUser } from '@/store/authSlice';
 import type { Credentials } from '@/types';
@@ -36,9 +36,13 @@ export default () => {
     try {
       await logout().unwrap();
       dispatch(clearUser());
+      dispatch(authUtil.resetApiState());
+      return true;
     } catch (error) {
       // eslint-disable-next-line no-console
       console.error('Logout failed:', error);
+      dispatch(clearUser());
+      return false;
     }
   };
 

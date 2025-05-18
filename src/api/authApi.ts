@@ -33,4 +33,5 @@ export const {
   useLoginMutation,
   useLogoutMutation,
   useCheckAuthQuery,
+  util: authUtil,
 } = authApi;
