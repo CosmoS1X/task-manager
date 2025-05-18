@@ -23,9 +23,10 @@ type Props = {
   | 'outline-light'
   | 'outline-dark';
   size?: 'sm' | 'lg';
+  onClick?: () => void;
 };
 
-export default function Button({ type, variant, size, isDisabled, children }: Props) {
+export default function Button({ type, variant, size, isDisabled, children, onClick }: Props) {
   const classes = cn('btn', {
     [`btn-${variant}`]: !!variant,
     [`btn-${size}`]: !!size,
@@ -33,7 +34,7 @@ export default function Button({ type, variant, size, isDisabled, children }: Pr
 
   return (
     // eslint-disable-next-line react/button-has-type
-    <button type={type} className={classes} disabled={isDisabled}>
+    <button type={type} className={classes} disabled={isDisabled} onClick={onClick}>
       {children}
     </button>
   );
@@ -44,4 +45,5 @@ Button.defaultProps = {
   isDisabled: false,
   variant: '',
   size: '',
+  onClick: () => {},
 };
