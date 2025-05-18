@@ -40,6 +40,7 @@ export default {
       delete: 'Delete',
       send: 'Send',
       sending: 'Sending...',
+      signOut: 'Logout',
     },
     form: {
       inputs: {
@@ -55,7 +56,11 @@ export default {
           invalid: 'Invalid email',
           exists: 'Email is already exists',
         },
+        invalidCredentials: 'Incorrect username and/or password',
       },
+    },
+    errors: {
+      server: 'Internal server error',
     },
   },
 };

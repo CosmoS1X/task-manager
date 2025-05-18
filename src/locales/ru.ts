@@ -40,6 +40,7 @@ export default {
       delete: 'Удалить',
       send: 'Отправить',
       sending: 'Отправка...',
+      signOut: 'Выйти',
     },
     form: {
       inputs: {
@@ -56,7 +57,11 @@ export default {
           invalid: 'Неверный email',
           exists: 'Email уже занят',
         },
+        invalidCredentials: 'Неверные имя пользователя и/или пароль',
       },
+    },
+    errors: {
+      server: 'Internal server error',
     },
   },
 };
