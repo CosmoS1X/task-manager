@@ -11,6 +11,7 @@ import Card from '@/components/Card';
 import Input from '@/components/Input';
 import Button from '@/components/Button';
 import Endpoints from '@/endpoints';
+import { showError } from '@/utils/flash';
 
 const formSchema = (t: TFunction) => z.object({
   email: z.string().email(t('form.errors.email.invalid')).transform((value) => value.toLowerCase()),
@@ -27,27 +28,16 @@ export default function LoginPage() {
   const {
     register,
     handleSubmit,
-    setError,
     formState: { errors, isSubmitting, isValid, dirtyFields },
   } = useForm<FormValues>({ resolver: zodResolver(formSchema(t)), mode: 'onChange' });
 
   const onSubmit = async (data: FormValues) => {
     try {
       const isSuccess = await login(data);
-
-      if (isSuccess) {
-        navigate(Endpoints.Home);
-      } else {
-        setError('root', {
-          type: 'manual',
-          message: t('form.errors.invalidCredentials'),
-        });
-      }
-    } catch {
-      setError('root', {
-        type: 'manual',
-        message: t('errors.server'),
-      });
+      if (isSuccess) navigate(Endpoints.Home);
+    } catch (error) {
+      showError(t('errors.server'));
+      throw error;
     }
   };
 
@@ -67,7 +57,6 @@ export default function LoginPage() {
             type="password"
             placeholder={t('form.inputs.password')}
             registration={register('password')}
-            error={errors.root?.message}
           />
           <Button type="submit" variant="primary" isDisabled={isSubmitting || !isValid}>
             Login
