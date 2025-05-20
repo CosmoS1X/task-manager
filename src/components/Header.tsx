@@ -37,10 +37,10 @@ export default function Header() {
           )}
           <div className="col-md-3 text-end">
             {isAuthenticated
-              ? <Button variant="outline-primary" onClick={handleLogout}>{t('buttons.signOut')}</Button>
+              ? <Button variant="outline-primary" onClick={handleLogout}>{t('navbar.logout')}</Button>
               : (
                 <>
-                  <Link to={Endpoints.Login} className="btn btn-outline-primary me-2">{t('navbar.signIn')}</Link>
+                  <Link to={Endpoints.Login} className="btn btn-outline-primary me-2">{t('navbar.login')}</Link>
                   <Link to={Endpoints.SignUp} className="btn btn-primary">{t('navbar.signUp')}</Link>
                 </>
               )}
