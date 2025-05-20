@@ -27,7 +27,7 @@ app.use(session({
     secure: isProduction,
     maxAge: 7 * 24 * 60 * 60 * 1000, // 1 week
     httpOnly: true,
-    sameSite: 'strict',
+    sameSite: isProduction ? 'none' : 'lax',
   },
   unset: 'destroy',
   rolling: true,
