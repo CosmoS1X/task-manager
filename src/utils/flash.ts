@@ -1,7 +1,7 @@
 import { toast, ToastOptions } from 'react-toastify';
 
 const defaultOptions: ToastOptions = {
-  position: 'top-center',
+  position: 'top-right',
   autoClose: 5000,
   hideProgressBar: false,
   closeOnClick: true,
@@ -9,18 +9,20 @@ const defaultOptions: ToastOptions = {
   draggable: false,
 };
 
-export const showInfo = (message: string, options?: ToastOptions) => {
+type FlashFunction = (message: string, options?: ToastOptions) => void;
+
+export const showInfo: FlashFunction = (message, options) => {
   toast.info(message, { ...defaultOptions, ...options });
 };
 
-export const showSuccess = (message: string, options?: ToastOptions) => {
+export const showSuccess: FlashFunction = (message, options) => {
   toast.success(message, { ...defaultOptions, ...options });
 };
 
-export const showWarn = (message: string, options?: ToastOptions) => {
+export const showWarn: FlashFunction = (message, options) => {
   toast.warn(message, { ...defaultOptions, ...options });
 };
 
-export const showError = (message: string, options?: ToastOptions) => {
+export const showError: FlashFunction = (message, options) => {
   toast.error(message, { ...defaultOptions, ...options });
 };
