@@ -6,6 +6,7 @@ import path from 'path';
 import passport from './lib/passport';
 import sessionRouter from './routes/session';
 import usersRouter from './routes/users';
+import { errorHandler } from './middlewares';
 
 const isProduction = process.env.ENV_NODE === 'production';
 
@@ -39,6 +40,7 @@ app.use(express.json());
 
 app.use('/api', usersRouter);
 app.use('/api', sessionRouter);
+app.use(errorHandler);
 
 if (isProduction) {
   const clientPath = path.join(__dirname, '..');
