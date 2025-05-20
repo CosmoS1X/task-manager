@@ -13,4 +13,4 @@ EXPOSE $PORT
 
 RUN npm run build
 
-CMD ["bash", "-c", "npm start"]
+CMD ["bash", "-c", "npm run migrate && npm start"]
