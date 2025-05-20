@@ -21,14 +21,14 @@ export default () => ({
           return;
         }
 
-        res.status(200).json({ success: true, user });
+        res.status(200).json(user);
       });
     })(req, res, next);
   },
   checkAuth: (req: Request, res: Response) => {
     if (req.isAuthenticated()) {
       const { user } = req;
-      res.status(200).json({ user });
+      res.status(200).json(user);
       return;
     }
 
