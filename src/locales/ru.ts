@@ -1,14 +1,43 @@
 export default {
   translation: {
     appName: 'Менеджер задач',
+    flash: {
+      login: {
+        success: 'Вы вошли в систему',
+        errors: {
+          email: 'Пользователь с таким email не найден',
+          password: 'Неправильный пароль',
+        },
+      },
+      logout: {
+        success: 'Вы вышли из системы',
+        error: 'Ошибка при выходе из системы',
+      },
+      users: {
+        create: {
+          success: 'Пользователь успешно зарегистрирован',
+          error: 'Не удалось зарегистрировать',
+        },
+        edit: {
+          success: 'Пользователь успешно изменён',
+          error: 'Не удалось изменить пользователя',
+          reject: 'Вы не можете редактировать другого пользователя',
+        },
+        delete: {
+          success: 'Пользователь успешно удалён',
+          error: 'Не удалось удалить пользователя',
+          reject: 'Вы не можете удалять другого пользователя',
+        },
+      },
+    },
     navbar: {
       users: 'Пользователи',
       statuses: 'Статусы',
       labels: 'Метки',
       tasks: 'Задачи',
-      signIn: 'Вход',
+      login: 'Войти',
       signUp: 'Регистрация',
-      signOut: 'Выход',
+      logout: 'Выйти',
     },
     titles: {
       users: 'Пользователи',
@@ -40,7 +69,6 @@ export default {
       delete: 'Удалить',
       send: 'Отправить',
       sending: 'Отправка...',
-      signOut: 'Выйти',
     },
     form: {
       inputs: {
@@ -57,11 +85,11 @@ export default {
           invalid: 'Неверный email',
           exists: 'Email уже занят',
         },
-        invalidCredentials: 'Неверные имя пользователя и/или пароль',
       },
     },
     errors: {
-      server: 'Internal server error',
+      server: 'Внутренняя ошибка сервера',
+      forbidden: 'Доступ запрещен',
     },
   },
 };
