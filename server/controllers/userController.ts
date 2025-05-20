@@ -19,7 +19,7 @@ export default () => ({
 
       if (existingUser) {
         res.status(409).json({
-          error: 'User already exists',
+          error: 'UserAlreadyExists',
           message: 'User with this email already exists',
         });
 
@@ -28,10 +28,20 @@ export default () => ({
 
       const newUser = await User.query().insert(validData);
 
-      res.status(201).json(newUser);
+      req.logIn(newUser, (err) => {
+        if (err) {
+          res.status(500).json({
+            error: 'LoginFailed',
+            message: 'Failed to log in newly created user',
+          });
+          return;
+        }
+
+        res.status(201).json(newUser);
+      });
     } catch (error) {
       res.status(400).json({
-        error: error instanceof Error ? error.name : 'UnknownError',
+        error: error instanceof Error ? error : 'UnknownError',
         message: error instanceof Error ? error.message : 'An unknown error occurred',
       });
     }
@@ -44,7 +54,17 @@ export default () => ({
   delete: async (req: Request, res: Response) => {
     await User.query().deleteById(req.params.id);
 
-    res.status(204).end();
+    req.logOut((error) => {
+      if (error) {
+        res.status(500).json({
+          error: 'LogoutFailed',
+          message: 'Failed to log out',
+        });
+        return;
+      }
+
+      res.status(204).end();
+    });
   },
   checkEmailAvailability: async (req: Request, res: Response) => {
     const { email } = req.query;
