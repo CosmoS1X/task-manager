@@ -1,31 +1,29 @@
-import { useEffect, useMemo } from 'react';
-import { useCheckAuthQuery, useLoginMutation, useLogoutMutation, authUtil } from '@/api/authApi';
+import { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useLoginMutation, useLogoutMutation, authUtil } from '@/api/authApi';
 import { useAppDispatch, useAppSelector } from '@/store';
 import { setUser, clearUser } from '@/store/authSlice';
 import type { Credentials } from '@/types';
+import { showSuccess, showError } from '@/utils/flash';
 
 export default () => {
+  const { t } = useTranslation();
   const dispatch = useAppDispatch();
-  const authState = useAppSelector((state) => state.auth);
-  const { user, isAuthenticated } = useMemo(() => ({
-    user: authState.user,
-    isAuthenticated: authState.isAuthenticated,
-  }), [authState.user, authState.isAuthenticated]);
-
+  const { user, isAuthenticated } = useAppSelector((state) => state.auth);
   const [login] = useLoginMutation();
   const [logout] = useLogoutMutation();
-  const { data, isLoading } = useCheckAuthQuery();
 
   useEffect(() => {
-    if (data) {
-      dispatch(setUser(data));
+    if (user) {
+      dispatch(setUser(user));
     }
-  }, [data, dispatch]);
+  }, [user, dispatch]);
 
   const handleLogin = async (credentials: Credentials) => {
     try {
       const response = await login(credentials).unwrap();
       dispatch(setUser(response));
+      showSuccess(t('flash.login.success'));
       return true;
     } catch {
       return false;
@@ -37,10 +35,10 @@ export default () => {
       await logout().unwrap();
       dispatch(clearUser());
       dispatch(authUtil.resetApiState());
+      showSuccess(t('flash.logout.success'));
       return true;
     } catch (error) {
-      // eslint-disable-next-line no-console
-      console.error('Logout failed:', error);
+      showError(t('flash.logout.error'));
       dispatch(clearUser());
       return false;
     }
@@ -49,7 +47,6 @@ export default () => {
   return {
     user,
     isAuthenticated,
-    isLoading,
     login: handleLogin,
     logout: handleLogout,
   };
