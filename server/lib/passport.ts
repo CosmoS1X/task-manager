@@ -11,13 +11,13 @@ passport.use(
         const user = await User.query().findOne({ email });
 
         if (!user) {
-          return done(null, false, { message: 'User with this email not found' });
+          return done(null, false, { message: 'flash.login.errors.email' });
         }
 
         const isValidPassword = user.verifyPassword(password);
 
         if (!isValidPassword) {
-          return done(null, false, { message: 'Incorrect password' });
+          return done(null, false, { message: 'flash.login.errors.password' });
         }
 
         return done(null, user);
