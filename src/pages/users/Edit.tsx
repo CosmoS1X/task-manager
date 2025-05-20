@@ -6,6 +6,7 @@ import UserForm from '@/components/UserForm';
 import { useGetUserByIdQuery, useUpdateUserMutation } from '@/api/usersApi';
 import type { FormValues } from '@/components/UserForm';
 import Endpoints from '@/endpoints';
+import { showSuccess, showError } from '@/utils/flash';
 
 export default function EditUserPage() {
   const { t } = useTranslation();
@@ -15,8 +16,14 @@ export default function EditUserPage() {
   const navigate = useNavigate();
 
   const onSubmit = async (data: FormValues) => {
-    await updateUser({ ...data, id: Number(id) }).unwrap();
-    navigate(Endpoints.Users);
+    try {
+      await updateUser({ ...data, id: Number(id) }).unwrap();
+      showSuccess(t('flash.users.edit.success'));
+      navigate(Endpoints.Users);
+    } catch (error) {
+      showError(t('flash.users.edit.error'));
+      throw error;
+    }
   };
 
   return (
