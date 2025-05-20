@@ -1,5 +1,6 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { ToastContainer } from 'react-toastify';
 import ProtectedLayout from './ProtectedLayout';
 import Endpoints from '@/endpoints';
 import Header from './Header';
@@ -39,6 +40,7 @@ export default function App() {
           </Routes>
         </main>
         <Footer />
+        <ToastContainer newestOnTop />
       </div>
     </BrowserRouter>
   );
