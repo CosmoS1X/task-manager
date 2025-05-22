@@ -2,23 +2,24 @@ import passport from 'passport';
 import { Strategy } from 'passport-local';
 import User from '../models/User';
 
+const checkCredentials = async (email: string, password: string) => {
+  const user = await User.query().findOne({ email });
+  if (!user) return { user: null, message: 'flash.login.errors.email' };
+
+  const isValidPassword = user.verifyPassword(password);
+  if (!isValidPassword) return { user: null, message: 'flash.login.errors.password' };
+
+  return { user };
+};
+
 const strategy = new Strategy(
   { usernameField: 'email', passwordField: 'password' },
   async (email, password, done) => {
     try {
-      const user = await User.query().findOne({ email });
+      const result = await checkCredentials(email, password);
+      if (result.user) return done(null, result.user);
 
-      if (!user) {
-        return done(null, false, { message: 'flash.login.errors.email' });
-      }
-
-      const isValidPassword = user.verifyPassword(password);
-
-      if (!isValidPassword) {
-        return done(null, false, { message: 'flash.login.errors.password' });
-      }
-
-      return done(null, user);
+      return done(null, false, { message: result.message });
     } catch (error) {
       return done(error);
     }
