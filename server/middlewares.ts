@@ -23,7 +23,6 @@ export const ownerOnly = (req: Request, res: Response, next: NextFunction) => {
   next();
 };
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export const errorHandler = (error: Error, req: Request, res: Response, next: NextFunction) => {
+export const errorHandler = (error: Error, req: Request, res: Response, _next: NextFunction) => {
   res.status(500).json({ error: 'InternalError', message: 'Internal server error' }).end();
 };
