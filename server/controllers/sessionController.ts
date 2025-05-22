@@ -1,5 +1,5 @@
 import type { Request, Response, NextFunction } from 'express';
-import { isProduction } from 'server/config';
+import { isProduction } from '../config';
 import passport from '../lib/passport';
 import User from '../models/User';
 
