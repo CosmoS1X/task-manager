@@ -4,8 +4,7 @@ import session from 'express-session';
 import morgan from 'morgan';
 import path from 'path';
 import passport from './lib/passport';
-import sessionRouter from './routes/session';
-import usersRouter from './routes/users';
+import routers from './routes';
 import { errorHandler } from './middlewares';
 
 const isProduction = process.env.ENV_NODE === 'production';
@@ -38,8 +37,7 @@ app.use(passport.session());
 
 app.use(express.json());
 
-app.use('/api', usersRouter);
-app.use('/api', sessionRouter);
+app.use('/api', ...routers);
 app.use(errorHandler);
 
 if (isProduction) {
