@@ -1,4 +1,5 @@
 import type { Request, Response, NextFunction } from 'express';
+import { isProduction } from 'server/config';
 import passport from '../lib/passport';
 import User from '../models/User';
 
@@ -45,7 +46,7 @@ export default () => ({
         res.clearCookie('connect.sid', {
           path: '/',
           httpOnly: true,
-          secure: process.env.NODE_ENV === 'production',
+          secure: isProduction,
         });
 
         res.status(204).end();
