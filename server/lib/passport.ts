@@ -4,9 +4,11 @@ import User from '../models/User';
 
 const checkCredentials = async (email: string, password: string) => {
   const user = await User.query().findOne({ email });
+
   if (!user) return { user: null, message: 'flash.login.errors.email' };
 
   const isValidPassword = user.verifyPassword(password);
+
   if (!isValidPassword) return { user: null, message: 'flash.login.errors.password' };
 
   return { user };
@@ -16,10 +18,11 @@ const strategy = new Strategy(
   { usernameField: 'email', passwordField: 'password' },
   async (email, password, done) => {
     try {
-      const result = await checkCredentials(email, password);
-      if (result.user) return done(null, result.user);
+      const { user, message } = await checkCredentials(email, password);
 
-      return done(null, false, { message: result.message });
+      if (user) return done(null, user);
+
+      return done(null, false, { message });
     } catch (error) {
       return done(error);
     }
