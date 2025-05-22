@@ -1,14 +1,6 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import type { FetchBaseQueryError } from '@reduxjs/toolkit/query/react';
-import { t } from 'i18next';
 import type { User } from '@/types';
-import { showError } from '@/utils/flash';
-
-const transformErrorResponse = (error: FetchBaseQueryError) => {
-  const message = (error.data as { message?: string })?.message;
-  showError(t(message || 'Unknown error'));
-  return error;
-};
+import { transformErrorResponse } from './helpers';
 
 export const usersApi = createApi({
   reducerPath: 'users',
