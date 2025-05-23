@@ -2,7 +2,7 @@ import morgan from 'morgan';
 import cors from 'cors';
 import session from 'express-session';
 
-export const isProduction = process.env.ENV_NODE === 'production';
+export const isProduction = process.env.NODE_ENV === 'production';
 
 export const morganConfig = morgan(isProduction ? 'combined' : 'dev');
 
