@@ -7,6 +7,7 @@ type EnvironmentUnion = 'production' | 'development' | 'test';
 const migrations = {
   directory: path.resolve(__dirname, 'server', 'migrations'),
   extension: 'ts',
+  loadExtensions: ['.js'],
 };
 
 const config: Record<EnvironmentUnion, Knex.Config> = {
