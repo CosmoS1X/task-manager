@@ -6,19 +6,22 @@ import { formatDate } from '@/helpers';
 import Button from './Button';
 
 type Props = {
-  name: TableNamesUnion,
-  cols: ColNamesUnion[],
-  rows: EntitiesUnion[],
-  onDelete: (id: number) => (event: React.FormEvent<HTMLFormElement>) => void,
+  name: TableNamesUnion;
+  cols: ColNamesUnion[];
+  rows: EntitiesUnion[];
+  onEdit: (id: number) => (event: React.MouseEvent<HTMLAnchorElement>) => void;
+  onDelete: (id: number) => (event: React.FormEvent<HTMLFormElement>) => void;
 };
 
-export default function Table({ name, cols, rows, onDelete }: Props) {
+export default function Table({ name, cols, rows, onEdit, onDelete }: Props) {
   const { t } = useTranslation();
   const cellClasses = cn('py-3');
 
   const renderTableHead = () => (
     <tr>
-      {cols.map((col: ColNamesUnion) => <th key={col} className={cellClasses}>{t(`tableCols.${col}`)}</th>)}
+      {cols.map((col: ColNamesUnion) => (
+        <th key={col} className={cellClasses}>{t(`tableCols.${col}`)}</th>
+      ))}
       <th className={cellClasses}>{t('tableCols.actions')}</th>
     </tr>
   );
@@ -37,9 +40,17 @@ export default function Table({ name, cols, rows, onDelete }: Props) {
       })}
       <td>
         <div className="d-flex flex-wrap align-items-center">
-          <a href={`${name}/${row.id}/edit`} className="btn btn-primary btn-sm me-1">{t('buttons.edit')}</a>
+          <a
+            href={`${name}/${row.id}/edit`}
+            className="btn btn-primary btn-sm me-1"
+            onClick={onEdit(row.id)}
+          >
+            {t('buttons.edit')}
+          </a>
           <form onSubmit={onDelete(row.id)}>
-            <Button type="submit" variant="danger" size="sm">{t('buttons.delete')}</Button>
+            <Button type="submit" variant="danger" size="sm">
+              {t('buttons.delete')}
+            </Button>
           </form>
         </div>
       </td>
@@ -49,12 +60,8 @@ export default function Table({ name, cols, rows, onDelete }: Props) {
   return (
     <div className="table-responsive">
       <table className="table table-borderless table-striped mt-5 bg-white">
-        <thead>
-          {renderTableHead()}
-        </thead>
-        <tbody>
-          {renderTableBody()}
-        </tbody>
+        <thead>{renderTableHead()}</thead>
+        <tbody>{renderTableBody()}</tbody>
       </table>
     </div>
   );

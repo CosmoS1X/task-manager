@@ -1,14 +1,43 @@
 export default {
   translation: {
     appName: 'Task Manager',
+    flash: {
+      login: {
+        success: 'You are logged in',
+        errors: {
+          email: 'User with this email not found',
+          password: 'Incorrect password',
+        },
+      },
+      logout: {
+        success: 'You are logged out',
+        error: 'Logout error',
+      },
+      users: {
+        create: {
+          success: 'User registered successfully',
+          error: 'Failed to register',
+        },
+        edit: {
+          success: 'User edited successfully',
+          error: 'Failed to edit',
+          reject: 'You cannot edit another user',
+        },
+        delete: {
+          success: 'User deleted successfully',
+          error: 'Failed to delete',
+          reject: 'You cannot delete another user',
+        },
+      },
+    },
     navbar: {
       users: 'Users',
       statuses: 'Statuses',
       labels: 'Labels',
       tasks: 'Tasks',
-      signIn: 'Login',
+      login: 'Login',
       signUp: 'Sign-up',
-      signOut: 'Logout',
+      logout: 'Logout',
     },
     titles: {
       users: 'Users',
@@ -56,6 +85,10 @@ export default {
           exists: 'Email is already exists',
         },
       },
+    },
+    errors: {
+      server: 'Internal server error',
+      forbidden: 'Access denied',
     },
   },
 };

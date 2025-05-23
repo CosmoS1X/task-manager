@@ -4,6 +4,7 @@
     "module": "CommonJS",
     "outDir": "../dist",
     "rootDir": "../",
+    "typeRoots": ["./types", "../node_modules/@types"]
   },
   "include": ["**/*.ts", "../knexfile.ts"]
 }
