@@ -18,10 +18,10 @@ export const sessionConfig = session({
   resave: false,
   saveUninitialized: false,
   cookie: {
-    secure: isProduction,
+    secure: false, // 'true' doesn't work on render.com
     maxAge: 7 * 24 * 60 * 60 * 1000, // 1 week
     httpOnly: true,
-    sameSite: isProduction ? 'none' : 'lax',
+    sameSite: 'lax', // 'none' doesn't work on render.com
   },
   unset: 'destroy',
   rolling: true,
