@@ -4,10 +4,29 @@ import { knexSnakeCaseMappers } from 'objection';
 
 type EnvironmentUnion = 'production' | 'development' | 'test';
 
-const migrations = {
-  directory: path.resolve(__dirname, 'server', 'migrations'),
-  extension: 'ts',
-  loadExtensions: ['.js'],
+const migrationsDirectory = path.resolve(__dirname, 'server', 'migrations');
+
+const migrationsConfig: Record<EnvironmentUnion, Knex.MigratorConfig> = {
+  production: {
+    directory: migrationsDirectory,
+    extension: 'js',
+    loadExtensions: ['.js'],
+  },
+  development: {
+    directory: migrationsDirectory,
+    extension: 'ts',
+    loadExtensions: ['.ts'],
+  },
+  test: {
+    directory: migrationsDirectory,
+    extension: 'ts',
+    loadExtensions: ['.ts'],
+  },
+};
+
+const commonConfig: Knex.Config = {
+  useNullAsDefault: true,
+  ...knexSnakeCaseMappers(),
 };
 
 const config: Record<EnvironmentUnion, Knex.Config> = {
@@ -16,31 +35,28 @@ const config: Record<EnvironmentUnion, Knex.Config> = {
     connection: {
       database: process.env.PG_DB,
       host: process.env.PG_HOST,
-      port: Number(process.env.PG_PORT) || 5432,
+      port: Number(process.env.PG_PORT),
       user: process.env.PG_USER,
       password: process.env.PG_PASSWORD,
       ssl: true,
     },
-    useNullAsDefault: true,
-    migrations,
-    ...knexSnakeCaseMappers(),
+    migrations: migrationsConfig.production,
+    ...commonConfig,
   },
   development: {
     client: 'sqlite3',
     connection: {
       filename: path.resolve(__dirname, 'db.sqlite'),
     },
-    useNullAsDefault: true,
-    migrations,
-    ...knexSnakeCaseMappers(),
+    migrations: migrationsConfig.development,
+    ...commonConfig,
   },
   test: {
     client: 'sqlite3',
     connection: ':memory:',
-    useNullAsDefault: true,
     debug: true,
-    migrations,
-    ...knexSnakeCaseMappers(),
+    migrations: migrationsConfig.test,
+    ...commonConfig,
   },
 };
 
