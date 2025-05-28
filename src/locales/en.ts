@@ -84,6 +84,7 @@ export default {
       send: 'Send',
       sending: 'Sending...',
       cancel: 'Cancel',
+      createStatus: 'Create status',
     },
     form: {
       inputs: {
