@@ -42,11 +42,11 @@ const formSchema = (t: TFunction, isEditing: boolean) => {
   return baseSchema.merge(passwordSchema);
 };
 
-export type FormValues = z.infer<ReturnType<typeof formSchema>>;
+export type UserFormValues = z.infer<ReturnType<typeof formSchema>>;
 
 type Props = {
   currentUser?: User;
-  onSubmit: SubmitHandler<FormValues>;
+  onSubmit: SubmitHandler<UserFormValues>;
   isEditing?: boolean;
 };
 
@@ -70,7 +70,7 @@ export default function UserForm({ currentUser, onSubmit, isEditing = false }: P
     watch,
     reset,
     formState: { errors, isSubmitting, isValid, dirtyFields },
-  } = useForm<FormValues>({
+  } = useForm<UserFormValues>({
     resolver: zodResolver(formSchema(t, isEditing)),
     mode: 'onChange',
     defaultValues: currentUser,

@@ -5,7 +5,7 @@ import Title from '@/components/Title';
 import Card from '@/components/Card';
 import UserForm from '@/components/UserForm';
 import { useCreateUserMutation } from '@/api/usersApi';
-import type { FormValues } from '@/components/UserForm';
+import type { UserFormValues } from '@/components/UserForm';
 import Endpoints from '@/endpoints';
 import { useAppDispatch } from '@/store';
 import { setUser } from '@/store/authSlice';
@@ -17,14 +17,14 @@ export default function SignUpPage() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
-  const onSubmit = async (data: FormValues) => {
+  const onSubmit = async (data: UserFormValues) => {
     try {
       const newUser = await createUser(data).unwrap();
       dispatch(setUser(newUser));
       showSuccess(t('flash.users.create.success'));
       navigate(Endpoints.Users);
     } catch (error) {
-      showError(t('error creating user'));
+      showError(t('flash.users.create.error'));
       throw error;
     }
   };
