@@ -5,7 +5,7 @@ import Title from '@/components/Title';
 import Table from '@/components/Table';
 import Spinner from '@/components/Spinner';
 import { useGetUsersQuery, useDeleteUserMutation } from '@/api/usersApi';
-import type { ColNamesUnion } from '@/types';
+import type { TableColumns } from '@/types';
 import { useAuth } from '@/hooks';
 import { showError, showSuccess } from '@/utils/flash';
 
@@ -53,7 +53,7 @@ export default function UsersPage() {
     }
   };
 
-  const cols: ColNamesUnion[] = ['id', 'fullName', 'email', 'createdAt'];
+  const cols: TableColumns<'users'> = ['id', 'fullName', 'email', 'createdAt'];
 
   return (
     <>
