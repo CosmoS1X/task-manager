@@ -31,10 +31,9 @@ export default () => ({
   },
   update: async (req: Request, res: Response) => {
     const validData = Status.fromJson(req.body);
-    const currentStatus = await Status.query().findById(req.params.id);
     const existingStatus = await Status.query().findOne({ name: validData.name });
 
-    if (existingStatus && !currentStatus) {
+    if (existingStatus) {
       res.status(409).json({
         error: 'StatusAlreadyExists',
         message: 'Status with this name already exists',
@@ -43,9 +42,9 @@ export default () => ({
       return;
     }
 
-    await currentStatus?.$query().patch(validData);
+    const updatedStatus = await Status.query().findById(req.params.id).patch(validData);
 
-    res.status(200).json(currentStatus);
+    res.status(200).json(updatedStatus);
   },
   delete: async (req: Request, res: Response) => {
     await Status.query().deleteById(req.params.id);
