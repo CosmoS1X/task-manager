@@ -24,5 +24,8 @@ export const ownerOnly = (req: Request, res: Response, next: NextFunction) => {
 };
 
 export const errorHandler = (error: Error, req: Request, res: Response, _next: NextFunction) => {
-  res.status(500).json({ error: 'InternalError', message: 'Internal server error' }).end();
+  // eslint-disable-next-line no-console
+  console.error('Error handler middleware:', error);
+
+  res.status(500).json({ error: 'InternalServerError', message: 'Internal Server Error' }).end();
 };
