@@ -1,6 +1,7 @@
 import path from 'path';
 import type { Knex } from 'knex';
 import { knexSnakeCaseMappers } from 'objection';
+import env from './env';
 
 type EnvironmentUnion = 'production' | 'development' | 'test';
 
@@ -33,11 +34,11 @@ const config: Record<EnvironmentUnion, Knex.Config> = {
   production: {
     client: 'pg',
     connection: {
-      database: process.env.PG_DB,
-      host: process.env.PG_HOST,
-      port: Number(process.env.PG_PORT),
-      user: process.env.PG_USER,
-      password: process.env.PG_PASSWORD,
+      database: env?.PG_DB,
+      host: env?.PG_HOST,
+      port: env?.PG_PORT,
+      user: env?.PG_USER,
+      password: env?.PG_PASSWORD,
       ssl: true,
     },
     migrations: migrationsConfig.production,

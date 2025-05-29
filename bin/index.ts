@@ -2,8 +2,9 @@ import 'dotenv/config';
 import debug from 'debug';
 import app from '../server';
 import { db } from '../server/database';
+import env from '../env';
 
-const port = process.env.PORT || 5000;
+const port = env?.PORT;
 const log = debug('server:start');
 const errorLog = debug('server:error');
 

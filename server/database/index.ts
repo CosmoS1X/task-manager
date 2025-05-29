@@ -1,9 +1,10 @@
 import knex from 'knex';
 import { Model } from 'objection';
 import config from '../../knexfile';
+import env from '../../env';
 
-const env = process.env.NODE_ENV || 'development';
-const db = knex(config[env as keyof typeof config]);
+const environment = env?.NODE_ENV;
+const db = knex(config[environment as keyof typeof config]);
 
 Model.knex(db);
 
