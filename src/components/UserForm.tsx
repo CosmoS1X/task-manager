@@ -9,6 +9,7 @@ import axios from 'axios';
 import Input from '@/components/Input';
 import Button from '@/components/Button';
 import type { User } from '@/types';
+import { capitalize } from '@/helpers';
 
 const formSchema = (t: TFunction, isEditing: boolean) => {
   const firstNameLength = 2;
@@ -19,11 +20,11 @@ const formSchema = (t: TFunction, isEditing: boolean) => {
     firstName: z
       .string()
       .min(firstNameLength, t('form.errors.min', { count: firstNameLength }))
-      .transform((value) => value.trim()),
+      .transform((value) => capitalize(value.trim())),
     lastName: z
       .string()
       .min(lastNameLength, t('form.errors.min', { count: lastNameLength }))
-      .transform((value) => value.trim()),
+      .transform((value) => capitalize(value.trim())),
     email: z
       .string()
       .email(t('form.errors.email.invalid'))
