@@ -10,7 +10,7 @@
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "client": "webpack serve",
-    "server": "DEBUG=server:* nodemon --exec ts-node bin/index.ts",
+    "server": "DEBUG=server:*,app:* nodemon --exec ts-node bin/index.ts",
     "dev": "concurrently \"npm run server\" \"npm run client\"",
     "clean": "rm -rf dist",
     "build:client": "webpack",
