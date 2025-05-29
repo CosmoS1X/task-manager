@@ -32,6 +32,13 @@ export default () => ({
   update: async (req: Request, res: Response) => {
     const validData = Status.fromJson(req.body);
     const existingStatus = await Status.query().findOne({ name: validData.name });
+    const currentStatus = await Status.query().findById(req.params.id);
+
+    if (currentStatus?.name === validData.name) {
+      res.status(200).json(currentStatus);
+
+      return;
+    }
 
     if (existingStatus) {
       res.status(409).json({
@@ -42,9 +49,9 @@ export default () => ({
       return;
     }
 
-    const updatedStatus = await Status.query().findById(req.params.id).patch(validData);
+    await currentStatus?.$query().patch(validData);
 
-    res.status(200).json(updatedStatus);
+    res.status(200).json(currentStatus);
   },
   delete: async (req: Request, res: Response) => {
     await Status.query().deleteById(req.params.id);
