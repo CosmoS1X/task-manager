@@ -23,6 +23,19 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
+    - name: Create .env file
+      run: |
+        cat <<EOF > .env
+        NODE_ENV=production
+        PORT=5000
+        PG_DB=${{ secrets.PG_DB }}
+        PG_HOST=${{ secrets.PG_HOST }}
+        PG_PORT=${{ secrets.PG_PORT }}
+        PG_USER=${{ secrets.PG_USER }}
+        PG_PASSWORD=${{ secrets.PG_PASSWORD }}
+        SESSION_KEY=${{ secrets.SESSION_KEY }}
+        EOF
+      shell: bash
     - run: make install
     - run: make check
     - run: make build
