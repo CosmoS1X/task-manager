@@ -34,4 +34,7 @@ start: build migrate
 dev:
 	npm run dev
 
+gen-session-key:
+	node -e "console.log(require('crypto').randomBytes(64).toString('hex'))"
+
 .PHONY: test
