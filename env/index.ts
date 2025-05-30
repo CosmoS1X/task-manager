@@ -1,6 +1,7 @@
 import 'dotenv/config';
 import debug from 'debug';
 import { envSchema } from './schema';
+import type { Env } from './schema';
 
 const log = debug('app:env:log');
 const errorLog = debug('app:env:error');
@@ -19,4 +20,4 @@ if (!success) {
 log('✅ Environment variables validated successfully');
 log(`✅ Running in ${env.NODE_ENV} mode`);
 
-export default env;
+export default env as Env;
