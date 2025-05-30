@@ -57,10 +57,7 @@ export default function StatusForm({ currentStatus, onSubmit, submitError }: Pro
   useEffect(() => {
     const error = submitError || internalSubmitError;
     if (error) {
-      setError('root', {
-        type: 'manual',
-        message: error,
-      });
+      setError('root', { message: error });
     }
   }, [submitError, internalSubmitError, setError]);
 
@@ -71,8 +68,13 @@ export default function StatusForm({ currentStatus, onSubmit, submitError }: Pro
     }
   }, [nameValue, currentStatus?.name, clearErrors]);
 
-  const handleFormSubmit = async (data: StatusFormValues) => {
+  const handleInputChange = () => {
     clearErrors('root');
+    setInternalSubmitError(null);
+  };
+
+  const handleFormSubmit = async (data: StatusFormValues) => {
+    handleInputChange();
 
     try {
       await onSubmit(data);
@@ -82,10 +84,7 @@ export default function StatusForm({ currentStatus, onSubmit, submitError }: Pro
   };
 
   const nameRegistration = register('name', {
-    onChange: () => {
-      clearErrors('root');
-      setInternalSubmitError(null);
-    },
+    onChange: handleInputChange,
   });
 
   return (
