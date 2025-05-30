@@ -4,7 +4,7 @@ import app from '../server';
 import { db } from '../server/database';
 import env from '../env';
 
-const port = env?.PORT;
+const port = env.PORT;
 const log = debug('server:start');
 const errorLog = debug('server:error');
 

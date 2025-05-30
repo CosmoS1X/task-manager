@@ -34,11 +34,11 @@ const config: Record<EnvironmentUnion, Knex.Config> = {
   production: {
     client: 'pg',
     connection: {
-      database: env?.PG_DB,
-      host: env?.PG_HOST,
-      port: env?.PG_PORT,
-      user: env?.PG_USER,
-      password: env?.PG_PASSWORD,
+      database: env.PG_DB,
+      host: env.PG_HOST,
+      port: env.PG_PORT,
+      user: env.PG_USER,
+      password: env.PG_PASSWORD,
       ssl: true,
     },
     migrations: migrationsConfig.production,
