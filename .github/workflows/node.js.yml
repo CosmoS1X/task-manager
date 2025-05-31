@@ -24,7 +24,7 @@ jobs:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
     - name: Create .env file
-      run: echo ${{ secrets.ENV_FILE }} > .env
+      run: printf '%s\n' "${{ secrets.ENV_FILE }}" > .env
     - run: make install
     - run: make check
     - run: make build
