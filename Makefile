@@ -22,10 +22,19 @@ build:
 migrate:
 	npm run migrate
 
+migrate-dev:
+	npm run migrate:dev
+
+migration:
+	npx tsx node_modules/.bin/knex migrate:make $(N)
+
 start: build migrate
 	npm run start
 
 dev:
 	npm run dev
+
+gen-session-key:
+	node -e "console.log(require('crypto').randomBytes(64).toString('hex'))"
 
 .PHONY: test

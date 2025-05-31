@@ -1,20 +1,17 @@
 import morgan from 'morgan';
 import cors from 'cors';
 import session from 'express-session';
+import env from '../env';
 
-export const isProduction = process.env.NODE_ENV === 'production';
-
-export const morganConfig = morgan(isProduction ? 'combined' : 'dev');
+export const morganConfig = morgan(env.isProduction ? 'combined' : 'dev');
 
 export const corsConfig = cors({
   origin: 'http://localhost:3000',
   credentials: true,
 });
 
-const devSessionKey = 'cdf49a999da33791f7646f7c5e5874c66b1247c5db7cc77e9d6a7844430cfc43d98f1160eeef3a91b2c6409ae9b4147f8920ec5fa6743b4d82700b310a918a3a';
-
 export const sessionConfig = session({
-  secret: process.env.SESSION_KEY || devSessionKey,
+  secret: env.SESSION_KEY,
   resave: false,
   saveUninitialized: false,
   cookie: {

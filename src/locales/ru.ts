@@ -29,6 +29,20 @@ export default {
           reject: 'Вы не можете удалять другого пользователя',
         },
       },
+      statuses: {
+        create: {
+          success: 'Статус успешно создан',
+          error: 'Не удалось создать статус',
+        },
+        edit: {
+          success: 'Статус успешно изменён',
+          error: 'Не удалось изменить статус',
+        },
+        delete: {
+          success: 'Статус успешно удалён',
+          error: 'Не удалось удалить статус',
+        },
+      },
     },
     navbar: {
       users: 'Пользователи',
@@ -69,6 +83,8 @@ export default {
       delete: 'Удалить',
       send: 'Отправить',
       sending: 'Отправка...',
+      cancel: 'Отменить',
+      createStatus: 'Создать статус',
     },
     form: {
       inputs: {
@@ -76,6 +92,7 @@ export default {
         lastName: 'Фамилия',
         email: 'Email',
         password: 'Пароль',
+        name: 'Наименование',
       },
       errors: {
         min_one: 'Должно быть не меньше {{count}} символа',
@@ -84,6 +101,9 @@ export default {
         email: {
           invalid: 'Неверный email',
           exists: 'Email уже занят',
+        },
+        name: {
+          exists: 'Наименование уже используется',
         },
       },
     },

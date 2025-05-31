@@ -13,6 +13,8 @@ import {
   UsersPage,
   EditUserPage,
   StatusesPage,
+  NewStatusPage,
+  EditStatusPage,
   LabelsPage,
   TasksPage,
 } from '../pages';
@@ -29,6 +31,8 @@ export default function App() {
               <Route path={Endpoints.Users} element={<UsersPage />} />
               <Route path={Endpoints.UserEdit} element={<EditUserPage />} />
               <Route path={Endpoints.Statuses} element={<StatusesPage />} />
+              <Route path={Endpoints.NewStatus} element={<NewStatusPage />} />
+              <Route path={Endpoints.EditStatus} element={<EditStatusPage />} />
               <Route path={Endpoints.Labels} element={<LabelsPage />} />
               <Route path={Endpoints.Tasks} element={<TasksPage />} />
             </Route>

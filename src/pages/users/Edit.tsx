@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import Title from '@/components/Title';
 import UserForm from '@/components/UserForm';
 import { useGetUserByIdQuery, useUpdateUserMutation } from '@/api/usersApi';
-import type { FormValues } from '@/components/UserForm';
+import type { UserFormValues } from '@/components/UserForm';
 import Endpoints from '@/endpoints';
 import { showSuccess, showError } from '@/utils/flash';
 
@@ -15,7 +15,7 @@ export default function EditUserPage() {
   const [updateUser] = useUpdateUserMutation();
   const navigate = useNavigate();
 
-  const onSubmit = async (data: FormValues) => {
+  const onSubmit = async (data: UserFormValues) => {
     try {
       await updateUser({ ...data, id: Number(id) }).unwrap();
       showSuccess(t('flash.users.edit.success'));

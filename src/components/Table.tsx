@@ -1,42 +1,89 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import cn from 'classnames';
-import type { TableNamesUnion, ColNamesUnion, EntitiesUnion } from '@/types';
 import { formatDate } from '@/helpers';
 import Button from './Button';
+import type {
+  TableNamesUnion,
+  TableColumns,
+  TableRows,
+  EntityMap,
+  User,
+  Status,
+} from '@/types';
 
-type Props = {
-  name: TableNamesUnion;
-  cols: ColNamesUnion[];
-  rows: EntitiesUnion[];
+type RenderableValue = string | number | boolean | null | undefined;
+
+const isRenderable = (value: unknown): value is RenderableValue => {
+  const type = typeof value;
+
+  return (
+    value === null
+    || value === undefined
+    || type === 'string'
+    || type === 'number'
+    || type === 'boolean'
+  );
+};
+
+const formatValue = (value: RenderableValue): React.ReactNode => {
+  if (value === null || value === undefined) return '';
+
+  if (typeof value === 'boolean') return value ? 'Yes' : 'No';
+
+  return value.toString();
+};
+
+type Props<T extends TableNamesUnion> = {
+  name: T;
+  cols: TableColumns<T>;
+  rows: TableRows<T>;
   onEdit: (id: number) => (event: React.MouseEvent<HTMLAnchorElement>) => void;
   onDelete: (id: number) => (event: React.FormEvent<HTMLFormElement>) => void;
 };
 
-export default function Table({ name, cols, rows, onEdit, onDelete }: Props) {
+export default function Table<T extends TableNamesUnion>({
+  name,
+  cols,
+  rows,
+  onEdit,
+  onDelete,
+}: Props<T>) {
   const { t } = useTranslation();
   const cellClasses = cn('py-3');
 
   const renderTableHead = () => (
     <tr>
-      {cols.map((col: ColNamesUnion) => (
-        <th key={col} className={cellClasses}>{t(`tableCols.${col}`)}</th>
-      ))}
+      {cols.map((col) => <th key={col} className={cellClasses}>{t(`tableCols.${col}`)}</th>)}
       <th className={cellClasses}>{t('tableCols.actions')}</th>
     </tr>
   );
 
-  const renderTableBody = () => rows.map((row: EntitiesUnion) => (
+  const renderTableBody = () => rows.map((row) => (
     <tr key={row.id}>
-      {cols.map((col: ColNamesUnion) => {
+      {cols.map((col) => {
+        let cellValue: React.ReactNode = '';
+
         switch (col) {
-          case 'fullName':
-            return <td key={col}>{`${row.firstName} ${row.lastName}`}</td>;
-          case 'createdAt':
-            return <td key={col}>{formatDate(row.createdAt)}</td>;
-          default:
-            return <td key={col}>{row[col]}</td>;
+          case 'fullName': {
+            cellValue = `${(row as User).firstName} ${(row as User).lastName}`;
+            break;
+          }
+          case 'name': {
+            cellValue = (row as Status).name;
+            break;
+          }
+          case 'createdAt': {
+            cellValue = formatDate(row.createdAt);
+            break;
+          }
+          default: {
+            const value = (row as EntityMap[T])[col as keyof EntityMap[T]];
+            cellValue = isRenderable(value) ? formatValue(value) : '';
+          }
         }
+
+        return <td key={col}>{cellValue}</td>;
       })}
       <td>
         <div className="d-flex flex-wrap align-items-center">

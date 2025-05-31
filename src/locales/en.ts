@@ -29,6 +29,20 @@ export default {
           reject: 'You cannot delete another user',
         },
       },
+      statuses: {
+        create: {
+          success: 'Status successfully created',
+          error: 'Failed to create status',
+        },
+        edit: {
+          success: 'Status successfully changed',
+          error: 'Failed to change status',
+        },
+        delete: {
+          success: 'Status successfully deleted',
+          error: 'Failed to delete status',
+        },
+      },
     },
     navbar: {
       users: 'Users',
@@ -69,6 +83,8 @@ export default {
       delete: 'Delete',
       send: 'Send',
       sending: 'Sending...',
+      cancel: 'Cancel',
+      createStatus: 'Create status',
     },
     form: {
       inputs: {
@@ -76,6 +92,7 @@ export default {
         lastName: 'Last Name',
         email: 'Email',
         password: 'Password',
+        name: 'Name',
       },
       errors: {
         min_one: 'Must be at least {{count}} character',
@@ -83,6 +100,9 @@ export default {
         email: {
           invalid: 'Invalid email',
           exists: 'Email is already exists',
+        },
+        name: {
+          exists: 'Name already in use',
         },
       },
     },

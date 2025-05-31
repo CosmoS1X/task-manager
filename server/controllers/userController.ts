@@ -1,5 +1,5 @@
 import type { Request, Response } from 'express';
-import User from '../models/User';
+import { User } from '../models';
 
 export default () => ({
   getList: async (req: Request, res: Response) => {
@@ -15,7 +15,7 @@ export default () => ({
   create: async (req: Request, res: Response) => {
     try {
       const validData = User.fromJson(req.body);
-      const existingUser = await User.query().where('email', validData.email).first();
+      const existingUser = await User.query().findOne({ email: validData.email });
 
       if (existingUser) {
         res.status(409).json({
@@ -75,7 +75,7 @@ export default () => ({
     }
 
     try {
-      const user = await User.query().where('email', email).first();
+      const user = await User.query().findOne({ email });
       res.status(200).json({ isAvailable: !user });
     } catch (error) {
       res.status(500).json({ error: 'Internal server error' });
