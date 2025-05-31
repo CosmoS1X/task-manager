@@ -24,15 +24,13 @@ export const envSchema = z.object({
     .min(1, 'DB password cannot be empty'),
   SESSION_KEY: z.string()
     .min(32, 'The secret key must be at least 32 characters long')
-    .superRefine((value, ctx) => {
-      if (process.env.NODE_ENV === 'production' && !value) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          message: 'SESSION_KEY must be set in production',
-        });
-      }
-    })
+    .refine(
+      (value) => !(process.env.NODE_ENV === 'production' && !value),
+      'SESSION_KEY must be set in production',
+    )
     .default(process.env.NODE_ENV !== 'production' ? devSessionKey : ''),
+  isProduction: z.boolean()
+    .default(process.env.NODE_ENV === 'production'),
 });
 
 export type Env = z.infer<typeof envSchema>;
