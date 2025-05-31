@@ -19,7 +19,7 @@ export const statusesApi = createApi({
         body: status,
       }),
     }),
-    updateStatus: builder.mutation<Status, Pick<Status, 'id'>>({
+    updateStatus: builder.mutation<Status, Partial<Status> & Pick<Status, 'id'>>({
       query: ({ id, ...patch }) => ({
         url: `/${id}`,
         method: 'PATCH',
