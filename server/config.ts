@@ -3,9 +3,7 @@ import cors from 'cors';
 import session from 'express-session';
 import env from '../env';
 
-export const isProduction = env.NODE_ENV === 'production';
-
-export const morganConfig = morgan(isProduction ? 'combined' : 'dev');
+export const morganConfig = morgan(env.isProduction ? 'combined' : 'dev');
 
 export const corsConfig = cors({
   origin: 'http://localhost:3000',
