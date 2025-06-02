@@ -10,6 +10,15 @@ export default () => ({
   getItem: async (req: Request, res: Response) => {
     const status = await Status.query().findById(req.params.id);
 
+    if (!status) {
+      res.status(404).json({
+        error: 'StatusNotFound',
+        message: 'Status not found',
+      });
+
+      return;
+    }
+
     res.status(200).json(status);
   },
   create: async (req: Request, res: Response) => {
