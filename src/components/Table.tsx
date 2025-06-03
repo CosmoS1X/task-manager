@@ -10,6 +10,7 @@ import type {
   EntityMap,
   User,
   Status,
+  Label,
 } from '@/types';
 
 type RenderableValue = string | number | boolean | null | undefined;
@@ -70,7 +71,7 @@ export default function Table<T extends TableNamesUnion>({
             break;
           }
           case 'name': {
-            cellValue = (row as Status).name;
+            cellValue = (row as Status | Label).name;
             break;
           }
           case 'createdAt': {

@@ -17,9 +17,16 @@ export type Status = {
   createdAt: string;
 };
 
+export type Label = {
+  id: number;
+  name: string;
+  createdAt: string;
+};
+
 export type EntityMap = {
   users: User;
   statuses: Status;
+  labels: Label;
 };
 
 export type TableNamesUnion = keyof EntityMap;
@@ -27,6 +34,7 @@ export type TableNamesUnion = keyof EntityMap;
 type ColumnMap = {
   users: Array<keyof User | 'fullName'>;
   statuses: Array<keyof Status>;
+  labels: Array<keyof Label>
 };
 
 export type TableColumns<T extends TableNamesUnion> = ColumnMap[T];
