@@ -2,6 +2,7 @@ import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import Title from '@/components/Title';
+import Card from '@/components/Card';
 import UserForm from '@/components/UserForm';
 import { useGetUserByIdQuery, useUpdateUserMutation } from '@/api/usersApi';
 import type { UserFormValues } from '@/components/UserForm';
@@ -29,7 +30,9 @@ export default function EditUserPage() {
   return (
     <>
       <Title text={t('titles.editUser')} />
-      <UserForm currentUser={user} onSubmit={onSubmit} isEditing />
+      <Card>
+        <UserForm currentUser={user} onSubmit={onSubmit} isEditing />
+      </Card>
     </>
   );
 }
