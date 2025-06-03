@@ -43,6 +43,20 @@ export default {
           error: 'Failed to delete status',
         },
       },
+      labels: {
+        create: {
+          success: 'Label successfully created',
+          error: 'Failed to create label',
+        },
+        edit: {
+          success: 'Label successfully changed',
+          error: 'Failed to change label',
+        },
+        delete: {
+          success: 'Label successfully deleted',
+          error: 'Failed to delete label',
+        },
+      },
     },
     navbar: {
       users: 'Users',
@@ -85,6 +99,7 @@ export default {
       sending: 'Sending...',
       cancel: 'Cancel',
       createStatus: 'Create status',
+      createLabel: 'Create label',
     },
     form: {
       inputs: {
