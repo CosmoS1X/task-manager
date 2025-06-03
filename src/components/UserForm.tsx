@@ -10,6 +10,7 @@ import Input from '@/components/Input';
 import Button from '@/components/Button';
 import type { User } from '@/types';
 import { capitalize } from '@/helpers';
+import Endpoints from '@/endpoints';
 
 const formSchema = (t: TFunction, isEditing: boolean) => {
   const firstNameLength = 2;
@@ -150,6 +151,7 @@ export default function UserForm({ currentUser, onSubmit, isEditing = false }: P
       >
         {isSubmitting ? t('buttons.sending') : t('buttons.send')}
       </Button>
+      {currentUser && <a href={Endpoints.Users} className="btn btn-danger ms-1">{t('buttons.cancel')}</a>}
     </form>
   );
 }
