@@ -8,6 +8,8 @@ enum Endpoints {
   NewStatus = '/statuses/new',
   EditStatus = '/statuses/:id/edit',
   Labels = '/labels',
+  NewLabel = '/labels/new',
+  EditLabel = '/labels/:id/edit',
   Tasks = '/tasks',
   Wildcard = '*',
 }
