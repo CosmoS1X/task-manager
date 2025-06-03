@@ -8,7 +8,7 @@ import type { TFunction } from 'i18next';
 import Input from './Input';
 import Button from './Button';
 import { capitalize } from '@/helpers';
-import type { Status } from '@/types';
+import type { Status, Label } from '@/types';
 import Endpoints from '@/endpoints';
 
 const formSchema = (t: TFunction) => {
@@ -22,15 +22,16 @@ const formSchema = (t: TFunction) => {
   });
 };
 
-export type StatusFormValues = z.infer<ReturnType<typeof formSchema>>;
+export type EntityFormValues = z.infer<ReturnType<typeof formSchema>>;
 
 type Props = {
-  currentStatus?: Status;
-  onSubmit: SubmitHandler<StatusFormValues>;
+  currentEntity?: Status | Label;
+  onSubmit: SubmitHandler<EntityFormValues>;
   submitError?: string | null;
+  redirectLink: Endpoints;
 };
 
-export default function StatusForm({ currentStatus, onSubmit, submitError }: Props) {
+export default function EntityForm({ currentEntity, onSubmit, submitError, redirectLink }: Props) {
   const { t } = useTranslation();
   const [internalSubmitError, setInternalSubmitError] = useState<string | null>(null);
 
@@ -42,17 +43,17 @@ export default function StatusForm({ currentStatus, onSubmit, submitError }: Pro
     clearErrors,
     watch,
     formState: { errors, isSubmitting, isValid, dirtyFields },
-  } = useForm<StatusFormValues>({
+  } = useForm<EntityFormValues>({
     resolver: zodResolver(formSchema(t)),
     mode: 'onChange',
-    defaultValues: currentStatus,
+    defaultValues: currentEntity,
   });
 
   const nameValue = watch('name');
 
   useEffect(() => {
-    reset(currentStatus);
-  }, [currentStatus, reset]);
+    reset(currentEntity);
+  }, [currentEntity, reset]);
 
   useEffect(() => {
     const error = submitError || internalSubmitError;
@@ -62,18 +63,18 @@ export default function StatusForm({ currentStatus, onSubmit, submitError }: Pro
   }, [submitError, internalSubmitError, setError]);
 
   useEffect(() => {
-    if (nameValue && nameValue !== currentStatus?.name) {
+    if (nameValue && nameValue !== currentEntity?.name) {
       clearErrors('root');
       setInternalSubmitError(null);
     }
-  }, [nameValue, currentStatus?.name, clearErrors]);
+  }, [nameValue, currentEntity?.name, clearErrors]);
 
   const handleInputChange = () => {
     clearErrors('root');
     setInternalSubmitError(null);
   };
 
-  const handleFormSubmit = async (data: StatusFormValues) => {
+  const handleFormSubmit = async (data: EntityFormValues) => {
     handleInputChange();
 
     try {
@@ -99,12 +100,12 @@ export default function StatusForm({ currentStatus, onSubmit, submitError }: Pro
       <Button type="submit" variant="primary" isDisabled={isSubmitting || !isValid}>
         {isSubmitting ? t('buttons.sending') : t('buttons.send')}
       </Button>
-      <a href={Endpoints.Statuses} className="btn btn-danger ms-1">{t('buttons.cancel')}</a>
+      <a href={redirectLink} className="btn btn-danger ms-1">{t('buttons.cancel')}</a>
     </form>
   );
 }
 
-StatusForm.defaultProps = {
-  currentStatus: undefined,
+EntityForm.defaultProps = {
+  currentEntity: undefined,
   submitError: null,
 };

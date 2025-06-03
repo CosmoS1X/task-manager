@@ -2,39 +2,41 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import Card from './Card';
-import StatusForm from './StatusForm';
-import type { StatusFormValues } from './StatusForm';
-import type { Status } from '@/types';
+import EntityForm from './EntityForm';
+import type { EntityFormValues } from './EntityForm';
+import type { Status, Label } from '@/types';
 import { showSuccess, showError } from '@/utils/flash';
 import Endpoints from '@/endpoints';
 
-export type StatusFormData = {
+export type EntityFormData = {
   name: string;
   id?: number;
 };
 
 type Props = {
-  initialStatus?: Status;
-  onSubmitAction: (data: StatusFormData) => Promise<void>;
+  initialEntity?: Status | Label;
+  onSubmitAction: (data: EntityFormData) => Promise<void>;
   successMessage: string;
   errorMessage: string;
+  redirectLink: Endpoints;
 };
 
-export default function StatusFormContainer({
-  initialStatus,
+export default function EntityFormContainer({
+  initialEntity,
   onSubmitAction,
   successMessage,
   errorMessage,
+  redirectLink,
 }: Props) {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [submitError, setSubmitError] = useState<string | null>(null);
 
-  const onSubmit = async (data: StatusFormValues) => {
+  const onSubmit = async (data: EntityFormValues) => {
     try {
       await onSubmitAction(data);
       showSuccess(successMessage);
-      navigate(Endpoints.Statuses);
+      navigate(redirectLink);
     } catch (error) {
       showError(errorMessage);
       setSubmitError(t('form.errors.name.exists'));
@@ -44,11 +46,16 @@ export default function StatusFormContainer({
 
   return (
     <Card>
-      <StatusForm currentStatus={initialStatus} onSubmit={onSubmit} submitError={submitError} />
+      <EntityForm
+        currentEntity={initialEntity}
+        onSubmit={onSubmit}
+        submitError={submitError}
+        redirectLink={redirectLink}
+      />
     </Card>
   );
 }
 
-StatusFormContainer.defaultProps = {
-  initialStatus: undefined,
+EntityFormContainer.defaultProps = {
+  initialEntity: undefined,
 };

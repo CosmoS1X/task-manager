@@ -3,16 +3,17 @@ import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { useGetStatusByIdQuery, useUpdateStatusMutation } from '@/api/statusesApi';
 import Title from '@/components/Title';
-import StatusFormContainer from '@/components/StatusFormContainer';
-import type { StatusFormData } from '@/components/StatusFormContainer';
+import EntityFormContainer from '@/components/EntityFormContainer';
+import type { EntityFormData } from '@/components/EntityFormContainer';
+import Endpoints from '@/endpoints';
 
-export default function EditStatus() {
+export default function EditStatusPage() {
   const { t } = useTranslation();
   const { id } = useParams();
   const { data: status } = useGetStatusByIdQuery(Number(id));
   const [updateStatus] = useUpdateStatusMutation();
 
-  const handleUpdateStatus = async (data: StatusFormData) => {
+  const handleUpdateStatus = async (data: EntityFormData) => {
     if (!id) return;
 
     await updateStatus({ ...data, id: Number(id) }).unwrap();
@@ -21,11 +22,12 @@ export default function EditStatus() {
   return (
     <>
       <Title text={t('titles.editStatus')} />
-      <StatusFormContainer
-        initialStatus={status}
+      <EntityFormContainer
+        initialEntity={status}
         onSubmitAction={handleUpdateStatus}
         successMessage={t('flash.statuses.edit.success')}
         errorMessage={t('flash.statuses.edit.error')}
+        redirectLink={Endpoints.Statuses}
       />
     </>
   );
