@@ -16,6 +16,8 @@ import {
   NewStatusPage,
   EditStatusPage,
   LabelsPage,
+  NewLabelPage,
+  EditLabelPage,
   TasksPage,
 } from '../pages';
 
@@ -34,6 +36,8 @@ export default function App() {
               <Route path={Endpoints.NewStatus} element={<NewStatusPage />} />
               <Route path={Endpoints.EditStatus} element={<EditStatusPage />} />
               <Route path={Endpoints.Labels} element={<LabelsPage />} />
+              <Route path={Endpoints.NewLabel} element={<NewLabelPage />} />
+              <Route path={Endpoints.EditLabel} element={<EditLabelPage />} />
               <Route path={Endpoints.Tasks} element={<TasksPage />} />
             </Route>
             {/* public routes */}
