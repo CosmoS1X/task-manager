@@ -37,7 +37,7 @@ export default function StatusesPage() {
       showSuccess(t('flash.statuses.delete.success'));
       refetch();
     } catch (error) {
-      showError(t('flash.statuses.edit.error'));
+      showError(t('flash.statuses.delete.error'));
       throw error;
     }
   };
