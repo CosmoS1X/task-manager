@@ -23,14 +23,23 @@ type Props = {
   | 'outline-light'
   | 'outline-dark';
   size?: 'sm' | 'lg';
-  onClick?: () => void;
+  onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
+  className?: string;
 };
 
-export default function Button({ type, variant, size, isDisabled, children, onClick }: Props) {
+export default function Button({
+  type,
+  variant,
+  size,
+  isDisabled,
+  children,
+  onClick,
+  className,
+}: Props) {
   const classes = cn('btn', {
     [`btn-${variant}`]: !!variant,
     [`btn-${size}`]: !!size,
-  });
+  }, className);
 
   return (
     // eslint-disable-next-line react/button-has-type
@@ -46,4 +55,5 @@ Button.defaultProps = {
   variant: '',
   size: '',
   onClick: () => {},
+  className: '',
 };
