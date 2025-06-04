@@ -43,6 +43,20 @@ export default {
           error: 'Не удалось удалить статус',
         },
       },
+      labels: {
+        create: {
+          success: 'Метка успешно создана',
+          error: 'Не удалось создать метку',
+        },
+        edit: {
+          success: 'Метка успешно изменена',
+          error: 'Не удалось изменить метку',
+        },
+        delete: {
+          success: 'Метка успешно удалена',
+          error: 'Не удалось удалить метку',
+        },
+      },
     },
     navbar: {
       users: 'Пользователи',
@@ -85,6 +99,7 @@ export default {
       sending: 'Отправка...',
       cancel: 'Отменить',
       createStatus: 'Создать статус',
+      createLabel: 'Создать метку',
     },
     form: {
       inputs: {

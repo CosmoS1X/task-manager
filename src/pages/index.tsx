@@ -8,6 +8,8 @@ import StatusesPage from './statuses';
 import NewStatusPage from './statuses/New';
 import EditStatusPage from './statuses/Edit';
 import LabelsPage from './labels';
+import NewLabelPage from './labels/New';
+import EditLabelPage from './labels/Edit';
 import TasksPage from './tasks';
 
 export {
@@ -21,5 +23,7 @@ export {
   NewStatusPage,
   EditStatusPage,
   LabelsPage,
+  NewLabelPage,
+  EditLabelPage,
   TasksPage,
 };

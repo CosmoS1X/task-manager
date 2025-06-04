@@ -23,7 +23,7 @@ export default function StatusesPage() {
     return <Spinner />;
   }
 
-  const onEdit = (id: number) => async (event: React.MouseEvent<HTMLAnchorElement>) => {
+  const onEdit = (id: number) => async (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
 
     navigate(`/statuses/${id}/edit`);
@@ -37,7 +37,7 @@ export default function StatusesPage() {
       showSuccess(t('flash.statuses.delete.success'));
       refetch();
     } catch (error) {
-      showError(t('flash.statuses.edit.error'));
+      showError(t('flash.statuses.delete.error'));
       throw error;
     }
   };
@@ -48,9 +48,7 @@ export default function StatusesPage() {
     <>
       <Title text={t('titles.statuses')} />
       <a href={Endpoints.NewStatus} className="btn btn-primary">{t('buttons.createStatus')}</a>
-      {statuses && (
-        <Table name="statuses" cols={cols} rows={statuses} onEdit={onEdit} onDelete={onDelete} />
-      )}
+      {statuses && <Table cols={cols} rows={statuses} onEdit={onEdit} onDelete={onDelete} />}
     </>
   );
 }

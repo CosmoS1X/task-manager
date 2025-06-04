@@ -24,7 +24,7 @@ export default function UsersPage() {
     return <Spinner />;
   }
 
-  const onEdit = (id: number) => async (event: React.MouseEvent<HTMLAnchorElement>) => {
+  const onEdit = (id: number) => async (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
 
     if (user?.id !== id) {
@@ -58,7 +58,7 @@ export default function UsersPage() {
   return (
     <>
       <Title text={t('titles.users')} />
-      {users && <Table name="users" cols={cols} rows={users} onEdit={onEdit} onDelete={onDelete} />}
+      {users && <Table cols={cols} rows={users} onEdit={onEdit} onDelete={onDelete} />}
     </>
   );
 }

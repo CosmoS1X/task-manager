@@ -10,6 +10,7 @@ import type {
   EntityMap,
   User,
   Status,
+  Label,
 } from '@/types';
 
 type RenderableValue = string | number | boolean | null | undefined;
@@ -35,15 +36,13 @@ const formatValue = (value: RenderableValue): React.ReactNode => {
 };
 
 type Props<T extends TableNamesUnion> = {
-  name: T;
   cols: TableColumns<T>;
   rows: TableRows<T>;
-  onEdit: (id: number) => (event: React.MouseEvent<HTMLAnchorElement>) => void;
+  onEdit: (id: number) => (event: React.MouseEvent<HTMLButtonElement>) => void;
   onDelete: (id: number) => (event: React.FormEvent<HTMLFormElement>) => void;
 };
 
 export default function Table<T extends TableNamesUnion>({
-  name,
   cols,
   rows,
   onEdit,
@@ -70,7 +69,7 @@ export default function Table<T extends TableNamesUnion>({
             break;
           }
           case 'name': {
-            cellValue = (row as Status).name;
+            cellValue = (row as Status | Label).name;
             break;
           }
           case 'createdAt': {
@@ -87,13 +86,9 @@ export default function Table<T extends TableNamesUnion>({
       })}
       <td>
         <div className="d-flex flex-wrap align-items-center">
-          <a
-            href={`${name}/${row.id}/edit`}
-            className="btn btn-primary btn-sm me-1"
-            onClick={onEdit(row.id)}
-          >
+          <Button type="button" variant="primary" size="sm" className="me-1" onClick={onEdit(row.id)}>
             {t('buttons.edit')}
-          </a>
+          </Button>
           <form onSubmit={onDelete(row.id)}>
             <Button type="submit" variant="danger" size="sm">
               {t('buttons.delete')}
