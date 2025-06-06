@@ -11,6 +11,9 @@ enum Endpoints {
   NewLabel = '/labels/new',
   EditLabel = '/labels/:id/edit',
   Tasks = '/tasks',
+  NewTask = '/tasks/new',
+  EditTask = '/tasks/:id/edit',
+  ShowTask = '/tasks/:id',
   Wildcard = '*',
 }
 
