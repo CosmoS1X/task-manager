@@ -7,7 +7,7 @@ type Props = {
 
 export default function Card({ children }: Props) {
   return (
-    <div className="row justify-content-center">
+    <div className="row justify-content-center mb-4">
       <div className="col-12 col-md-8">
         <div className="card shadow-sm">
           <div className="card-body row p-5">
