@@ -57,6 +57,21 @@ export default {
           error: 'Failed to delete label',
         },
       },
+      tasks: {
+        create: {
+          success: 'Task successfully created',
+          error: 'Failed to create task',
+        },
+        edit: {
+          success: 'Task successfully changed',
+          error: 'Failed to change task',
+        },
+        delete: {
+          success: 'Task successfully deleted',
+          error: 'Failed to delete task',
+          reject: 'Task can be deleted only by its author',
+        },
+      },
     },
     navbar: {
       users: 'Users',
@@ -100,6 +115,7 @@ export default {
       cancel: 'Cancel',
       createStatus: 'Create status',
       createLabel: 'Create label',
+      createTask: 'Create task',
     },
     form: {
       inputs: {
@@ -108,6 +124,19 @@ export default {
         email: 'Email',
         password: 'Password',
         name: 'Name',
+      },
+      textarea: {
+        description: 'Description',
+      },
+      selects: {
+        status: 'Status',
+        executor: 'Executor',
+        label: 'Label',
+        labels: 'Labels',
+        defaults: {
+          status: '-- Select status --',
+          executor: '-- Select executor --',
+        },
       },
       errors: {
         min_one: 'Must be at least {{count}} character',
