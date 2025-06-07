@@ -1,6 +1,7 @@
 import path from 'path';
 import type { Knex } from 'knex';
 import { knexSnakeCaseMappers } from 'objection';
+import type { Database } from 'sqlite3';
 import env from './env';
 
 type EnvironmentUnion = 'production' | 'development' | 'test';
@@ -50,6 +51,11 @@ const config: Record<EnvironmentUnion, Knex.Config> = {
       filename: path.resolve(__dirname, 'db.sqlite'),
     },
     migrations: migrationsConfig.development,
+    pool: {
+      afterCreate: (connection: Database, done: (error?: Error) => void) => {
+        connection.run('PRAGMA foreign_keys = ON', done);
+      },
+    },
     ...commonConfig,
   },
   test: {
