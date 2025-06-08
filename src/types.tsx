@@ -23,10 +23,24 @@ export type Label = {
   createdAt: string;
 };
 
+export type Task = {
+  id: number;
+  name: string;
+  statusId: number;
+  creatorId: number;
+  executorId: number | null;
+  createdAt: string;
+  status?: Status;
+  creator?: User;
+  executor?: User | null;
+  labels?: Label[];
+};
+
 export type EntityMap = {
   users: User;
   statuses: Status;
   labels: Label;
+  tasks: Task;
 };
 
 export type TableNamesUnion = keyof EntityMap;
@@ -34,7 +48,8 @@ export type TableNamesUnion = keyof EntityMap;
 type ColumnMap = {
   users: Array<keyof User | 'fullName'>;
   statuses: Array<keyof Status>;
-  labels: Array<keyof Label>
+  labels: Array<keyof Label>;
+  tasks: Array<keyof Task>;
 };
 
 export type TableColumns<T extends TableNamesUnion> = ColumnMap[T];
