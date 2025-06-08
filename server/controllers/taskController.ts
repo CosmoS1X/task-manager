@@ -3,7 +3,10 @@ import { Task, Label, TaskLabel } from '../models';
 
 export default () => ({
   getList: async (req: Request, res: Response) => {
-    const tasks = await Task.query();
+    const tasks = await Task.query()
+      .withGraphFetched('status')
+      .withGraphFetched('creator')
+      .withGraphFetched('executor');
 
     res.status(200).json(tasks);
   },
@@ -129,7 +132,7 @@ export default () => ({
     }
 
     if (task.creatorId !== req.user.id) {
-      res.status(401).json({ message: 'Access denied' });
+      res.status(403).json({ message: 'Access denied' });
 
       return;
     }
