@@ -105,3 +105,11 @@ export default function TaskForm({ currentTask, onSubmit }: Props) {
 TaskForm.defaultProps = {
   currentTask: undefined,
 };
+
+TaskForm.prepareDataForSubmit = (data: TaskFormValues) => ({
+  name: data.name,
+  description: data.description,
+  statusId: Number(data.status),
+  executorId: Number(data.executor) || null,
+  labelIds: data.labels,
+});
