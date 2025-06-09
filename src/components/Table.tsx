@@ -11,7 +11,9 @@ import type {
   User,
   Status,
   Label,
+  Task,
 } from '@/types';
+import Endpoints from '@/endpoints';
 
 type RenderableValue = string | number | boolean | null | undefined;
 
@@ -35,7 +37,10 @@ const formatValue = (value: RenderableValue): React.ReactNode => {
   return value.toString();
 };
 
+const buildFullName = (user: User | null) => (user ? `${user.firstName} ${user.lastName}` : '');
+
 type Props<T extends TableNamesUnion> = {
+  tableName: T;
   cols: TableColumns<T>;
   rows: TableRows<T>;
   onEdit: (id: number) => (event: React.MouseEvent<HTMLButtonElement>) => void;
@@ -43,6 +48,7 @@ type Props<T extends TableNamesUnion> = {
 };
 
 export default function Table<T extends TableNamesUnion>({
+  tableName,
   cols,
   rows,
   onEdit,
@@ -65,11 +71,31 @@ export default function Table<T extends TableNamesUnion>({
 
         switch (col) {
           case 'fullName': {
-            cellValue = `${(row as User).firstName} ${(row as User).lastName}`;
+            cellValue = buildFullName(row as User);
             break;
           }
           case 'name': {
+            if (tableName === 'tasks') {
+              cellValue = (
+                <a href={`${Endpoints.Tasks}/${row.id}`} className="text-decoration-none">
+                  {(row as Task).name}
+                </a>
+              );
+              break;
+            }
             cellValue = (row as Status | Label).name;
+            break;
+          }
+          case 'status': {
+            cellValue = (row as Task).status?.name ?? '';
+            break;
+          }
+          case 'creator': {
+            cellValue = buildFullName((row as Task).creator as User);
+            break;
+          }
+          case 'executor': {
+            cellValue = buildFullName((row as Task).executor as User);
             break;
           }
           case 'createdAt': {
