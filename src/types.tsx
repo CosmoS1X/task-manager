@@ -26,6 +26,7 @@ export type Label = {
 export type Task = {
   id: number;
   name: string;
+  description?: string;
   statusId: number;
   creatorId: number;
   executorId: number | null;
