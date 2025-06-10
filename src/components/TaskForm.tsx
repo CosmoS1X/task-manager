@@ -14,6 +14,7 @@ import Select from './Select';
 import Multiselect from './Multiselect';
 import Button from './Button';
 import type { Task } from '@/types';
+import Endpoints from '@/endpoints';
 
 const formSchema = (t: TFunction) => {
   const minLength = 1;
@@ -97,6 +98,7 @@ export default function TaskForm({ currentTask, onSubmit }: Props) {
       <Button type="submit" variant="primary" isDisabled={isSubmitting || !isValid}>
         {isSubmitting ? t('buttons.sending') : t('buttons.send')}
       </Button>
+      <a href={Endpoints.Tasks} className="btn btn-danger ms-1">{t('buttons.cancel')}</a>
     </form>
   );
 }
