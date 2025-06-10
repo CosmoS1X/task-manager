@@ -1,7 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import cn from 'classnames';
-import { formatDate } from '@/helpers';
+import { formatDate, buildFullName } from '@/helpers';
 import Button from './Button';
 import type {
   TableNamesUnion,
@@ -36,8 +36,6 @@ const formatValue = (value: RenderableValue): React.ReactNode => {
 
   return value.toString();
 };
-
-const buildFullName = (user: User | null) => (user ? `${user.firstName} ${user.lastName}` : '');
 
 type Props<T extends TableNamesUnion> = {
   tableName: T;
