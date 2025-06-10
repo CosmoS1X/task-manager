@@ -33,12 +33,11 @@ export default function StatusesPage() {
     event.preventDefault();
 
     try {
-      await deleteStatus(id);
+      await deleteStatus(id).unwrap();
       showSuccess(t('flash.statuses.delete.success'));
       refetch();
-    } catch (error) {
+    } catch {
       showError(t('flash.statuses.delete.error'));
-      throw error;
     }
   };
 
@@ -48,7 +47,7 @@ export default function StatusesPage() {
     <>
       <Title text={t('titles.statuses')} />
       <a href={Endpoints.NewStatus} className="btn btn-primary">{t('buttons.createStatus')}</a>
-      {statuses && <Table cols={cols} rows={statuses} onEdit={onEdit} onDelete={onDelete} />}
+      {statuses && <Table tableName="statuses" cols={cols} rows={statuses} onEdit={onEdit} onDelete={onDelete} />}
     </>
   );
 }

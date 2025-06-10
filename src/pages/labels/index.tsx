@@ -33,12 +33,11 @@ export default function LabelsPage() {
     event.preventDefault();
 
     try {
-      await deleteLabel(id);
+      await deleteLabel(id).unwrap();
       showSuccess(t('flash.labels.delete.success'));
       refetch();
-    } catch (error) {
+    } catch {
       showError(t('flash.labels.delete.error'));
-      throw error;
     }
   };
 
@@ -48,7 +47,7 @@ export default function LabelsPage() {
     <>
       <Title text={t('titles.labels')} />
       <a href={Endpoints.NewLabel} className="btn btn-primary">{t('buttons.createLabel')}</a>
-      {labels && <Table cols={cols} rows={labels} onEdit={onEdit} onDelete={onDelete} />}
+      {labels && <Table tableName="labels" cols={cols} rows={labels} onEdit={onEdit} onDelete={onDelete} />}
     </>
   );
 }

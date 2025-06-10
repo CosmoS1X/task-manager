@@ -44,12 +44,11 @@ export default function UsersPage() {
     }
 
     try {
-      await deleteUser(id);
+      await deleteUser(id).unwrap();
       showSuccess(t('flash.users.delete.success'));
       await logout();
-    } catch (error) {
+    } catch {
       showError(t('flash.users.delete.error'));
-      throw error;
     }
   };
 
@@ -58,7 +57,7 @@ export default function UsersPage() {
   return (
     <>
       <Title text={t('titles.users')} />
-      {users && <Table cols={cols} rows={users} onEdit={onEdit} onDelete={onDelete} />}
+      {users && <Table tableName="users" cols={cols} rows={users} onEdit={onEdit} onDelete={onDelete} />}
     </>
   );
 }
