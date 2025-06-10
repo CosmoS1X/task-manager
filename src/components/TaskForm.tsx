@@ -5,7 +5,6 @@ import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import type { SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { capitalize } from '@/helpers';
 import { useGetStatusesQuery } from '@/api/statusesApi';
 import { useGetUsersQuery } from '@/api/usersApi';
 import { useGetLabelsQuery } from '@/api/labelsApi';
@@ -22,7 +21,7 @@ const formSchema = (t: TFunction) => {
   return z.object({
     name: z.string()
       .min(minLength, t('form.errors.min', { count: minLength }))
-      .transform((value) => capitalize(value.trim())),
+      .transform((value) => value.trim()),
     description: z.string().optional(),
     status: z.string().min(1, t('form.errors.required')),
     executor: z.string().optional(),
