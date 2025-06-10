@@ -12,9 +12,14 @@ import Endpoints from '@/endpoints';
 export default function NewTaskPage() {
   const { t } = useTranslation();
   const { id } = useParams();
-  const { data: task } = useGetTaskByIdQuery(Number(id));
+  const { data: task, isError } = useGetTaskByIdQuery(Number(id));
   const [updateTask] = useUpdateTaskMutation();
   const navigate = useNavigate();
+
+  if (isError && !task) {
+    navigate(Endpoints.NotFound, { replace: true });
+    return null;
+  }
 
   const handleFormSubmit = async (data: TaskFormValues) => {
     const preparedData = TaskForm.prepareDataForSubmit(data);
