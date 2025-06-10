@@ -14,6 +14,7 @@ enum Endpoints {
   NewTask = '/tasks/new',
   EditTask = '/tasks/:id/edit',
   ShowTask = '/tasks/:id',
+  NotFound = '/not-found',
   Wildcard = '*',
 }
 
