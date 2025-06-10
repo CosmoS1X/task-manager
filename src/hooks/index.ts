@@ -1,6 +1,7 @@
-/* eslint-disable import/prefer-default-export */
 import useAuth from './useAuth';
+import useTaskActions from './useTaskActions';
 
 export {
   useAuth,
+  useTaskActions,
 };
