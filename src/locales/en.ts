@@ -69,7 +69,7 @@ export default {
         delete: {
           success: 'Task successfully deleted',
           error: 'Failed to delete task',
-          reject: 'Task can be deleted only by its author',
+          forbidden: 'Task can be deleted only by its author',
         },
       },
     },
@@ -93,6 +93,7 @@ export default {
       editUser: 'Edit user',
       editStatus: 'Edit status',
       editLabel: 'Edit label',
+      editTask: 'Edit task',
       signUp: 'Sign-up',
       login: 'Login',
     },
@@ -148,6 +149,7 @@ export default {
         name: {
           exists: 'Name already in use',
         },
+        required: 'Required field',
       },
     },
     errors: {
