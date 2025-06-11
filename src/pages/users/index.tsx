@@ -8,6 +8,7 @@ import { useGetUsersQuery, useDeleteUserMutation } from '@/api/usersApi';
 import type { TableColumns } from '@/types';
 import { useAuth } from '@/hooks';
 import { showError, showSuccess } from '@/utils/flash';
+import Endpoints, { getEditRoute } from '@/endpoints';
 
 export default function UsersPage() {
   const { data: users, isLoading, refetch } = useGetUsersQuery();
@@ -32,7 +33,7 @@ export default function UsersPage() {
       return;
     }
 
-    navigate(`/users/${id}/edit`);
+    navigate(getEditRoute(Endpoints.Users, id));
   };
 
   const onDelete = (id: number) => async (event: React.FormEvent<HTMLFormElement>) => {

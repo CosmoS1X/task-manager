@@ -7,7 +7,7 @@ import Table from '@/components/Table';
 import Spinner from '@/components/Spinner';
 import type { TableColumns } from '@/types';
 import { showError, showSuccess } from '@/utils/flash';
-import Endpoints from '@/endpoints';
+import Endpoints, { getEditRoute } from '@/endpoints';
 
 export default function StatusesPage() {
   const { t } = useTranslation();
@@ -26,7 +26,7 @@ export default function StatusesPage() {
   const onEdit = (id: number) => async (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
 
-    navigate(`/statuses/${id}/edit`);
+    navigate(getEditRoute(Endpoints.Statuses, id));
   };
 
   const onDelete = (id: number) => async (event: React.FormEvent<HTMLFormElement>) => {

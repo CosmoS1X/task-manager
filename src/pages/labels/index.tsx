@@ -7,7 +7,7 @@ import Table from '@/components/Table';
 import Spinner from '@/components/Spinner';
 import type { TableColumns } from '@/types';
 import { showSuccess, showError } from '@/utils/flash';
-import Endpoints from '@/endpoints';
+import Endpoints, { getEditRoute } from '@/endpoints';
 
 export default function LabelsPage() {
   const { t } = useTranslation();
@@ -26,7 +26,7 @@ export default function LabelsPage() {
   const onEdit = (id: number) => async (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
 
-    navigate(`/labels/${id}/edit`);
+    navigate(getEditRoute(Endpoints.Labels, id));
   };
 
   const onDelete = (id: number) => async (event: React.FormEvent<HTMLFormElement>) => {
