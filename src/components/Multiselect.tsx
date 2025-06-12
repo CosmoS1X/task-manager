@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import type { Label } from '@/types';
 
 type Props = {
-  options: Label[] | undefined;
+  options: Label[];
   registration: UseFormRegisterReturn;
 };
 

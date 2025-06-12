@@ -5,7 +5,7 @@ import cn from 'classnames';
 import type { Status, User } from '@/types';
 
 type Props = {
-  options: Array<Status | User> | undefined;
+  options: Array<Status | User>;
   registration: UseFormRegisterReturn;
   error?: string | null;
 };

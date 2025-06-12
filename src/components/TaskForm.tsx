@@ -13,7 +13,7 @@ import Textarea from './Textarea';
 import Select from './Select';
 import Multiselect from './Multiselect';
 import Button from './Button';
-import type { Task } from '@/types';
+import type { Task, Status, User, Label } from '@/types';
 import Endpoints from '@/endpoints';
 
 const formSchema = (t: TFunction) => {
@@ -83,16 +83,16 @@ export default function TaskForm({ currentTask, onSubmit }: Props) {
         placeholder={t('form.textarea.description')}
       />
       <Select
-        options={statuses}
+        options={statuses as Status[]}
         registration={register('status')}
         error={errors.status?.message}
       />
       <Select
-        options={users}
+        options={users as User[]}
         registration={register('executor')}
       />
       <Multiselect
-        options={labels}
+        options={labels as Label[]}
         registration={register('labels')}
       />
       <Button type="submit" variant="primary" isDisabled={isSubmitting || !isValid}>
