@@ -27,14 +27,8 @@ export default () => ({
     res.status(200).json(task);
   },
   create: async (req: Request, res: Response) => {
-    if (!req.isAuthenticated()) {
-      res.status(401).json({ message: 'User not authenticated' });
-
-      return;
-    }
-
     const { name, description, statusId, executorId, labelIds } = req.body;
-    const creatorId = req.user.id;
+    const creatorId = req.user?.id;
     const labels = await Label.query().whereIn('id', labelIds);
 
     const data = {
@@ -116,12 +110,6 @@ export default () => ({
     }
   },
   delete: async (req: Request, res: Response) => {
-    if (!req.isAuthenticated()) {
-      res.status(401).json({ message: 'User not authenticated' });
-
-      return;
-    }
-
     const taskId = req.params.id;
     const task = await Task.query().findById(taskId);
 
@@ -131,7 +119,7 @@ export default () => ({
       return;
     }
 
-    if (task.creatorId !== req.user.id) {
+    if (task.creatorId !== req.user?.id) {
       res.status(403).json({ message: 'Access denied' });
 
       return;
