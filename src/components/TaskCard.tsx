@@ -1,7 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import Button from './Button';
-import Endpoints, { getEditRoute } from '@/endpoints';
+import Endpoints, { buildEditRoute } from '@/endpoints';
 
 function Description({ description }: { description: string }) {
   return (
@@ -49,7 +49,7 @@ function Actions({ taskId, onDelete }: ActionProps) {
 
   return (
     <div className="d-flex flex-wrap">
-      <a href={getEditRoute(Endpoints.Tasks, taskId)} className="btn btn-primary me-1">{t('buttons.edit')}</a>
+      <a href={buildEditRoute(Endpoints.Tasks, taskId)} className="btn btn-primary me-1">{t('buttons.edit')}</a>
       <form onSubmit={onDelete(taskId)}>
         <Button type="submit" variant="danger">{t('buttons.delete')}</Button>
       </form>

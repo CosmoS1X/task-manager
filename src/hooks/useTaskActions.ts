@@ -2,7 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useDeleteTaskMutation, useGetTasksQuery } from '@/api/tasksApi';
 import { showSuccess, showError } from '@/utils/flash';
-import Endpoints, { getEditRoute } from '@/endpoints';
+import Endpoints, { buildEditRoute } from '@/endpoints';
 import { isFetchBaseQueryError } from '@/api/helpers';
 
 export default () => {
@@ -14,7 +14,7 @@ export default () => {
   const handleEdit = (id: number) => async (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
 
-    navigate(getEditRoute(Endpoints.Tasks, id));
+    navigate(buildEditRoute(Endpoints.Tasks, id));
   };
 
   const handleDelete = (id: number) => async (event: React.FormEvent<HTMLFormElement>) => {

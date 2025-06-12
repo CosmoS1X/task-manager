@@ -18,6 +18,6 @@ enum Endpoints {
   Wildcard = '*',
 }
 
-export const getEditRoute = (endpoint: string, id: number) => `${endpoint}/${id}/edit`;
+export const buildEditRoute = (endpoint: string, id: number) => `${endpoint}/${id}/edit`;
 
 export default Endpoints;
