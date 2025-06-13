@@ -3,20 +3,33 @@ import { Task, Label, TaskLabel } from '../models';
 
 export default () => ({
   getList: async (req: Request, res: Response) => {
+    const filters = Object.entries(req.query).reduce((acc, [key, value]) => {
+      if (!value) return acc;
+
+      if (key === 'isCreator') {
+        return value === 'true' ? { ...acc, creatorId: req.user?.id } : acc;
+      }
+
+      return { ...acc, [`${key}Id`]: Number(value) };
+    }, {});
+
     const tasks = await Task.query()
-      .withGraphFetched('status')
-      .withGraphFetched('creator')
-      .withGraphFetched('executor');
+      .where(filters)
+      .withGraphJoined('status')
+      .withGraphJoined('creator')
+      .withGraphJoined('executor')
+      .withGraphJoined('labels')
+      .orderBy('createdAt', 'desc');
 
     res.status(200).json(tasks);
   },
   getItem: async (req: Request, res: Response) => {
     const task = await Task.query()
       .findById(req.params.id)
-      .withGraphFetched('status')
-      .withGraphFetched('creator')
-      .withGraphFetched('executor')
-      .withGraphFetched('labels');
+      .withGraphJoined('status')
+      .withGraphJoined('creator')
+      .withGraphJoined('executor')
+      .withGraphJoined('labels');
 
     if (!task) {
       res.status(404).json({ message: 'Task not found' });
