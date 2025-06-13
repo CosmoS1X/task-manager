@@ -7,7 +7,7 @@ import Table from '@/components/Table';
 import Spinner from '@/components/Spinner';
 import type { TableColumns } from '@/types';
 import { showSuccess, showError } from '@/utils/flash';
-import Endpoints from '@/endpoints';
+import Endpoints, { buildEditRoute } from '@/endpoints';
 
 export default function LabelsPage() {
   const { t } = useTranslation();
@@ -26,19 +26,18 @@ export default function LabelsPage() {
   const onEdit = (id: number) => async (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
 
-    navigate(`/labels/${id}/edit`);
+    navigate(buildEditRoute(Endpoints.Labels, id));
   };
 
   const onDelete = (id: number) => async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     try {
-      await deleteLabel(id);
+      await deleteLabel(id).unwrap();
       showSuccess(t('flash.labels.delete.success'));
       refetch();
-    } catch (error) {
+    } catch {
       showError(t('flash.labels.delete.error'));
-      throw error;
     }
   };
 
@@ -48,7 +47,7 @@ export default function LabelsPage() {
     <>
       <Title text={t('titles.labels')} />
       <a href={Endpoints.NewLabel} className="btn btn-primary">{t('buttons.createLabel')}</a>
-      {labels && <Table cols={cols} rows={labels} onEdit={onEdit} onDelete={onDelete} />}
+      {labels && <Table tableName="labels" cols={cols} rows={labels} onEdit={onEdit} onDelete={onDelete} />}
     </>
   );
 }

@@ -11,6 +11,9 @@ import LabelsPage from './labels';
 import NewLabelPage from './labels/New';
 import EditLabelPage from './labels/Edit';
 import TasksPage from './tasks';
+import NewTaskPage from './tasks/New';
+import EditTaskPage from './tasks/Edit';
+import ShowTaskPage from './tasks/Show';
 
 export {
   MainPage,
@@ -26,4 +29,7 @@ export {
   NewLabelPage,
   EditLabelPage,
   TasksPage,
+  NewTaskPage,
+  EditTaskPage,
+  ShowTaskPage,
 };

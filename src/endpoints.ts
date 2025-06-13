@@ -11,7 +11,13 @@ enum Endpoints {
   NewLabel = '/labels/new',
   EditLabel = '/labels/:id/edit',
   Tasks = '/tasks',
+  NewTask = '/tasks/new',
+  EditTask = '/tasks/:id/edit',
+  ShowTask = '/tasks/:id',
+  NotFound = '/not-found',
   Wildcard = '*',
 }
+
+export const buildEditRoute = (endpoint: string, id: number) => `${endpoint}/${id}/edit`;
 
 export default Endpoints;

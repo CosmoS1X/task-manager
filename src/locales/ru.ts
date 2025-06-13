@@ -57,6 +57,21 @@ export default {
           error: 'Не удалось удалить метку',
         },
       },
+      tasks: {
+        create: {
+          success: 'Задача успешно создана',
+          error: 'Не удалось создать задачу',
+        },
+        edit: {
+          success: 'Задача успешно изменена',
+          error: 'Не удалось изменить задачу',
+        },
+        delete: {
+          success: 'Задача успешно удалена',
+          error: 'Не удалось удалить задачу',
+          forbidden: 'Задачу может удалить только её автор',
+        },
+      },
     },
     navbar: {
       users: 'Пользователи',
@@ -78,6 +93,7 @@ export default {
       editUser: 'Изменение пользователя',
       editStatus: 'Изменение статуса',
       editLabel: 'Изменение метки',
+      editTask: 'Изменение задачи',
       signUp: 'Регистрация',
       login: 'Вход',
     },
@@ -100,6 +116,7 @@ export default {
       cancel: 'Отменить',
       createStatus: 'Создать статус',
       createLabel: 'Создать метку',
+      createTask: 'Создать задачу',
     },
     form: {
       inputs: {
@@ -108,6 +125,19 @@ export default {
         email: 'Email',
         password: 'Пароль',
         name: 'Наименование',
+      },
+      textarea: {
+        description: 'Описание',
+      },
+      selects: {
+        status: 'Статус',
+        executor: 'Исполнитель',
+        label: 'Метка',
+        labels: 'Метки',
+        defaults: {
+          status: '-- Выберите статус --',
+          executor: '-- Выберите исполнителя --',
+        },
       },
       errors: {
         min_one: 'Должно быть не меньше {{count}} символа',
@@ -120,6 +150,7 @@ export default {
         name: {
           exists: 'Наименование уже используется',
         },
+        required: 'Обязательное поле',
       },
     },
     errors: {

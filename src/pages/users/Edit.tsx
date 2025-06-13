@@ -12,9 +12,14 @@ import { showSuccess, showError } from '@/utils/flash';
 export default function EditUserPage() {
   const { t } = useTranslation();
   const { id } = useParams();
-  const { data: user } = useGetUserByIdQuery(Number(id));
+  const { data: user, isError } = useGetUserByIdQuery(Number(id));
   const [updateUser] = useUpdateUserMutation();
   const navigate = useNavigate();
+
+  if (isError && !user) {
+    showError(t('flash.users.edit.reject'));
+    return null;
+  }
 
   const onSubmit = async (data: UserFormValues) => {
     try {
@@ -23,7 +28,6 @@ export default function EditUserPage() {
       navigate(Endpoints.Users);
     } catch (error) {
       showError(t('flash.users.edit.error'));
-      throw error;
     }
   };
 

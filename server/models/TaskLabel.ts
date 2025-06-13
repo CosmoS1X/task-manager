@@ -1,24 +1,19 @@
 import type { JSONSchema } from 'objection';
 import { Model } from '../database';
 
-export default class Label extends Model {
-  id!: number;
-
-  name!: string;
-
-  createdAt!: string;
-
+export default class TaskLabel extends Model {
   static get tableName() {
-    return 'labels';
+    return 'tasks_labels';
   }
 
   static get jsonSchema(): JSONSchema {
     return {
       type: 'object',
-      required: ['name'],
+      required: ['taskId', 'labelId'],
       properties: {
         id: { type: 'integer' },
-        name: { type: 'string', minLength: 1, maxLength: 255 },
+        taskId: { type: 'integer', minimum: 1 },
+        labelId: { type: 'integer', minimum: 1 },
       },
     };
   }

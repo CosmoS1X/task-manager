@@ -8,6 +8,7 @@ import { useGetUsersQuery, useDeleteUserMutation } from '@/api/usersApi';
 import type { TableColumns } from '@/types';
 import { useAuth } from '@/hooks';
 import { showError, showSuccess } from '@/utils/flash';
+import Endpoints, { buildEditRoute } from '@/endpoints';
 
 export default function UsersPage() {
   const { data: users, isLoading, refetch } = useGetUsersQuery();
@@ -32,7 +33,7 @@ export default function UsersPage() {
       return;
     }
 
-    navigate(`/users/${id}/edit`);
+    navigate(buildEditRoute(Endpoints.Users, id));
   };
 
   const onDelete = (id: number) => async (event: React.FormEvent<HTMLFormElement>) => {
@@ -44,12 +45,11 @@ export default function UsersPage() {
     }
 
     try {
-      await deleteUser(id);
+      await deleteUser(id).unwrap();
       showSuccess(t('flash.users.delete.success'));
       await logout();
-    } catch (error) {
+    } catch {
       showError(t('flash.users.delete.error'));
-      throw error;
     }
   };
 
@@ -58,7 +58,7 @@ export default function UsersPage() {
   return (
     <>
       <Title text={t('titles.users')} />
-      {users && <Table cols={cols} rows={users} onEdit={onEdit} onDelete={onDelete} />}
+      {users && <Table tableName="users" cols={cols} rows={users} onEdit={onEdit} onDelete={onDelete} />}
     </>
   );
 }

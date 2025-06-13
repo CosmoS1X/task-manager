@@ -45,6 +45,6 @@ export default function Input({
 
 Input.defaultProps = {
   error: null,
-  defaultValue: undefined,
+  defaultValue: '',
   isDirty: false,
 };

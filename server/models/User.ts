@@ -1,3 +1,4 @@
+import type { JSONSchema } from 'objection';
 import { Model } from '../database';
 import encrypt from '../lib/secure';
 
@@ -12,13 +13,13 @@ export default class User extends Model {
 
   passwordDigest!: string;
 
-  createdAt!: Date;
+  createdAt!: string;
 
   static get tableName() {
     return 'users';
   }
 
-  static get jsonSchema() {
+  static get jsonSchema(): JSONSchema {
     return {
       type: 'object',
       required: ['firstName', 'lastName', 'email', 'password'],

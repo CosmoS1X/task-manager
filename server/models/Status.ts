@@ -1,3 +1,4 @@
+import type { JSONSchema } from 'objection';
 import { Model } from '../database';
 
 export default class Status extends Model {
@@ -5,11 +6,13 @@ export default class Status extends Model {
 
   name!: string;
 
+  createdAt!: string;
+
   static get tableName() {
     return 'statuses';
   }
 
-  static get jsonSchema() {
+  static get jsonSchema(): JSONSchema {
     return {
       type: 'object',
       required: ['name'],
