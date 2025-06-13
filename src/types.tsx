@@ -37,6 +37,13 @@ export type Task = {
   labels?: Label[];
 };
 
+export type TaskFilterParams = {
+  status: string;
+  executor: string;
+  label: string;
+  isCreator: boolean;
+};
+
 export type EntityMap = {
   users: User;
   statuses: Status;
