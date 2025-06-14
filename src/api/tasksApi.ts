@@ -1,13 +1,19 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import type { Task } from '@/types';
+import type { Task, TaskFilterParams } from '@/types';
 
 export const tasksApi = createApi({
   reducerPath: 'tasks',
   keepUnusedDataFor: 0,
-  baseQuery: fetchBaseQuery({ baseUrl: '/api/tasks' }),
+  baseQuery: fetchBaseQuery({
+    baseUrl: '/api/tasks',
+    paramsSerializer: (params) => new URLSearchParams(params).toString(),
+  }),
   endpoints: (builder) => ({
-    getTasks: builder.query<Task[], void>({
-      query: () => '/',
+    getTasks: builder.query<Task[], TaskFilterParams | void>({
+      query: (params) => ({
+        url: '/',
+        params: params || {},
+      }),
     }),
     getTaskById: builder.query<Task, number>({
       query: (id) => `/${id}`,

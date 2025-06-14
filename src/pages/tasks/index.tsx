@@ -1,16 +1,20 @@
 import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useSearchParams } from 'react-router-dom';
 import { useGetTasksQuery } from '@/api/tasksApi';
 import Title from '@/components/Title';
 import Table from '@/components/Table';
 import Spinner from '@/components/Spinner';
+import TaskFilter from '@/components/TaskFilter';
 import type { TableColumns } from '@/types';
 import Endpoints from '@/endpoints';
 import useTaskActions from '@/hooks/useTaskActions';
 
 export default function TasksPage() {
   const { t } = useTranslation();
-  const { data: tasks, isLoading, refetch } = useGetTasksQuery();
+  const [searchParams] = useSearchParams();
+  const filterParams = TaskFilter.getFilterParams(searchParams);
+  const { data: tasks, isLoading, refetch } = useGetTasksQuery(filterParams);
   const { handleEdit, handleDelete } = useTaskActions();
 
   useEffect(() => {
@@ -26,7 +30,8 @@ export default function TasksPage() {
   return (
     <>
       <Title text={t('titles.tasks')} />
-      <a href={Endpoints.NewTask} className="btn btn-primary">{t('buttons.createTask')}</a>
+      <a href={Endpoints.NewTask} className="btn btn-primary mb-5">{t('buttons.createTask')}</a>
+      <TaskFilter />
       {tasks && <Table tableName="tasks" cols={cols} rows={tasks} onEdit={handleEdit} onDelete={handleDelete} />}
     </>
   );

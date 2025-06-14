@@ -117,6 +117,8 @@ export default {
       createStatus: 'Create status',
       createLabel: 'Create label',
       createTask: 'Create task',
+      show: 'Show',
+      reset: 'Reset',
     },
     form: {
       inputs: {
@@ -137,7 +139,11 @@ export default {
         defaults: {
           status: '-- Select status --',
           executor: '-- Select executor --',
+          label: '-- Select label --',
         },
+      },
+      checkboxes: {
+        isCreator: 'My tasks only',
       },
       errors: {
         min_one: 'Must be at least {{count}} character',

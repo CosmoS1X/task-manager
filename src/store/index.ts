@@ -7,6 +7,7 @@ import { statusesApi } from '@/api/statusesApi';
 import { labelsApi } from '@/api/labelsApi';
 import { tasksApi } from '@/api/tasksApi';
 import authReducer from './authSlice';
+import taskFiltersReducer from './taskFiltersSlice';
 
 export const store = configureStore({
   reducer: {
@@ -16,6 +17,7 @@ export const store = configureStore({
     [labelsApi.reducerPath]: labelsApi.reducer,
     [tasksApi.reducerPath]: tasksApi.reducer,
     auth: authReducer,
+    taskFilters: taskFiltersReducer,
   },
   middleware: (getDefaultMiddleware) => getDefaultMiddleware()
     .concat(authApi.middleware)

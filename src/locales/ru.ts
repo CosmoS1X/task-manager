@@ -117,6 +117,8 @@ export default {
       createStatus: 'Создать статус',
       createLabel: 'Создать метку',
       createTask: 'Создать задачу',
+      show: 'Показать',
+      reset: 'Сбросить',
     },
     form: {
       inputs: {
@@ -137,7 +139,11 @@ export default {
         defaults: {
           status: '-- Выберите статус --',
           executor: '-- Выберите исполнителя --',
+          label: '-- Выберите метку --',
         },
+      },
+      checkboxes: {
+        isCreator: 'Только мои задачи',
       },
       errors: {
         min_one: 'Должно быть не меньше {{count}} символа',
