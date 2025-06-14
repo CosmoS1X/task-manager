@@ -1,17 +1,23 @@
 import { Request, Response } from 'express';
 import { Task, Label, TaskLabel } from '../models';
 
+const createFilters = (req: Request) => {
+  const status = req.query.status ? { statusId: Number(req.query.status) } : {};
+  const executor = req.query.executor ? { executorId: Number(req.query.executor) } : {};
+  const label = req.query.label ? { labelId: Number(req.query.label) } : {};
+  const creator = req.query.isCreator === 'true' ? { creatorId: req.user?.id } : {};
+
+  return {
+    ...status,
+    ...executor,
+    ...label,
+    ...creator,
+  };
+};
+
 export default () => ({
   getList: async (req: Request, res: Response) => {
-    const filters = Object.entries(req.query).reduce((acc, [key, value]) => {
-      if (!value) return acc;
-
-      if (key === 'isCreator') {
-        return value === 'true' ? { ...acc, creatorId: req.user?.id } : acc;
-      }
-
-      return { ...acc, [`${key}Id`]: Number(value) };
-    }, {});
+    const filters = createFilters(req);
 
     const tasks = await Task.query()
       .where(filters)
