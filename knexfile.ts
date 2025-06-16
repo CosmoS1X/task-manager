@@ -61,7 +61,7 @@ const config: Record<EnvironmentUnion, Knex.Config> = {
   test: {
     client: 'sqlite3',
     connection: ':memory:',
-    debug: true,
+    // debug: true,
     migrations: migrationsConfig.test,
     ...commonConfig,
   },
