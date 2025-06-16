@@ -6,6 +6,8 @@
   "type": "commonjs",
   "scripts": {
     "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
     "type-check": "tsc --noEmit -p server/tsconfig.json && tsc --noEmit -p src/tsconfig.json && tsc --noEmit -p bin/tsconfig.json",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
@@ -19,9 +21,6 @@
     "start": "DEBUG=* node dist/bin/index.js",
     "migrate": "knex migrate:latest --knexfile=./dist/knexfile.js --env production",
     "migrate:dev": "tsx node_modules/.bin/knex migrate:latest"
-  },
-  "jest": {
-    "preset": "ts-jest"
   },
   "repository": {
     "type": "git",
