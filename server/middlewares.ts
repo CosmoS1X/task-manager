@@ -1,4 +1,5 @@
 import type { Request, Response, NextFunction } from 'express';
+import env from '../env';
 
 export const authRequired = (req: Request, res: Response, next: NextFunction) => {
   if (!req.isAuthenticated()) {
@@ -24,8 +25,15 @@ export const ownerOnly = (req: Request, res: Response, next: NextFunction) => {
 };
 
 export const errorHandler = (error: Error, req: Request, res: Response, _next: NextFunction) => {
-  // eslint-disable-next-line no-console
-  console.error('Error handler middleware:', error);
+  if (env.NODE_ENV === 'development') {
+    // eslint-disable-next-line no-console
+    console.error('Error handler middleware:', error);
+  }
+
+  if (error.name === 'ValidationError') {
+    res.status(400).json({ error: error.name, message: error.message });
+    return;
+  }
 
   res.status(500).json({ error: 'InternalServerError', message: 'Internal Server Error' }).end();
 };
