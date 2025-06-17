@@ -2,17 +2,24 @@ import User from '../../server/models/User';
 import encrypt from '../../server/lib/secure';
 import { createUser } from '../helpers';
 
-const testUser = createUser();
-
 describe('User model', () => {
+  let testUser: {
+    firstName: string;
+    lastName: string;
+    email: string;
+    password: string;
+  };
+
   beforeEach(async () => {
     await User.query().delete();
+    testUser = createUser();
   });
 
-  it('should create user', async () => {
+  it('should create an user', async () => {
     const user = await User.query().insert(testUser);
 
     expect(user).toBeDefined();
+    expect(user.id).toBeDefined();
     expect(user.firstName).toBe(testUser.firstName);
     expect(user.lastName).toBe(testUser.lastName);
     expect(user.email).toBe(testUser.email);
