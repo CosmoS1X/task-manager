@@ -2,7 +2,7 @@ import request from 'supertest';
 import app from '../../server';
 import { User } from '../../server/models';
 import { createUser } from '../helpers';
-import Endpoints from '../../server/Endpoints';
+import Endpoints from '../../server/endpoints';
 
 describe('Session controller', () => {
   let testUser: User;

@@ -1,7 +1,7 @@
 import request from 'supertest';
 import app from '../../server';
 import { User } from '../../server/models';
-import Endpoints, { getUserPath, getCheckEmailQueryString } from '../../server/Endpoints';
+import Endpoints, { getUserPath, getCheckEmailQueryString } from '../../server/endpoints';
 import { createUser } from '../helpers';
 
 describe('User controller', () => {
