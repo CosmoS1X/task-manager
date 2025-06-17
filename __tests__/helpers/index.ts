@@ -1,4 +1,3 @@
-/* eslint-disable import/prefer-default-export */
 import { faker } from '@faker-js/faker';
 
 export const createUser = () => ({
@@ -6,4 +5,8 @@ export const createUser = () => ({
   lastName: faker.person.lastName(),
   email: faker.internet.email().toLowerCase(),
   password: faker.internet.password(),
+});
+
+export const createStatus = () => ({
+  name: faker.lorem.word(),
 });
