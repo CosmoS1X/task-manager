@@ -43,7 +43,16 @@ export default () => ({
     const existingStatus = await Status.query().findOne({ name: validData.name });
     const currentStatus = await Status.query().findById(req.params.id);
 
-    if (currentStatus?.name === validData.name) {
+    if (!currentStatus) {
+      res.status(404).json({
+        error: 'StatusNotFound',
+        message: 'Status not found',
+      });
+
+      return;
+    }
+
+    if (currentStatus.name === validData.name) {
       res.status(200).json(currentStatus);
 
       return;
@@ -63,7 +72,19 @@ export default () => ({
     res.status(200).json(currentStatus);
   },
   delete: async (req: Request, res: Response) => {
-    await Status.query().deleteById(req.params.id);
+    const { id } = req.params;
+    const currentStatus = await Status.query().findById(id);
+
+    if (!currentStatus) {
+      res.status(404).json({
+        error: 'StatusNotFound',
+        message: 'Status not found',
+      });
+
+      return;
+    }
+
+    await Status.query().deleteById(id);
 
     res.status(204).end();
   },
