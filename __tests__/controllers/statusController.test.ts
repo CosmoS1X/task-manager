@@ -133,7 +133,7 @@ describe('Status controller', () => {
     });
   });
 
-  describe(`DELETE ${Endpoints.Statuses}`, () => {
+  describe(`DELETE ${Endpoints.Status}`, () => {
     it('should delete status', async () => {
       const response = await agent.delete(getStatusPath(testStatus.id));
 
