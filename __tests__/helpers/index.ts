@@ -10,3 +10,7 @@ export const createUser = () => ({
 export const createStatus = () => ({
   name: faker.lorem.word(),
 });
+
+export const createLabel = () => ({
+  name: faker.lorem.word(),
+});
