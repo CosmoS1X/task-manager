@@ -1,7 +1,7 @@
 import request from 'supertest';
 import app from '../../server';
 import { User } from '../../server/models';
-import { createUser } from '../helpers';
+import { createUserData } from '../helpers';
 import Endpoints from '../../server/endpoints';
 
 describe('Session controller', () => {
@@ -10,9 +10,9 @@ describe('Session controller', () => {
   let agent: request.Agent;
 
   beforeEach(async () => {
-    const user = createUser();
-    credentials = { email: user.email, password: user.password };
-    testUser = await User.query().insert(user);
+    const userData = createUserData();
+    credentials = { email: userData.email, password: userData.password };
+    testUser = await User.query().insert(userData);
     agent = request.agent(app);
   });
 

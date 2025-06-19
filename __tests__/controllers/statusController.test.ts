@@ -1,18 +1,17 @@
 import request from 'supertest';
 import app from '../../server';
 import { Status, User } from '../../server/models';
-import { createUser, createStatus } from '../helpers';
-import Endpoints, { getStatusPath } from '../../server/endpoints';
+import { createUserData, createStatusData, getStatusPath } from '../helpers';
+import Endpoints from '../../server/endpoints';
 
 describe('Status controller', () => {
-  let credentials: { email: string; password: string };
   let testStatus: Status;
   let agent: request.Agent;
 
   beforeAll(async () => {
-    const user = createUser();
-    credentials = { email: user.email, password: user.password };
-    await User.query().insert(user);
+    const userData = createUserData();
+    const credentials = { email: userData.email, password: userData.password };
+    await User.query().insert(userData);
     agent = request.agent(app);
     await agent.post(Endpoints.Login).send(credentials);
   });
@@ -22,8 +21,8 @@ describe('Status controller', () => {
   });
 
   beforeEach(async () => {
-    const status = createStatus();
-    testStatus = await Status.query().insert(status);
+    const statusData = createStatusData();
+    testStatus = await Status.query().insert(statusData);
   });
 
   afterEach(async () => {
@@ -56,7 +55,7 @@ describe('Status controller', () => {
     });
 
     it('should return 404 for non-existent status', async () => {
-      const response = await agent.get(getStatusPath(9999));
+      const response = await agent.get(getStatusPath(Infinity));
 
       expect(response.status).toBe(404);
       expect(response.body.error).toBe('StatusNotFound');
@@ -65,11 +64,11 @@ describe('Status controller', () => {
 
   describe(`POST ${Endpoints.Statuses}`, () => {
     it('should create new status', async () => {
-      const newStatus = createStatus();
-      const response = await agent.post(Endpoints.Statuses).send(newStatus);
+      const newStatusData = createStatusData();
+      const response = await agent.post(Endpoints.Statuses).send(newStatusData);
 
       expect(response.status).toBe(201);
-      expect(response.body.name).toBe(newStatus.name);
+      expect(response.body.name).toBe(newStatusData.name);
 
       const createdStatus = await Status.query().findById(response.body.id);
 
@@ -94,7 +93,7 @@ describe('Status controller', () => {
 
   describe(`PATCH ${Endpoints.Status}`, () => {
     it('should update status', async () => {
-      const updates = createStatus();
+      const updates = createStatusData();
       const response = await agent.patch(getStatusPath(testStatus.id)).send(updates);
 
       expect(response.status).toBe(200);
@@ -106,11 +105,11 @@ describe('Status controller', () => {
     });
 
     it('should return 409 for duplicate status name', async () => {
-      const anotherStatus = createStatus();
+      const anotherStatusData = createStatusData();
 
-      await Status.query().insert(anotherStatus);
+      await Status.query().insert(anotherStatusData);
 
-      const response = await agent.patch(getStatusPath(testStatus.id)).send(anotherStatus);
+      const response = await agent.patch(getStatusPath(testStatus.id)).send(anotherStatusData);
 
       expect(response.status).toBe(409);
       expect(response.body.error).toBe('StatusAlreadyExists');
@@ -126,7 +125,7 @@ describe('Status controller', () => {
     });
 
     it('should return 404 for non-existent status', async () => {
-      const response = await agent.patch(getStatusPath(9999)).send(createStatus());
+      const response = await agent.patch(getStatusPath(Infinity)).send(createStatusData());
 
       expect(response.status).toBe(404);
       expect(response.body.error).toBe('StatusNotFound');
@@ -145,7 +144,7 @@ describe('Status controller', () => {
     });
 
     it('should return 404 for non-existent status', async () => {
-      const response = await agent.delete(getStatusPath(9999));
+      const response = await agent.delete(getStatusPath(Infinity));
 
       expect(response.status).toBe(404);
       expect(response.body.error).toBe('StatusNotFound');

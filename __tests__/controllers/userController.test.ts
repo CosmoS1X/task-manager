@@ -1,8 +1,8 @@
 import request from 'supertest';
 import app from '../../server';
 import { User } from '../../server/models';
-import Endpoints, { getUserPath, getCheckEmailQueryString } from '../../server/endpoints';
-import { createUser } from '../helpers';
+import Endpoints from '../../server/endpoints';
+import { createUserData, getUserPath, getCheckEmailQueryString } from '../helpers';
 
 describe('User controller', () => {
   let testUser: User;
@@ -10,9 +10,9 @@ describe('User controller', () => {
   let agent: request.Agent;
 
   beforeEach(async () => {
-    const user = createUser();
-    credentials = { email: user.email, password: user.password };
-    testUser = await User.query().insert(user);
+    const userData = createUserData();
+    credentials = { email: userData.email, password: userData.password };
+    testUser = await User.query().insert(userData);
     agent = request.agent(app);
   });
 
@@ -39,15 +39,15 @@ describe('User controller', () => {
 
   describe(`POST ${Endpoints.Users}`, () => {
     it('should create a new user', async () => {
-      const newUser = createUser();
-      const response = await request(app).post(Endpoints.Users).send(newUser);
+      const newUserData = createUserData();
+      const response = await request(app).post(Endpoints.Users).send(newUserData);
 
       expect(response.status).toBe(201);
-      expect(response.body.email).toBe(newUser.email);
+      expect(response.body.email).toBe(newUserData.email);
     });
 
     it('should not allow duplicate emails', async () => {
-      const userWithSameEmail = { ...createUser(), email: testUser.email };
+      const userWithSameEmail = { ...createUserData(), email: testUser.email };
       const response = await request(app).post(Endpoints.Users).send(userWithSameEmail);
 
       expect(response.status).toBe(409);
@@ -58,7 +58,7 @@ describe('User controller', () => {
     it('should return 403 if user tries to access another user', async () => {
       await agent.post(Endpoints.Login).send(credentials);
 
-      const response = await agent.get(getUserPath(999));
+      const response = await agent.get(getUserPath(testUser.id + 1));
 
       expect(response.status).toBe(403);
     });

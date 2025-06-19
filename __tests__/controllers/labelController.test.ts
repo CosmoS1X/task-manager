@@ -1,8 +1,8 @@
 import request from 'supertest';
 import app from '../../server';
 import { Label, User } from '../../server/models';
-import { createUser, createLabel } from '../helpers';
-import Endpoints, { getLabelPath } from '../../server/endpoints';
+import { createUserData, createLabelData, getLabelPath } from '../helpers';
+import Endpoints from '../../server/endpoints';
 
 describe('Label controller', () => {
   let credentials: { email: string; password: string };
@@ -10,9 +10,9 @@ describe('Label controller', () => {
   let agent: request.Agent;
 
   beforeAll(async () => {
-    const user = createUser();
-    credentials = { email: user.email, password: user.password };
-    await User.query().insert(user);
+    const userData = createUserData();
+    credentials = { email: userData.email, password: userData.password };
+    await User.query().insert(userData);
     agent = request.agent(app);
     await agent.post(Endpoints.Login).send(credentials);
   });
@@ -22,8 +22,8 @@ describe('Label controller', () => {
   });
 
   beforeEach(async () => {
-    const label = createLabel();
-    testLabel = await Label.query().insert(label);
+    const labelData = createLabelData();
+    testLabel = await Label.query().insert(labelData);
   });
 
   afterEach(async () => {
@@ -56,7 +56,7 @@ describe('Label controller', () => {
     });
 
     it('should return 404 for non-existent label', async () => {
-      const response = await agent.get(getLabelPath(9999));
+      const response = await agent.get(getLabelPath(Infinity));
 
       expect(response.status).toBe(404);
       expect(response.body.error).toBe('LabelNotFound');
@@ -65,11 +65,11 @@ describe('Label controller', () => {
 
   describe(`POST ${Endpoints.Labels}`, () => {
     it('should create new label', async () => {
-      const newLabel = createLabel();
-      const response = await agent.post(Endpoints.Labels).send(newLabel);
+      const newLabeData = createLabelData();
+      const response = await agent.post(Endpoints.Labels).send(newLabeData);
 
       expect(response.status).toBe(201);
-      expect(response.body.name).toBe(newLabel.name);
+      expect(response.body.name).toBe(newLabeData.name);
 
       const createdLabel = await Label.query().findById(response.body.id);
 
@@ -94,7 +94,7 @@ describe('Label controller', () => {
 
   describe(`PATCH ${Endpoints.Label}`, () => {
     it('should update label', async () => {
-      const updates = createLabel();
+      const updates = createLabelData();
       const response = await agent.patch(getLabelPath(testLabel.id)).send(updates);
 
       expect(response.status).toBe(200);
@@ -106,11 +106,11 @@ describe('Label controller', () => {
     });
 
     it('should return 409 for duplicate label name', async () => {
-      const anotherLabel = createLabel();
+      const anotherLabelData = createLabelData();
 
-      await Label.query().insert(anotherLabel);
+      await Label.query().insert(anotherLabelData);
 
-      const response = await agent.patch(getLabelPath(testLabel.id)).send(anotherLabel);
+      const response = await agent.patch(getLabelPath(testLabel.id)).send(anotherLabelData);
 
       expect(response.status).toBe(409);
       expect(response.body.error).toBe('LabelAlreadyExists');
@@ -126,7 +126,7 @@ describe('Label controller', () => {
     });
 
     it('should return 404 for non-existent label', async () => {
-      const response = await agent.patch(getLabelPath(9999)).send(createLabel());
+      const response = await agent.patch(getLabelPath(Infinity)).send(createLabelData());
 
       expect(response.status).toBe(404);
       expect(response.body.error).toBe('LabelNotFound');
@@ -145,7 +145,7 @@ describe('Label controller', () => {
     });
 
     it('should return 404 for non-existent label', async () => {
-      const response = await agent.delete(getLabelPath(9999));
+      const response = await agent.delete(getLabelPath(Infinity));
 
       expect(response.status).toBe(404);
       expect(response.body.error).toBe('LabelNotFound');
