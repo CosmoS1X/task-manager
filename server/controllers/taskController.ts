@@ -49,7 +49,7 @@ export default () => ({
     res.status(200).json(task);
   },
   create: async (req: Request, res: Response) => {
-    const { name, description, statusId, executorId, labelIds } = req.body;
+    const { name, description, statusId, executorId, labelIds = [] } = req.body;
     const creatorId = req.user?.id;
     const labels = await Label.query().whereIn('id', labelIds);
 
@@ -93,7 +93,7 @@ export default () => ({
       return;
     }
 
-    const { name, description, statusId, executorId, labelIds } = req.body;
+    const { name, description, statusId, executorId, labelIds = [] } = req.body;
     const { creatorId } = task;
     const labels = await Label.query().whereIn('id', labelIds);
 
