@@ -1,20 +1,20 @@
 import { Label } from '../../server/models';
-import { createLabel } from '../helpers';
+import { createLabelData } from '../helpers';
 
 describe('Label Model', () => {
-  let testLabel: { name: string };
+  let labelData: { name: string };
 
   beforeEach(async () => {
     await Label.query().delete();
-    testLabel = createLabel();
+    labelData = createLabelData();
   });
 
   it('should create a label', async () => {
-    const label = await Label.query().insert(testLabel);
+    const label = await Label.query().insert(labelData);
 
     expect(label).toBeDefined();
     expect(label.id).toBeDefined();
-    expect(label.name).toBe(testLabel.name);
+    expect(label.name).toBe(labelData.name);
   });
 
   it('should validate name length', async () => {
@@ -23,8 +23,8 @@ describe('Label Model', () => {
   });
 
   it('should enforce unique names', async () => {
-    await Label.query().insert(testLabel);
+    await Label.query().insert(labelData);
 
-    await expect(Label.query().insert(testLabel)).rejects.toThrow();
+    await expect(Label.query().insert(labelData)).rejects.toThrow();
   });
 });

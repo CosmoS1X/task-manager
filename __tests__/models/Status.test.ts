@@ -1,20 +1,20 @@
 import { Status } from '../../server/models';
-import { createStatus } from '../helpers';
+import { createStatusData } from '../helpers';
 
 describe('Status Model', () => {
-  let testStatus: { name: string };
+  let statusData: { name: string };
 
   beforeEach(async () => {
     await Status.query().delete();
-    testStatus = createStatus();
+    statusData = createStatusData();
   });
 
   it('should create a status', async () => {
-    const status = await Status.query().insert(testStatus);
+    const status = await Status.query().insert(statusData);
 
     expect(status).toBeDefined();
     expect(status.id).toBeDefined();
-    expect(status.name).toBe(testStatus.name);
+    expect(status.name).toBe(statusData.name);
   });
 
   it('should validate name length', async () => {
@@ -23,8 +23,8 @@ describe('Status Model', () => {
   });
 
   it('should enforce unique names', async () => {
-    await Status.query().insert(testStatus);
+    await Status.query().insert(statusData);
 
-    await expect(Status.query().insert(testStatus)).rejects.toThrow();
+    await expect(Status.query().insert(statusData)).rejects.toThrow();
   });
 });

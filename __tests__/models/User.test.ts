@@ -1,9 +1,9 @@
 import User from '../../server/models/User';
 import encrypt from '../../server/lib/secure';
-import { createUser } from '../helpers';
+import { createUserData } from '../helpers';
 
 describe('User model', () => {
-  let testUser: {
+  let userData: {
     firstName: string;
     lastName: string;
     email: string;
@@ -12,24 +12,24 @@ describe('User model', () => {
 
   beforeEach(async () => {
     await User.query().delete();
-    testUser = createUser();
+    userData = createUserData();
   });
 
   it('should create an user', async () => {
-    const user = await User.query().insert(testUser);
+    const user = await User.query().insert(userData);
 
     expect(user).toBeDefined();
     expect(user.id).toBeDefined();
-    expect(user.firstName).toBe(testUser.firstName);
-    expect(user.lastName).toBe(testUser.lastName);
-    expect(user.email).toBe(testUser.email);
-    expect(user.passwordDigest).toBe(encrypt(testUser.password));
+    expect(user.firstName).toBe(userData.firstName);
+    expect(user.lastName).toBe(userData.lastName);
+    expect(user.email).toBe(userData.email);
+    expect(user.passwordDigest).toBe(encrypt(userData.password));
   });
 
   it('should verify password correctly', async () => {
-    const user = await User.query().insert(testUser);
+    const user = await User.query().insert(userData);
 
-    expect(user.verifyPassword(testUser.password)).toBeTruthy();
+    expect(user.verifyPassword(userData.password)).toBeTruthy();
     expect(user.verifyPassword('wrong_password')).toBeFalsy();
   });
 
@@ -43,6 +43,6 @@ describe('User model', () => {
   });
 
   it('should validate email format', async () => {
-    await expect(User.query().insert({ ...testUser, email: 'invalid_email' })).rejects.toThrow();
+    await expect(User.query().insert({ ...userData, email: 'invalid_email' })).rejects.toThrow();
   });
 });
