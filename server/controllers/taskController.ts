@@ -21,10 +21,7 @@ export default () => ({
 
     const tasks = await Task.query()
       .where(filters)
-      .withGraphJoined('status')
-      .withGraphJoined('creator')
-      .withGraphJoined('executor')
-      .withGraphJoined('labels')
+      .withGraphJoined('[status, creator, executor, labels]')
       .orderBy('createdAt', 'desc');
 
     res.status(200).json(tasks);
@@ -32,10 +29,7 @@ export default () => ({
   getItem: async (req: Request, res: Response) => {
     const task = await Task.query()
       .findById(req.params.id)
-      .withGraphJoined('status')
-      .withGraphJoined('creator')
-      .withGraphJoined('executor')
-      .withGraphJoined('labels');
+      .withGraphJoined('[status, creator, executor, labels]');
 
     if (!task) {
       res.status(404).json({
