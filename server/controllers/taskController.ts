@@ -38,7 +38,10 @@ export default () => ({
       .withGraphJoined('labels');
 
     if (!task) {
-      res.status(404).json({ message: 'Task not found' });
+      res.status(404).json({
+        error: 'TaskNotFound',
+        message: 'Task not found',
+      });
 
       return;
     }
@@ -75,9 +78,6 @@ export default () => ({
       res.status(201).json(task);
     } catch (error) {
       await transaction.rollback();
-
-      res.status(500).json({ message: 'Internal server error' });
-
       throw error;
     }
   },
@@ -85,7 +85,10 @@ export default () => ({
     const task = await Task.query().findById(req.params.id);
 
     if (!task) {
-      res.status(404).json({ message: 'Task not found' });
+      res.status(404).json({
+        error: 'TaskNotFound',
+        message: 'Task not found',
+      });
 
       return;
     }
@@ -122,9 +125,6 @@ export default () => ({
       res.status(200).json(task);
     } catch (error) {
       await transaction.rollback();
-
-      res.status(500).json({ message: 'Internal server error' });
-
       throw error;
     }
   },
@@ -139,7 +139,10 @@ export default () => ({
     }
 
     if (task.creatorId !== req.user?.id) {
-      res.status(403).json({ message: 'Access denied' });
+      res.status(403).json({
+        error: 'Forbidden',
+        message: 'Access denied',
+      });
 
       return;
     }
