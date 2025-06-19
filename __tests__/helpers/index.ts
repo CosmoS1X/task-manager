@@ -1,18 +1,18 @@
 import { faker } from '@faker-js/faker';
 import Endpoints from '../../server/endpoints';
 
-export const createUser = () => ({
+export const createUserData = () => ({
   firstName: faker.person.firstName(),
   lastName: faker.person.lastName(),
   email: faker.internet.email().toLowerCase(),
   password: faker.internet.password(),
 });
 
-export const createStatus = () => ({
+export const createStatusData = () => ({
   name: faker.lorem.word(),
 });
 
-export const createLabel = () => ({
+export const createLabelData = () => ({
   name: faker.lorem.word(),
 });
 
