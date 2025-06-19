@@ -9,6 +9,8 @@ enum Endpoints {
   Status = '/api/statuses/:id',
   Labels = '/api/labels',
   Label = '/api/labels/:id',
+  Tasks = '/api/tasks',
+  Task = '/api/tasks/:id',
 }
 
 export default Endpoints;
