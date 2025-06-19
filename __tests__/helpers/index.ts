@@ -1,4 +1,5 @@
 import { faker } from '@faker-js/faker';
+import Endpoints from '../../server/endpoints';
 
 export const createUser = () => ({
   firstName: faker.person.firstName(),
@@ -14,3 +15,8 @@ export const createStatus = () => ({
 export const createLabel = () => ({
   name: faker.lorem.word(),
 });
+
+export const getUserPath = (id: number) => `${Endpoints.Users}/${id}`;
+export const getStatusPath = (id: number) => `${Endpoints.Statuses}/${id}`;
+export const getLabelPath = (id: number) => `${Endpoints.Labels}/${id}`;
+export const getCheckEmailQueryString = (email: string) => `${Endpoints.CheckEmail}?email=${email}`;
