@@ -35,5 +35,10 @@ export const errorHandler = (error: Error, req: Request, res: Response, _next: N
     return;
   }
 
+  if (error.name === 'ForeignKeyViolationError') {
+    res.status(403).json({ error: error.name, message: 'Cannot delete related entity' });
+    return;
+  }
+
   res.status(500).json({ error: 'InternalServerError', message: 'Internal Server Error' }).end();
 };
