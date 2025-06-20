@@ -1,4 +1,5 @@
 import type { Request, Response, NextFunction } from 'express';
+import Rollbar from 'rollbar';
 import env from '../env';
 
 export const authRequired = (req: Request, res: Response, next: NextFunction) => {
@@ -25,7 +26,14 @@ export const ownerOnly = (req: Request, res: Response, next: NextFunction) => {
 };
 
 export const errorHandler = (error: Error, req: Request, res: Response, _next: NextFunction) => {
-  if (env.NODE_ENV === 'development') {
+  const rollbar = new Rollbar({
+    enabled: env.isProduction,
+    accessToken: env.ROLLBAR_ACCESS_TOKEN,
+    captureUncaught: true,
+    captureUnhandledRejections: true,
+  });
+
+  if (env.isDevelopment) {
     // eslint-disable-next-line no-console
     console.error('Error handler middleware:', error);
   }
@@ -39,6 +47,8 @@ export const errorHandler = (error: Error, req: Request, res: Response, _next: N
     res.status(403).json({ error: error.name, message: 'Cannot delete related entity' });
     return;
   }
+
+  rollbar.error(error);
 
   res.status(500).json({ error: 'InternalServerError', message: 'Internal Server Error' }).end();
 };
