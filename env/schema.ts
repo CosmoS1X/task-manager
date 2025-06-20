@@ -29,8 +29,12 @@ export const envSchema = z.object({
       'SESSION_KEY must be set in production',
     )
     .default(process.env.NODE_ENV !== 'production' ? devSessionKey : ''),
+  ROLLBAR_ACCESS_TOKEN: z.string()
+    .optional(),
   isProduction: z.boolean()
     .default(process.env.NODE_ENV === 'production'),
+  isDevelopment: z.boolean()
+    .default(process.env.NODE_ENV === 'development'),
 });
 
 export type Env = z.infer<typeof envSchema>;
