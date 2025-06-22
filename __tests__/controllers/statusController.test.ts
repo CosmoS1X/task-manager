@@ -86,7 +86,7 @@ describe('Status controller', () => {
       const invalidStatus = { name: '' };
       const response = await agent.post(Endpoints.Statuses).send(invalidStatus);
 
-      expect(response.status).toBe(400);
+      expect(response.status).toBe(422);
       expect(response.body.error).toBe('ValidationError');
     });
   });

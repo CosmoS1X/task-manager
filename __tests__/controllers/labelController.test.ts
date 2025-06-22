@@ -87,7 +87,7 @@ describe('Label controller', () => {
       const invalidLabel = { name: '' };
       const response = await agent.post(Endpoints.Statuses).send(invalidLabel);
 
-      expect(response.status).toBe(400);
+      expect(response.status).toBe(422);
       expect(response.body.error).toBe('ValidationError');
     });
   });

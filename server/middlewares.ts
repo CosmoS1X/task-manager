@@ -39,7 +39,7 @@ export const errorHandler = (error: Error, req: Request, res: Response, _next: N
   }
 
   if (error.name === 'ValidationError') {
-    res.status(400).json({ error: error.name, message: error.message });
+    res.status(422).json({ error: error.name, message: error.message });
     return;
   }
 

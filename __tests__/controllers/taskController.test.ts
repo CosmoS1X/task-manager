@@ -156,7 +156,7 @@ describe('Task controller', () => {
 
       const response = await agent.post(Endpoints.Tasks).send(invalidTask);
 
-      expect(response.status).toBe(400);
+      expect(response.status).toBe(422);
       expect(response.body.error).toBe('ValidationError');
     });
   });
