@@ -41,8 +41,7 @@ describe('Label controller', () => {
       const response = await agent.get(Endpoints.Labels);
 
       expect(response.status).toBe(200);
-      expect(Array.isArray(response.body)).toBeTruthy();
-      expect(response.body.length).toBe(1);
+      expect(response.body).toHaveLength(1);
       expect(response.body[0].name).toBe(testLabel.name);
     });
   });

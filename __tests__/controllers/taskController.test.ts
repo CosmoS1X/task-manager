@@ -65,19 +65,19 @@ describe('Task controller', () => {
       const existentStatusResponse = await agent.get(buildQueryString({ status: testStatus.id }));
 
       expect(existentStatusResponse.status).toBe(200);
-      expect(existentStatusResponse.body.length).toBe(1);
+      expect(existentStatusResponse.body).toHaveLength(1);
 
       const nonExistentStatusResponse = await agent.get(buildQueryString({ status: Infinity }));
 
       expect(nonExistentStatusResponse.status).toBe(200);
-      expect(nonExistentStatusResponse.body.length).toBe(0);
+      expect(nonExistentStatusResponse.body).toHaveLength(0);
     });
 
     it('should filter tasks by creator', async () => {
       const response = await agent.get(buildQueryString({ isCreator: true }));
 
       expect(response.status).toBe(200);
-      expect(response.body.length).toBe(1);
+      expect(response.body).toHaveLength(1);
     });
 
     it('should filter tasks by executor', async () => {
@@ -85,12 +85,12 @@ describe('Task controller', () => {
         .get(buildQueryString({ executor: testExecutor.id }));
 
       expect(existentExecutorResponse.status).toBe(200);
-      expect(existentExecutorResponse.body.length).toBe(1);
+      expect(existentExecutorResponse.body).toHaveLength(1);
 
       const nonExistentExecutorResponse = await agent.get(buildQueryString({ executor: Infinity }));
 
       expect(nonExistentExecutorResponse.status).toBe(200);
-      expect(nonExistentExecutorResponse.body.length).toBe(0);
+      expect(nonExistentExecutorResponse.body).toHaveLength(0);
     });
 
     it('should apply all filters', async () => {
@@ -105,7 +105,7 @@ describe('Task controller', () => {
 
       expect(queryString).toBe(`${Endpoints.Tasks}?status=${filters.status}&executor=${filters.executor}&label=${filters.label}&isCreator=${filters.isCreator}`);
       expect(response.status).toBe(200);
-      expect(response.body.length).toBe(0);
+      expect(response.body).toHaveLength(0);
     });
   });
 
@@ -144,7 +144,7 @@ describe('Task controller', () => {
         .findById(response.body.id)
         .withGraphFetched('labels');
 
-      expect(createdTask?.labels?.length).toBe(1);
+      expect(createdTask?.labels).toHaveLength(1);
       expect(createdTask?.labels?.[0].name).toBe(testLabel.name);
     });
 
@@ -174,7 +174,7 @@ describe('Task controller', () => {
         .findById(testTask.id)
         .withGraphFetched('labels');
 
-      expect(updatedTask?.labels?.length).toBe(1);
+      expect(updatedTask?.labels).toHaveLength(1);
       expect(updatedTask?.labels?.[0].name).toBe(testLabel.name);
     });
 
