@@ -26,22 +26,3 @@ export const getStatusPath = (id: number) => `${Endpoints.Statuses}/${id}`;
 export const getLabelPath = (id: number) => `${Endpoints.Labels}/${id}`;
 export const getTaskPath = (id: number) => `${Endpoints.Tasks}/${id}`;
 export const getCheckEmailQueryString = (email: string) => `${Endpoints.CheckEmail}?email=${email}`;
-
-type FilterParams = {
-  status?: number;
-  executor?: number;
-  label?: number;
-  isCreator?: boolean;
-};
-
-export const buildQueryString = (filters: FilterParams) => {
-  const searchParams = new URLSearchParams();
-
-  Object.entries(filters).forEach(([key, value]) => {
-    if (value) {
-      searchParams.append(key, String(value));
-    }
-  });
-
-  return `${Endpoints.Tasks}?${searchParams.toString()}`;
-};

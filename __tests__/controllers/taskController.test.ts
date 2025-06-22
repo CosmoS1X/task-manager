@@ -8,7 +8,6 @@ import {
   createLabelData,
   createTaskData,
   getTaskPath,
-  buildQueryString,
 } from '../helpers';
 
 describe('Task controller', () => {
@@ -62,48 +61,39 @@ describe('Task controller', () => {
     });
 
     it('should filter tasks by status', async () => {
-      const existentStatusResponse = await agent.get(buildQueryString({ status: testStatus.id }));
+      const existentStatusResponse = await agent.get(`${Endpoints.Tasks}?status=${testStatus.id}`);
 
       expect(existentStatusResponse.status).toBe(200);
       expect(existentStatusResponse.body).toHaveLength(1);
 
-      const nonExistentStatusResponse = await agent.get(buildQueryString({ status: Infinity }));
+      const nonExistentStatusResponse = await agent.get(`${Endpoints.Tasks}?status=${Infinity}`);
 
       expect(nonExistentStatusResponse.status).toBe(200);
       expect(nonExistentStatusResponse.body).toHaveLength(0);
     });
 
     it('should filter tasks by creator', async () => {
-      const response = await agent.get(buildQueryString({ isCreator: true }));
+      const response = await agent.get(`${Endpoints.Tasks}?isCreator=true`);
 
       expect(response.status).toBe(200);
       expect(response.body).toHaveLength(1);
     });
 
     it('should filter tasks by executor', async () => {
-      const existentExecutorResponse = await agent
-        .get(buildQueryString({ executor: testExecutor.id }));
+      const existentExecutorResponse = await agent.get(`${Endpoints.Tasks}?executor=${testExecutor.id}`);
 
       expect(existentExecutorResponse.status).toBe(200);
       expect(existentExecutorResponse.body).toHaveLength(1);
 
-      const nonExistentExecutorResponse = await agent.get(buildQueryString({ executor: Infinity }));
+      const nonExistentExecutorResponse = await agent.get(`${Endpoints.Tasks}?executor=${Infinity}`);
 
       expect(nonExistentExecutorResponse.status).toBe(200);
       expect(nonExistentExecutorResponse.body).toHaveLength(0);
     });
 
     it('should apply all filters', async () => {
-      const filters = {
-        status: testStatus.id,
-        executor: testExecutor.id,
-        label: testLabel.id,
-        isCreator: true,
-      };
-      const queryString = buildQueryString(filters);
-      const response = await agent.get(queryString);
+      const response = await agent.get(`${Endpoints.Tasks}?status=${testStatus.id}&executor=${testExecutor.id}&label=${testLabel.id}&isCreator=true`);
 
-      expect(queryString).toBe(`${Endpoints.Tasks}?status=${filters.status}&executor=${filters.executor}&label=${filters.label}&isCreator=${filters.isCreator}`);
       expect(response.status).toBe(200);
       expect(response.body).toHaveLength(0);
     });
