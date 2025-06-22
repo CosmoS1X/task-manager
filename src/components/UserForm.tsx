@@ -5,7 +5,6 @@ import type { TFunction } from 'i18next';
 import { z } from 'zod';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import axios from 'axios';
 import Input from '@/components/Input';
 import Button from '@/components/Button';
 import type { User } from '@/types';
@@ -54,7 +53,8 @@ type Props = {
 
 const checkEmailAvailability = async (email: string) => {
   try {
-    const { data } = await axios.get(`/api/check-email?email=${email}`);
+    const response = await fetch(`/api/check-email?email=${email}`);
+    const data = await response.json();
     return data.isAvailable;
   } catch {
     return false;
