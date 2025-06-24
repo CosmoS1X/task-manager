@@ -22,38 +22,32 @@ export default () => ({
     res.status(200).json(user);
   },
   create: async (req: Request, res: Response) => {
-    try {
-      const validData = User.fromJson(req.body);
-      const existingUser = await User.query().findOne({ email: validData.email });
+    const validData = User.fromJson(req.body);
+    const existingUser = await User.query().findOne({ email: validData.email });
 
-      if (existingUser) {
-        res.status(409).json({
-          error: 'UserAlreadyExists',
-          message: 'User with this email already exists',
+    if (existingUser) {
+      res.status(409).json({
+        error: 'UserAlreadyExists',
+        message: 'User with this email already exists',
+      });
+
+      return;
+    }
+
+    const newUser = await User.query().insert(validData);
+
+    req.logIn(newUser, (err) => {
+      if (err) {
+        res.status(500).json({
+          error: 'LoginFailed',
+          message: 'Failed to log in newly created user',
         });
 
         return;
       }
 
-      const newUser = await User.query().insert(validData);
-
-      req.logIn(newUser, (err) => {
-        if (err) {
-          res.status(500).json({
-            error: 'LoginFailed',
-            message: 'Failed to log in newly created user',
-          });
-          return;
-        }
-
-        res.status(201).json(newUser);
-      });
-    } catch (error) {
-      res.status(400).json({
-        error: error instanceof Error ? error : 'UnknownError',
-        message: error instanceof Error ? error.message : 'An unknown error occurred',
-      });
-    }
+      res.status(201).json(newUser);
+    });
   },
   update: async (req: Request, res: Response) => {
     const user = await User.query().findById(req.params.id).patch(req.body);
