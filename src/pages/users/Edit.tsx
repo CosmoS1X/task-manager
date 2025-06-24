@@ -22,13 +22,11 @@ export default function EditUserPage() {
   }
 
   const onSubmit = async (data: UserFormValues) => {
-    try {
-      await updateUser({ ...data, id: Number(id) }).unwrap();
-      showSuccess(t('flash.users.edit.success'));
-      navigate(Endpoints.Users);
-    } catch (error) {
-      showError(t('flash.users.edit.error'));
-    }
+    const preparedData = UserForm.prepareDataForSubmit(data);
+
+    await updateUser({ ...preparedData, id: Number(id) }).unwrap();
+    showSuccess(t('flash.users.edit.success'));
+    navigate(Endpoints.Users);
   };
 
   return (

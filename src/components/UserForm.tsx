@@ -10,6 +10,8 @@ import Button from '@/components/Button';
 import type { User } from '@/types';
 import { capitalize } from '@/helpers';
 import Endpoints from '@/endpoints';
+import { isFetchBaseQueryError } from '@/api/helpers';
+import { showError } from '@/utils/flash';
 
 const formSchema = (t: TFunction, isEditing: boolean) => {
   const firstNameLength = 2;
@@ -36,11 +38,35 @@ const formSchema = (t: TFunction, isEditing: boolean) => {
     .min(passwordLength, t('form.errors.min', { count: passwordLength }))
     .transform((value) => value.trim());
 
-  const passwordSchema = isEditing
-    ? z.object({ password: passwordBaseSchema.optional() })
-    : z.object({ password: passwordBaseSchema });
+  const newPasswordSchema = passwordBaseSchema.optional();
+  const currentPasswordSchema = z.string().min(1, t('form.errors.required')).optional();
+  const confirmPasswordSchema = z.string().min(1, t('form.errors.required'));
 
-  return baseSchema.merge(passwordSchema);
+  const passwordEditSchema = z.object({
+    currentPassword: currentPasswordSchema,
+    newPassword: newPasswordSchema,
+    confirmPassword: confirmPasswordSchema.optional(),
+  })
+    .refine((data) => !(data.newPassword && !data.currentPassword), {
+      message: t('form.errors.currentPassword.required'),
+      path: ['currentPassword'],
+    })
+    .refine((data) => data.newPassword === data.confirmPassword, {
+      message: t('form.errors.password.mismatch'),
+      path: ['confirmPassword'],
+    });
+
+  const passwordCreateSchema = z.object({
+    password: passwordBaseSchema,
+    confirmPassword: confirmPasswordSchema,
+  }).refine((data) => data.password === data.confirmPassword, {
+    message: t('form.errors.password.mismatch'),
+    path: ['confirmPassword'],
+  });
+
+  const passwordSchema = isEditing ? passwordEditSchema : passwordCreateSchema;
+
+  return baseSchema.and(passwordSchema);
 };
 
 export type UserFormValues = z.infer<ReturnType<typeof formSchema>>;
@@ -64,6 +90,7 @@ const checkEmailAvailability = async (email: string) => {
 export default function UserForm({ currentUser, onSubmit, isEditing = false }: Props) {
   const [isEmailAvailable, setIsEmailAvailable] = useState<boolean | null>(null);
   const [isCheckingEmail, setIsCheckingEmail] = useState(false);
+  const [showPasswordFields, setShowPasswordFields] = useState(false);
   const { t } = useTranslation();
 
   const {
@@ -71,6 +98,7 @@ export default function UserForm({ currentUser, onSubmit, isEditing = false }: P
     handleSubmit,
     watch,
     reset,
+    setError,
     formState: { errors, isSubmitting, isValid, dirtyFields },
   } = useForm<UserFormValues>({
     resolver: zodResolver(formSchema(t, isEditing)),
@@ -85,6 +113,7 @@ export default function UserForm({ currentUser, onSubmit, isEditing = false }: P
   }, [currentUser, reset]);
 
   const [debouncedEmail] = useDebounce(watch('email'), 500);
+  const currentPasswordValue = watch('currentPassword');
 
   useEffect(() => {
     const checkEmail = async () => {
@@ -114,8 +143,88 @@ export default function UserForm({ currentUser, onSubmit, isEditing = false }: P
     checkEmail();
   }, [debouncedEmail, currentUser?.email]);
 
+  const submitHandler: SubmitHandler<UserFormValues> = async (data) => {
+    try {
+      await onSubmit(data);
+    } catch (error) {
+      const isForbidden = isFetchBaseQueryError(error) && error.status === 403;
+
+      if (isForbidden) {
+        setError('currentPassword', {
+          type: 'manual',
+          message: t('form.errors.password.invalid'),
+        });
+
+        showError(t('flash.users.edit.error'));
+      }
+    }
+  };
+
+  const renderPasswordFields = () => {
+    if (isEditing) {
+      if (!showPasswordFields) {
+        return (
+          <Button
+            type="button"
+            variant="outline-secondary"
+            size="sm"
+            className="d-block mb-3"
+            onClick={() => setShowPasswordFields(true)}
+          >
+            {t('buttons.changePassword')}
+          </Button>
+        );
+      }
+
+      return (
+        <>
+          <Input
+            type="password"
+            placeholder={t('form.inputs.currentPassword')}
+            registration={register('currentPassword')}
+            error={(errors as any).currentPassword?.message}
+            isDirty={(dirtyFields as any).currentPassword}
+          />
+          <Input
+            type="password"
+            placeholder={t('form.inputs.newPassword')}
+            registration={register('newPassword')}
+            error={(errors as any).newPassword?.message}
+            isDirty={(dirtyFields as any).newPassword}
+          />
+          <Input
+            type="password"
+            placeholder={t('form.inputs.confirmPassword')}
+            registration={register('confirmPassword')}
+            error={errors.confirmPassword?.message}
+            isDirty={dirtyFields.confirmPassword}
+          />
+        </>
+      );
+    }
+
+    return (
+      <>
+        <Input
+          type="password"
+          placeholder={t('form.inputs.password')}
+          registration={register('password')}
+          error={(errors as any).password?.message}
+          isDirty={(dirtyFields as any).password}
+        />
+        <Input
+          type="password"
+          placeholder={t('form.inputs.confirmPassword')}
+          registration={register('confirmPassword')}
+          error={errors.confirmPassword?.message}
+          isDirty={dirtyFields.confirmPassword}
+        />
+      </>
+    );
+  };
+
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
+    <form onSubmit={handleSubmit(submitHandler)}>
       <Input
         type="text"
         placeholder={t('form.inputs.firstName')}
@@ -137,21 +246,27 @@ export default function UserForm({ currentUser, onSubmit, isEditing = false }: P
         error={errors.email?.message || (isEmailAvailable === false ? t('form.errors.email.exists') : null)}
         isDirty={dirtyFields.email}
       />
-      <Input
-        type="password"
-        placeholder={t('form.inputs.password')}
-        registration={register('password')}
-        error={errors.password?.message}
-        isDirty={dirtyFields.password}
-      />
+
+      {renderPasswordFields()}
+
       <Button
         type="submit"
         variant="primary"
-        isDisabled={isSubmitting || isCheckingEmail || !isValid || !isEmailAvailable}
+        isDisabled={
+          isSubmitting
+          || isCheckingEmail
+          || !isValid
+          || !isEmailAvailable
+          || (isEditing && showPasswordFields && !currentPasswordValue)
+        }
       >
         {isSubmitting ? t('buttons.sending') : t('buttons.send')}
       </Button>
-      {currentUser && <a href={Endpoints.Users} className="btn btn-danger ms-1">{t('buttons.cancel')}</a>}
+      {currentUser && (
+        <a href={Endpoints.Users} className="btn btn-danger ms-1">
+          {t('buttons.cancel')}
+        </a>
+      )}
     </form>
   );
 }
@@ -159,4 +274,29 @@ export default function UserForm({ currentUser, onSubmit, isEditing = false }: P
 UserForm.defaultProps = {
   currentUser: undefined,
   isEditing: false,
+};
+
+UserForm.prepareDataForSubmit = (data: UserFormValues) => {
+  const baseData = {
+    firstName: data.firstName,
+    lastName: data.lastName,
+    email: data.email,
+  };
+
+  if ('password' in data) {
+    return {
+      ...baseData,
+      password: data.password,
+    };
+  }
+
+  if ('newPassword' in data && data.newPassword) {
+    return {
+      ...baseData,
+      currentPassword: data.currentPassword,
+      newPassword: data.newPassword,
+    };
+  }
+
+  return baseData;
 };
