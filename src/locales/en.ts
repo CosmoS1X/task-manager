@@ -119,6 +119,7 @@ export default {
       createTask: 'Create task',
       show: 'Show',
       reset: 'Reset',
+      changePassword: 'Change password',
     },
     form: {
       inputs: {
@@ -126,6 +127,9 @@ export default {
         lastName: 'Last Name',
         email: 'Email',
         password: 'Password',
+        currentPassword: 'Current Password',
+        newPassword: 'New Password',
+        confirmPassword: 'Confirm Password',
         name: 'Name',
       },
       textarea: {
@@ -156,6 +160,10 @@ export default {
           exists: 'Name already in use',
         },
         required: 'Required field',
+        password: {
+          mismatch: 'Passwords do not match',
+          invalid: 'Invalid password',
+        },
       },
     },
     errors: {
