@@ -50,9 +50,46 @@ export default () => ({
     });
   },
   update: async (req: Request, res: Response) => {
-    const user = await User.query().findById(req.params.id).patch(req.body);
+    const { currentPassword, newPassword, ...updateData } = req.body;
+    const currentUser = await User.query().findById(req.params.id);
 
-    res.status(200).json(user);
+    if (!currentUser) {
+      res.status(404).json({
+        error: 'UserNotFound',
+        message: 'User not found',
+      });
+
+      return;
+    }
+
+    if (newPassword) {
+      if (!currentPassword) {
+        res.status(400).json({
+          error: 'CurrentPasswordRequired',
+          message: 'Current password is required to change password',
+        });
+
+        return;
+      }
+
+      if (!currentUser?.verifyPassword(currentPassword)) {
+        res.status(403).json({
+          error: 'InvalidPassword',
+          message: 'Current password is incorrect',
+        });
+
+        return;
+      }
+    }
+
+    const validData = {
+      ...updateData,
+      ...(newPassword && { password: newPassword }),
+    };
+
+    await currentUser.$query().patch(validData);
+
+    res.status(200).json(currentUser);
   },
   delete: async (req: Request, res: Response) => {
     const { id } = req.params;
