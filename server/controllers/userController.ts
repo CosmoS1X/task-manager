@@ -10,15 +10,6 @@ export default () => ({
   getItem: async (req: Request, res: Response) => {
     const user = await User.query().findById(req.params.id);
 
-    if (!user) {
-      res.status(404).json({
-        error: 'UserNotFound',
-        message: 'User not found',
-      });
-
-      return;
-    }
-
     res.status(200).json(user);
   },
   create: async (req: Request, res: Response) => {
@@ -92,19 +83,7 @@ export default () => ({
     res.status(200).json(currentUser);
   },
   delete: async (req: Request, res: Response) => {
-    const { id } = req.params;
-    const currentUser = await User.query().findById(id);
-
-    if (!currentUser) {
-      res.status(404).json({
-        error: 'UserNotFound',
-        message: 'User not found',
-      });
-
-      return;
-    }
-
-    await User.query().deleteById(id);
+    await User.query().deleteById(req.params.id);
 
     req.logOut((error) => {
       if (error) {
@@ -112,7 +91,6 @@ export default () => ({
           error: 'LogoutFailed',
           message: 'Failed to log out',
         });
-
         return;
       }
 
