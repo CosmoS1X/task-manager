@@ -74,17 +74,82 @@ describe('User controller', () => {
   });
 
   describe(`PATCH ${Endpoints.User}`, () => {
-    it('should update user', async () => {
+    it('should update user without password', async () => {
       await agent.post(Endpoints.Login).send(credentials);
 
-      const updates = { firstName: 'Updated' };
+      const updates = createUserData();
+
+      const response = await agent.patch(getUserPath(testUser.id)).send({
+        firstName: updates.firstName,
+        lastName: updates.lastName,
+      });
+
+      expect(response.status).toBe(200);
+      expect(response.body.firstName).toBe(updates.firstName);
+      expect(response.body.lastName).toBe(updates.lastName);
+    });
+
+    it('should update password when current password is correct', async () => {
+      await agent.post(Endpoints.Login).send(credentials);
+
+      const updates = {
+        currentPassword: credentials.password,
+        newPassword: createUserData().password,
+      };
+
       const response = await agent.patch(getUserPath(testUser.id)).send(updates);
 
       expect(response.status).toBe(200);
 
       const updatedUser = await User.query().findById(testUser.id);
 
-      expect(updatedUser?.firstName).toBe('Updated');
+      expect(updatedUser?.verifyPassword(updates.newPassword)).toBeTruthy();
+      expect(updatedUser?.verifyPassword(updates.currentPassword)).toBeFalsy();
+    });
+
+    it('should return 403 when new password provided without current password', async () => {
+      await agent.post(Endpoints.Login).send(credentials);
+
+      const updates = { newPassword: createUserData().password };
+
+      const response = await agent.patch(getUserPath(testUser.id)).send(updates);
+
+      expect(response.status).toBe(403);
+      expect(response.body.error).toBe('CurrentPasswordRequired');
+    });
+
+    it('should return 403 when current password is incorrect', async () => {
+      await agent.post(Endpoints.Login).send(credentials);
+
+      const updates = {
+        currentPassword: 'wrongPassword',
+        newPassword: createUserData().password,
+      };
+
+      const response = await agent.patch(getUserPath(testUser.id)).send(updates);
+
+      expect(response.status).toBe(403);
+      expect(response.body.error).toBe('InvalidPassword');
+    });
+
+    it('should update both profile and password when all data is valid', async () => {
+      await agent.post(Endpoints.Login).send(credentials);
+
+      const newData = createUserData();
+      const updates = {
+        firstName: newData.firstName,
+        currentPassword: credentials.password,
+        newPassword: newData.password,
+      };
+
+      const response = await agent.patch(getUserPath(testUser.id)).send(updates);
+
+      expect(response.status).toBe(200);
+      expect(response.body.firstName).toBe(updates.firstName);
+
+      const updatedUser = await User.query().findById(testUser.id);
+
+      expect(updatedUser?.verifyPassword(updates.newPassword)).toBeTruthy();
     });
   });
 
