@@ -144,10 +144,12 @@ The application can be deployed to any Node.js hosting platform. For Render.com:
 
 ## 🤝 Contributing
 
+Contributions are welcome! Please follow these steps:
+
 1. Fork the project
-2. Create your feature branch (git switch -c feature/amazing-feature)
-3. Commit your changes (git commit -m 'add some amazing feature')
-3. Push to the branch (git push -u origin feature/amazing-feature)
+2. Create your feature branch
+3. Commit your changes
+3. Push to the branch
 4. Open a Pull Request
 
 ## 📄 License
