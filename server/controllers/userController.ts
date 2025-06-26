@@ -44,18 +44,9 @@ export default () => ({
     const { currentPassword, newPassword, ...updateData } = req.body;
     const currentUser = await User.query().findById(req.params.id);
 
-    if (!currentUser) {
-      res.status(404).json({
-        error: 'UserNotFound',
-        message: 'User not found',
-      });
-
-      return;
-    }
-
     if (newPassword) {
       if (!currentPassword) {
-        res.status(400).json({
+        res.status(403).json({
           error: 'CurrentPasswordRequired',
           message: 'Current password is required to change password',
         });
@@ -78,7 +69,7 @@ export default () => ({
       ...(newPassword && { password: newPassword }),
     };
 
-    await currentUser.$query().patch(validData);
+    await currentUser?.$query().patch(validData);
 
     res.status(200).json(currentUser);
   },
