@@ -170,5 +170,12 @@ export default {
       server: 'Internal server error',
       forbidden: 'Access denied',
     },
+    views: {
+      main: {
+        title: 'Task Manager',
+        description: 'The Task Manager application is designed for convenient task management. It allows you to create, edit, and track the execution of tasks.',
+        registration: 'Please register or login to get started.',
+      },
+    },
   },
 };
