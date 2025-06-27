@@ -245,6 +245,7 @@ export default function UserForm({ currentUser, onSubmit, isEditing = false }: P
         registration={register('email')}
         error={errors.email?.message || (isEmailAvailable === false ? t('form.errors.email.exists') : null)}
         isDirty={dirtyFields.email}
+        isDisabled={isEditing}
       />
 
       {renderPasswordFields()}
