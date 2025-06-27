@@ -9,6 +9,7 @@ type Props = {
   error?: string | null;
   defaultValue?: string;
   isDirty?: boolean;
+  isDisabled?: boolean;
 };
 
 export default function Input({
@@ -18,6 +19,7 @@ export default function Input({
   error,
   defaultValue,
   isDirty,
+  isDisabled,
 }: Props) {
   const inputClasses = cn('form-control', {
     'is-valid': !error && isDirty,
@@ -36,6 +38,7 @@ export default function Input({
         onBlur={registration.onBlur}
         ref={registration.ref}
         defaultValue={defaultValue}
+        disabled={isDisabled}
       />
       <label htmlFor={registration.name}>{placeholder}</label>
       {error && <div className="invalid-feedback">{error}</div>}
@@ -47,4 +50,5 @@ Input.defaultProps = {
   error: null,
   defaultValue: '',
   isDirty: false,
+  isDisabled: false,
 };
