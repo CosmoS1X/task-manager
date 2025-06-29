@@ -21,10 +21,7 @@ export default () => ({
 
     const tasks = await Task.query()
       .where(filters)
-      .withGraphJoined('status')
-      .withGraphJoined('creator')
-      .withGraphJoined('executor')
-      .withGraphJoined('labels')
+      .withGraphJoined('[status, creator, executor, labels]')
       .orderBy('createdAt', 'desc');
 
     res.status(200).json(tasks);
@@ -32,13 +29,13 @@ export default () => ({
   getItem: async (req: Request, res: Response) => {
     const task = await Task.query()
       .findById(req.params.id)
-      .withGraphJoined('status')
-      .withGraphJoined('creator')
-      .withGraphJoined('executor')
-      .withGraphJoined('labels');
+      .withGraphJoined('[status, creator, executor, labels]');
 
     if (!task) {
-      res.status(404).json({ message: 'Task not found' });
+      res.status(404).json({
+        error: 'TaskNotFound',
+        message: 'Task not found',
+      });
 
       return;
     }
@@ -46,7 +43,7 @@ export default () => ({
     res.status(200).json(task);
   },
   create: async (req: Request, res: Response) => {
-    const { name, description, statusId, executorId, labelIds } = req.body;
+    const { name, description, statusId, executorId, labelIds = [] } = req.body;
     const creatorId = req.user?.id;
     const labels = await Label.query().whereIn('id', labelIds);
 
@@ -75,9 +72,6 @@ export default () => ({
       res.status(201).json(task);
     } catch (error) {
       await transaction.rollback();
-
-      res.status(500).json({ message: 'Internal server error' });
-
       throw error;
     }
   },
@@ -85,12 +79,15 @@ export default () => ({
     const task = await Task.query().findById(req.params.id);
 
     if (!task) {
-      res.status(404).json({ message: 'Task not found' });
+      res.status(404).json({
+        error: 'TaskNotFound',
+        message: 'Task not found',
+      });
 
       return;
     }
 
-    const { name, description, statusId, executorId, labelIds } = req.body;
+    const { name, description, statusId, executorId, labelIds = [] } = req.body;
     const { creatorId } = task;
     const labels = await Label.query().whereIn('id', labelIds);
 
@@ -122,9 +119,6 @@ export default () => ({
       res.status(200).json(task);
     } catch (error) {
       await transaction.rollback();
-
-      res.status(500).json({ message: 'Internal server error' });
-
       throw error;
     }
   },
@@ -139,7 +133,10 @@ export default () => ({
     }
 
     if (task.creatorId !== req.user?.id) {
-      res.status(403).json({ message: 'Access denied' });
+      res.status(403).json({
+        error: 'Forbidden',
+        message: 'Access denied',
+      });
 
       return;
     }

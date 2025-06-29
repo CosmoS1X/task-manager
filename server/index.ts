@@ -14,7 +14,7 @@ app.use(sessionConfig);
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(express.json());
-app.use('/api', ...routers);
+app.use(...routers);
 app.use(errorHandler);
 
 if (env.isProduction) {

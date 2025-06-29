@@ -4,5 +4,6 @@
     "**/*.ts",
     "**/*.tsx",
     "webpack.config.js",
+    "jest.config.js",
   ],
 }

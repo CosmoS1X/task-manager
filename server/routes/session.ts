@@ -1,11 +1,12 @@
 import { Router } from 'express';
 import { sessionController } from '../controllers';
+import Endpoints from '../endpoints';
 
 const router = Router();
 const controller = sessionController();
 
-router.post('/login', controller.login);
-router.get('/check-auth', controller.checkAuth);
-router.post('/logout', controller.logout);
+router.post(Endpoints.Login, controller.login);
+router.get(Endpoints.CheckAuth, controller.checkAuth);
+router.post(Endpoints.Logout, controller.logout);
 
 export default router;

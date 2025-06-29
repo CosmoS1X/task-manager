@@ -6,6 +6,8 @@
   "type": "commonjs",
   "scripts": {
     "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
     "type-check": "tsc --noEmit -p server/tsconfig.json && tsc --noEmit -p src/tsconfig.json && tsc --noEmit -p bin/tsconfig.json",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
@@ -20,9 +22,6 @@
     "migrate": "knex migrate:latest --knexfile=./dist/knexfile.js --env production",
     "migrate:dev": "tsx node_modules/.bin/knex migrate:latest"
   },
-  "jest": {
-    "preset": "ts-jest"
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/CosmoS1X/new-typescript-project.git"
@@ -36,7 +35,6 @@
   "dependencies": {
     "@hookform/resolvers": "^5.0.1",
     "@reduxjs/toolkit": "^2.7.0",
-    "axios": "^1.9.0",
     "bootstrap": "^5.3.5",
     "bootstrap-icons": "^1.11.3",
     "classnames": "^2.5.1",
@@ -60,6 +58,7 @@
     "react-redux": "^9.2.0",
     "react-router-dom": "^7.5.3",
     "react-toastify": "^11.0.5",
+    "rollbar": "^3.0.0-alpha.1",
     "sqlite3": "^5.1.7",
     "use-debounce": "^10.0.4",
     "zod": "^3.24.3"
@@ -69,6 +68,7 @@
     "@babel/preset-env": "^7.26.9",
     "@babel/preset-react": "^7.26.3",
     "@babel/preset-typescript": "^7.27.0",
+    "@faker-js/faker": "^9.8.0",
     "@types/bootstrap": "^5.2.10",
     "@types/cors": "^2.8.17",
     "@types/debug": "^4.1.12",
@@ -81,6 +81,7 @@
     "@types/passport-local": "^1.0.38",
     "@types/react": "^19.1.2",
     "@types/react-dom": "^19.1.2",
+    "@types/supertest": "^6.0.3",
     "@typescript-eslint/eslint-plugin": "^7.18.0",
     "@typescript-eslint/parser": "^7.18.0",
     "babel-loader": "^10.0.0",
@@ -101,6 +102,7 @@
     "sass": "^1.87.0",
     "sass-loader": "^16.0.5",
     "style-loader": "^4.0.0",
+    "supertest": "^7.1.1",
     "ts-jest": "^29.3.2",
     "ts-node": "^10.9.2",
     "tsx": "^4.19.4",

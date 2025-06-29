@@ -43,6 +43,15 @@ export default () => ({
     const existingLabel = await Label.query().findOne({ name: validData.name });
     const currentLabel = await Label.query().findById(req.params.id);
 
+    if (!currentLabel) {
+      res.status(404).json({
+        error: 'LabelNotFound',
+        message: 'Label not found',
+      });
+
+      return;
+    }
+
     if (currentLabel?.name === validData.name) {
       res.status(200).json(currentLabel);
 
@@ -63,6 +72,18 @@ export default () => ({
     res.status(200).json(currentLabel);
   },
   delete: async (req: Request, res: Response) => {
+    const { id } = req.params;
+    const currentLabel = await Label.query().findById(id);
+
+    if (!currentLabel) {
+      res.status(404).json({
+        error: 'LabelNotFound',
+        message: 'Label not found',
+      });
+
+      return;
+    }
+
     await Label.query().deleteById(req.params.id);
 
     res.status(204).end();
