@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useDebounce } from 'use-debounce';
 import type { TFunction } from 'i18next';
 import { z } from 'zod';
-import { useForm, SubmitHandler } from 'react-hook-form';
+import { useForm, SubmitHandler, FieldError } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import Input from '@/components/Input';
 import Button from '@/components/Button';
@@ -197,6 +197,27 @@ export default function UserForm({ currentUser, onSubmit, isEditing = false }: P
 
     const shouldShowChangePasswordButton = isEditing && !showPasswordFields;
 
+    if (!isEditing) {
+      return (
+        <>
+          <Input
+            type="password"
+            placeholder={t('form.inputs.password')}
+            registration={register('password')}
+            error={(errors as PasswordError).password?.message}
+            isDirty={(dirtyFields as PasswordDirtyFields).password}
+          />
+          <Input
+            type="password"
+            placeholder={t('form.inputs.confirmPassword')}
+            registration={register('confirmPassword')}
+            error={(errors as ConfirmPasswordError).confirmPassword?.message}
+            isDirty={(dirtyFields as ConfirmPasswordDirtyFields).confirmPassword}
+          />
+        </>
+      );
+    }
+
     if (shouldShowChangePasswordButton) {
       return (
         <Button
@@ -211,49 +232,28 @@ export default function UserForm({ currentUser, onSubmit, isEditing = false }: P
       );
     }
 
-    if (shouldShowPasswordFields) {
-      return (
-        <>
-          <Input
-            type="password"
-            placeholder={t('form.inputs.currentPassword')}
-            registration={register('currentPassword')}
-            error={(errors as { currentPassword: { message: string } }).currentPassword?.message}
-            isDirty={(dirtyFields as { currentPassword: boolean }).currentPassword}
-          />
-          <Input
-            type="password"
-            placeholder={t('form.inputs.newPassword')}
-            registration={register('newPassword')}
-            error={(errors as { newPassword: { message: string } }).newPassword?.message}
-            isDirty={(dirtyFields as { newPassword: boolean }).newPassword}
-          />
-          <Input
-            type="password"
-            placeholder={t('form.inputs.confirmPassword')}
-            registration={register('confirmPassword')}
-            error={(errors as { confirmPassword: { message: string } }).confirmPassword?.message}
-            isDirty={(dirtyFields as { confirmPassword: boolean }).confirmPassword}
-          />
-        </>
-      );
-    }
-
     return (
       <>
         <Input
           type="password"
-          placeholder={t('form.inputs.password')}
-          registration={register('password')}
-          error={(errors as { password: { message: string } }).password?.message}
-          isDirty={(dirtyFields as { password: boolean }).password}
+          placeholder={t('form.inputs.currentPassword')}
+          registration={register('currentPassword')}
+          error={(errors as CurrentPasswordError).currentPassword?.message}
+          isDirty={(dirtyFields as CurrentPasswordDirtyFields).currentPassword}
+        />
+        <Input
+          type="password"
+          placeholder={t('form.inputs.newPassword')}
+          registration={register('newPassword')}
+          error={(errors as NewPasswordError).newPassword?.message}
+          isDirty={(dirtyFields as NewPasswordDirtyFields).newPassword}
         />
         <Input
           type="password"
           placeholder={t('form.inputs.confirmPassword')}
           registration={register('confirmPassword')}
-          error={(errors as { confirmPassword: { message: string } }).confirmPassword?.message}
-          isDirty={(dirtyFields as { confirmPassword: boolean }).confirmPassword}
+          error={(errors as ConfirmPasswordError).confirmPassword?.message}
+          isDirty={(dirtyFields as ConfirmPasswordDirtyFields).confirmPassword}
         />
       </>
     );
