@@ -66,11 +66,11 @@ const formSchema = (t: TFunction, isEditing: boolean) => {
     newPassword: passwordBaseSchema.optional(),
     confirmPassword: requiredInputSchema.optional(),
   })
-    .refine((data) => shouldRequireCurrentPassword(data), {
+    .refine(shouldRequireCurrentPassword, {
       message: t('form.errors.required'),
       path: ['currentPassword'],
     })
-    .refine((data) => shouldConfirmPassword(data), {
+    .refine(shouldConfirmPassword, {
       message: t('form.errors.password.mismatch'),
       path: ['confirmPassword'],
     });
@@ -78,7 +78,7 @@ const formSchema = (t: TFunction, isEditing: boolean) => {
   const passwordCreateSchema = z.object({
     password: passwordBaseSchema,
     confirmPassword: requiredInputSchema,
-  }).refine((data) => shouldConfirmPassword(data), {
+  }).refine(shouldConfirmPassword, {
     message: t('form.errors.password.mismatch'),
     path: ['confirmPassword'],
   });
