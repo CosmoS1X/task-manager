@@ -3,13 +3,36 @@ import { useTranslation } from 'react-i18next';
 import { useDebounce } from 'use-debounce';
 import type { TFunction } from 'i18next';
 import { z } from 'zod';
-import { useForm, SubmitHandler } from 'react-hook-form';
+import { useForm, SubmitHandler, FieldError } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import Input from '@/components/Input';
 import Button from '@/components/Button';
 import type { User } from '@/types';
 import { capitalize } from '@/helpers';
 import Endpoints from '@/endpoints';
+import { isFetchBaseQueryError } from '@/api/helpers';
+import { showError } from '@/utils/flash';
+
+const shouldRequireCurrentPassword = (data: { currentPassword?: string, newPassword?: string }) => {
+  const isCurrentPasswordProvided = Boolean(data.currentPassword);
+  const isNewPasswordProvided = Boolean(data.newPassword);
+
+  if (!isCurrentPasswordProvided && isNewPasswordProvided) return false;
+
+  return true;
+};
+
+const shouldConfirmPassword = (data: {
+  password?: string;
+  newPassword?: string;
+  confirmPassword?: string;
+}) => {
+  const isPasswordConfirmed = (data.password || data.newPassword) === data.confirmPassword;
+
+  if (isPasswordConfirmed) return true;
+
+  return false;
+};
 
 const formSchema = (t: TFunction, isEditing: boolean) => {
   const firstNameLength = 2;
@@ -31,16 +54,38 @@ const formSchema = (t: TFunction, isEditing: boolean) => {
       .transform((value) => value.trim().toLowerCase()),
   });
 
+  const requiredInputSchema = z.string().min(1, t('form.errors.required'));
+
   const passwordBaseSchema = z
     .string()
     .min(passwordLength, t('form.errors.min', { count: passwordLength }))
     .transform((value) => value.trim());
 
-  const passwordSchema = isEditing
-    ? z.object({ password: passwordBaseSchema.optional() })
-    : z.object({ password: passwordBaseSchema });
+  const passwordEditSchema = z.object({
+    currentPassword: requiredInputSchema.optional(),
+    newPassword: passwordBaseSchema.optional(),
+    confirmPassword: requiredInputSchema.optional(),
+  })
+    .refine(shouldRequireCurrentPassword, {
+      message: t('form.errors.required'),
+      path: ['currentPassword'],
+    })
+    .refine(shouldConfirmPassword, {
+      message: t('form.errors.password.mismatch'),
+      path: ['confirmPassword'],
+    });
 
-  return baseSchema.merge(passwordSchema);
+  const passwordCreateSchema = z.object({
+    password: passwordBaseSchema,
+    confirmPassword: requiredInputSchema,
+  }).refine(shouldConfirmPassword, {
+    message: t('form.errors.password.mismatch'),
+    path: ['confirmPassword'],
+  });
+
+  const passwordSchema = isEditing ? passwordEditSchema : passwordCreateSchema;
+
+  return baseSchema.and(passwordSchema);
 };
 
 export type UserFormValues = z.infer<ReturnType<typeof formSchema>>;
@@ -64,6 +109,7 @@ const checkEmailAvailability = async (email: string) => {
 export default function UserForm({ currentUser, onSubmit, isEditing = false }: Props) {
   const [isEmailAvailable, setIsEmailAvailable] = useState<boolean | null>(null);
   const [isCheckingEmail, setIsCheckingEmail] = useState(false);
+  const [showPasswordFields, setShowPasswordFields] = useState(false);
   const { t } = useTranslation();
 
   const {
@@ -71,6 +117,7 @@ export default function UserForm({ currentUser, onSubmit, isEditing = false }: P
     handleSubmit,
     watch,
     reset,
+    setError,
     formState: { errors, isSubmitting, isValid, dirtyFields },
   } = useForm<UserFormValues>({
     resolver: zodResolver(formSchema(t, isEditing)),
@@ -85,6 +132,7 @@ export default function UserForm({ currentUser, onSubmit, isEditing = false }: P
   }, [currentUser, reset]);
 
   const [debouncedEmail] = useDebounce(watch('email'), 500);
+  const currentPasswordValue = watch('currentPassword');
 
   useEffect(() => {
     const checkEmail = async () => {
@@ -114,8 +162,105 @@ export default function UserForm({ currentUser, onSubmit, isEditing = false }: P
     checkEmail();
   }, [debouncedEmail, currentUser?.email]);
 
+  const submitHandler: SubmitHandler<UserFormValues> = async (data) => {
+    try {
+      await onSubmit(data);
+    } catch (error) {
+      const isForbidden = isFetchBaseQueryError(error) && error.status === 403;
+
+      if (isForbidden) {
+        setError('currentPassword', {
+          type: 'manual',
+          message: t('form.errors.password.invalid'),
+        });
+
+        showError(t('flash.users.edit.error'));
+      }
+    }
+  };
+
+  const renderPasswordFields = () => {
+    type Errors = typeof errors;
+    type DirtyFields = typeof dirtyFields;
+
+    type CurrentPasswordError = Errors & { currentPassword: FieldError };
+    type CurrentPasswordDirtyFields = DirtyFields & { currentPassword: boolean };
+
+    type NewPasswordError = Errors & { newPassword: FieldError };
+    type NewPasswordDirtyFields = DirtyFields & { newPassword: boolean };
+
+    type ConfirmPasswordError = Errors & { confirmPassword: FieldError };
+    type ConfirmPasswordDirtyFields = DirtyFields & { confirmPassword: boolean };
+
+    type PasswordError = Errors & { password: FieldError };
+    type PasswordDirtyFields = DirtyFields & { password: boolean };
+
+    const shouldShowChangePasswordButton = isEditing && !showPasswordFields;
+
+    if (!isEditing) {
+      return (
+        <>
+          <Input
+            type="password"
+            placeholder={t('form.inputs.password')}
+            registration={register('password')}
+            error={(errors as PasswordError).password?.message}
+            isDirty={(dirtyFields as PasswordDirtyFields).password}
+          />
+          <Input
+            type="password"
+            placeholder={t('form.inputs.confirmPassword')}
+            registration={register('confirmPassword')}
+            error={(errors as ConfirmPasswordError).confirmPassword?.message}
+            isDirty={(dirtyFields as ConfirmPasswordDirtyFields).confirmPassword}
+          />
+        </>
+      );
+    }
+
+    if (shouldShowChangePasswordButton) {
+      return (
+        <Button
+          type="button"
+          variant="outline-secondary"
+          size="sm"
+          className="d-block mb-3"
+          onClick={() => setShowPasswordFields(true)}
+        >
+          {t('buttons.changePassword')}
+        </Button>
+      );
+    }
+
+    return (
+      <>
+        <Input
+          type="password"
+          placeholder={t('form.inputs.currentPassword')}
+          registration={register('currentPassword')}
+          error={(errors as CurrentPasswordError).currentPassword?.message}
+          isDirty={(dirtyFields as CurrentPasswordDirtyFields).currentPassword}
+        />
+        <Input
+          type="password"
+          placeholder={t('form.inputs.newPassword')}
+          registration={register('newPassword')}
+          error={(errors as NewPasswordError).newPassword?.message}
+          isDirty={(dirtyFields as NewPasswordDirtyFields).newPassword}
+        />
+        <Input
+          type="password"
+          placeholder={t('form.inputs.confirmPassword')}
+          registration={register('confirmPassword')}
+          error={(errors as ConfirmPasswordError).confirmPassword?.message}
+          isDirty={(dirtyFields as ConfirmPasswordDirtyFields).confirmPassword}
+        />
+      </>
+    );
+  };
+
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
+    <form onSubmit={handleSubmit(submitHandler)}>
       <Input
         type="text"
         placeholder={t('form.inputs.firstName')}
@@ -136,22 +281,29 @@ export default function UserForm({ currentUser, onSubmit, isEditing = false }: P
         registration={register('email')}
         error={errors.email?.message || (isEmailAvailable === false ? t('form.errors.email.exists') : null)}
         isDirty={dirtyFields.email}
+        isDisabled={isEditing}
       />
-      <Input
-        type="password"
-        placeholder={t('form.inputs.password')}
-        registration={register('password')}
-        error={errors.password?.message}
-        isDirty={dirtyFields.password}
-      />
+
+      {renderPasswordFields()}
+
       <Button
         type="submit"
         variant="primary"
-        isDisabled={isSubmitting || isCheckingEmail || !isValid || !isEmailAvailable}
+        isDisabled={
+          isSubmitting
+          || isCheckingEmail
+          || !isValid
+          || !isEmailAvailable
+          || (isEditing && showPasswordFields && !currentPasswordValue)
+        }
       >
         {isSubmitting ? t('buttons.sending') : t('buttons.send')}
       </Button>
-      {currentUser && <a href={Endpoints.Users} className="btn btn-danger ms-1">{t('buttons.cancel')}</a>}
+      {currentUser && (
+        <a href={Endpoints.Users} className="btn btn-danger ms-1">
+          {t('buttons.cancel')}
+        </a>
+      )}
     </form>
   );
 }
@@ -159,4 +311,29 @@ export default function UserForm({ currentUser, onSubmit, isEditing = false }: P
 UserForm.defaultProps = {
   currentUser: undefined,
   isEditing: false,
+};
+
+UserForm.prepareDataForSubmit = (data: UserFormValues) => {
+  const baseData = {
+    firstName: data.firstName,
+    lastName: data.lastName,
+    email: data.email,
+  };
+
+  if ('password' in data) {
+    return {
+      ...baseData,
+      password: data.password,
+    };
+  }
+
+  if ('newPassword' in data && data.newPassword) {
+    return {
+      ...baseData,
+      currentPassword: data.currentPassword,
+      newPassword: data.newPassword,
+    };
+  }
+
+  return baseData;
 };

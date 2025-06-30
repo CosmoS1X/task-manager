@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { useDeleteTaskMutation, useGetTasksQuery } from '@/api/tasksApi';
+import { useDeleteTaskMutation } from '@/api/tasksApi';
 import { showSuccess, showError } from '@/utils/flash';
 import Endpoints, { buildEditRoute } from '@/endpoints';
 import { isFetchBaseQueryError } from '@/api/helpers';
@@ -9,7 +9,6 @@ export default () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [deleteTask] = useDeleteTaskMutation();
-  const { refetch } = useGetTasksQuery();
 
   const handleEdit = (id: number) => async (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
@@ -23,7 +22,6 @@ export default () => {
     try {
       await deleteTask(id).unwrap();
       showSuccess(t('flash.tasks.delete.success'));
-      refetch();
       navigate(Endpoints.Tasks);
     } catch (error) {
       const isForbidden = isFetchBaseQueryError(error) && error.status === 403;

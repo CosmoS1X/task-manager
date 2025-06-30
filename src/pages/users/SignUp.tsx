@@ -9,7 +9,7 @@ import type { UserFormValues } from '@/components/UserForm';
 import Endpoints from '@/endpoints';
 import { useAppDispatch } from '@/store';
 import { setUser } from '@/store/authSlice';
-import { showError, showSuccess } from '@/utils/flash';
+import { showSuccess } from '@/utils/flash';
 
 export default function SignUpPage() {
   const { t } = useTranslation();
@@ -18,15 +18,12 @@ export default function SignUpPage() {
   const dispatch = useAppDispatch();
 
   const onSubmit = async (data: UserFormValues) => {
-    try {
-      const newUser = await createUser(data).unwrap();
-      dispatch(setUser(newUser));
-      showSuccess(t('flash.users.create.success'));
-      navigate(Endpoints.Users);
-    } catch (error) {
-      showError(t('flash.users.create.error'));
-      throw error;
-    }
+    const preparedData = UserForm.prepareDataForSubmit(data);
+    const newUser = await createUser(preparedData).unwrap();
+
+    dispatch(setUser(newUser));
+    showSuccess(t('flash.users.create.success'));
+    navigate(Endpoints.Users);
   };
 
   return (

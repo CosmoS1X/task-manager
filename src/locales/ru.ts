@@ -6,7 +6,7 @@ export default {
         success: 'Вы вошли в систему',
         errors: {
           email: 'Пользователь с таким email не найден',
-          password: 'Неправильный пароль',
+          password: 'Неверный пароль',
         },
       },
       logout: {
@@ -119,6 +119,7 @@ export default {
       createTask: 'Создать задачу',
       show: 'Показать',
       reset: 'Сбросить',
+      changePassword: 'Изменить пароль',
     },
     form: {
       inputs: {
@@ -126,6 +127,9 @@ export default {
         lastName: 'Фамилия',
         email: 'Email',
         password: 'Пароль',
+        currentPassword: 'Текущий пароль',
+        newPassword: 'Новый пароль',
+        confirmPassword: 'Подтверждение пароля',
         name: 'Наименование',
       },
       textarea: {
@@ -157,11 +161,22 @@ export default {
           exists: 'Наименование уже используется',
         },
         required: 'Обязательное поле',
+        password: {
+          mismatch: 'Пароли не совпадают',
+          invalid: 'Неверный пароль',
+        },
       },
     },
     errors: {
       server: 'Внутренняя ошибка сервера',
       forbidden: 'Доступ запрещен',
+    },
+    views: {
+      main: {
+        title: 'Менеджер задач',
+        description: 'Приложение «Менеджер задач» предназначено для удобного управления задачами. Оно позволяет создавать, редактировать и отслеживать выполнение задач.',
+        registration: 'Чтобы начать работу, пожалуйста, зарегистрируйтесь или войдите в систему.',
+      },
     },
   },
 };

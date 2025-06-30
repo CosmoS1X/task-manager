@@ -8,12 +8,14 @@ export const tasksApi = createApi({
     baseUrl: '/api/tasks',
     paramsSerializer: (params) => new URLSearchParams(params).toString(),
   }),
+  tagTypes: ['Tasks'],
   endpoints: (builder) => ({
     getTasks: builder.query<Task[], TaskFilterParams | void>({
       query: (params) => ({
         url: '/',
         params: params || {},
       }),
+      providesTags: ['Tasks'],
     }),
     getTaskById: builder.query<Task, number>({
       query: (id) => `/${id}`,
@@ -37,6 +39,7 @@ export const tasksApi = createApi({
         url: `/${id}`,
         method: 'DELETE',
       }),
+      invalidatesTags: ['Tasks'],
     }),
   }),
 });
