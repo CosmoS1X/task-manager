@@ -13,6 +13,27 @@ import Endpoints from '@/endpoints';
 import { isFetchBaseQueryError } from '@/api/helpers';
 import { showError } from '@/utils/flash';
 
+const shouldRequireCurrentPassword = (data: { currentPassword?: string, newPassword?: string }) => {
+  const isCurrentPasswordProvided = Boolean(data.currentPassword);
+  const isNewPasswordProvided = Boolean(data.newPassword);
+
+  if (!isCurrentPasswordProvided && isNewPasswordProvided) return false;
+
+  return true;
+};
+
+const shouldConfirmPassword = (data: {
+  password?: string;
+  newPassword?: string;
+  confirmPassword?: string;
+}) => {
+  const isPasswordConfirmed = (data.password || data.newPassword) === data.confirmPassword;
+
+  if (isPasswordConfirmed) return true;
+
+  return false;
+};
+
 const formSchema = (t: TFunction, isEditing: boolean) => {
   const firstNameLength = 2;
   const lastNameLength = 2;
@@ -33,33 +54,31 @@ const formSchema = (t: TFunction, isEditing: boolean) => {
       .transform((value) => value.trim().toLowerCase()),
   });
 
+  const requiredInputSchema = z.string().min(1, t('form.errors.required'));
+
   const passwordBaseSchema = z
     .string()
     .min(passwordLength, t('form.errors.min', { count: passwordLength }))
     .transform((value) => value.trim());
 
-  const newPasswordSchema = passwordBaseSchema.optional();
-  const currentPasswordSchema = z.string().min(1, t('form.errors.required')).optional();
-  const confirmPasswordSchema = z.string().min(1, t('form.errors.required'));
-
   const passwordEditSchema = z.object({
-    currentPassword: currentPasswordSchema,
-    newPassword: newPasswordSchema,
-    confirmPassword: confirmPasswordSchema.optional(),
+    currentPassword: requiredInputSchema.optional(),
+    newPassword: passwordBaseSchema.optional(),
+    confirmPassword: requiredInputSchema.optional(),
   })
-    .refine((data) => !(data.newPassword && !data.currentPassword), {
-      message: t('form.errors.currentPassword.required'),
+    .refine((data) => shouldRequireCurrentPassword(data), {
+      message: t('form.errors.required'),
       path: ['currentPassword'],
     })
-    .refine((data) => data.newPassword === data.confirmPassword, {
+    .refine((data) => shouldConfirmPassword(data), {
       message: t('form.errors.password.mismatch'),
       path: ['confirmPassword'],
     });
 
   const passwordCreateSchema = z.object({
     password: passwordBaseSchema,
-    confirmPassword: confirmPasswordSchema,
-  }).refine((data) => data.password === data.confirmPassword, {
+    confirmPassword: requiredInputSchema,
+  }).refine((data) => shouldConfirmPassword(data), {
     message: t('form.errors.password.mismatch'),
     path: ['confirmPassword'],
   });
@@ -161,43 +180,46 @@ export default function UserForm({ currentUser, onSubmit, isEditing = false }: P
   };
 
   const renderPasswordFields = () => {
-    if (isEditing) {
-      if (!showPasswordFields) {
-        return (
-          <Button
-            type="button"
-            variant="outline-secondary"
-            size="sm"
-            className="d-block mb-3"
-            onClick={() => setShowPasswordFields(true)}
-          >
-            {t('buttons.changePassword')}
-          </Button>
-        );
-      }
+    const shouldShowPasswordFields = isEditing && showPasswordFields;
+    const shouldShowChangePasswordButton = isEditing && !showPasswordFields;
 
+    if (shouldShowChangePasswordButton) {
+      return (
+        <Button
+          type="button"
+          variant="outline-secondary"
+          size="sm"
+          className="d-block mb-3"
+          onClick={() => setShowPasswordFields(true)}
+        >
+          {t('buttons.changePassword')}
+        </Button>
+      );
+    }
+
+    if (shouldShowPasswordFields) {
       return (
         <>
           <Input
             type="password"
             placeholder={t('form.inputs.currentPassword')}
             registration={register('currentPassword')}
-            error={(errors as any).currentPassword?.message}
-            isDirty={(dirtyFields as any).currentPassword}
+            error={(errors as { currentPassword: { message: string } }).currentPassword?.message}
+            isDirty={(dirtyFields as { currentPassword: boolean }).currentPassword}
           />
           <Input
             type="password"
             placeholder={t('form.inputs.newPassword')}
             registration={register('newPassword')}
-            error={(errors as any).newPassword?.message}
-            isDirty={(dirtyFields as any).newPassword}
+            error={(errors as { newPassword: { message: string } }).newPassword?.message}
+            isDirty={(dirtyFields as { newPassword: boolean }).newPassword}
           />
           <Input
             type="password"
             placeholder={t('form.inputs.confirmPassword')}
             registration={register('confirmPassword')}
-            error={errors.confirmPassword?.message}
-            isDirty={dirtyFields.confirmPassword}
+            error={(errors as { confirmPassword: { message: string } }).confirmPassword?.message}
+            isDirty={(dirtyFields as { confirmPassword: boolean }).confirmPassword}
           />
         </>
       );
@@ -209,15 +231,15 @@ export default function UserForm({ currentUser, onSubmit, isEditing = false }: P
           type="password"
           placeholder={t('form.inputs.password')}
           registration={register('password')}
-          error={(errors as any).password?.message}
-          isDirty={(dirtyFields as any).password}
+          error={(errors as { password: { message: string } }).password?.message}
+          isDirty={(dirtyFields as { password: boolean }).password}
         />
         <Input
           type="password"
           placeholder={t('form.inputs.confirmPassword')}
           registration={register('confirmPassword')}
-          error={errors.confirmPassword?.message}
-          isDirty={dirtyFields.confirmPassword}
+          error={(errors as { confirmPassword: { message: string } }).confirmPassword?.message}
+          isDirty={(dirtyFields as { confirmPassword: boolean }).confirmPassword}
         />
       </>
     );
