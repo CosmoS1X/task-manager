@@ -180,7 +180,21 @@ export default function UserForm({ currentUser, onSubmit, isEditing = false }: P
   };
 
   const renderPasswordFields = () => {
-    const shouldShowPasswordFields = isEditing && showPasswordFields;
+    type Errors = typeof errors;
+    type DirtyFields = typeof dirtyFields;
+
+    type CurrentPasswordError = Errors & { currentPassword: FieldError };
+    type CurrentPasswordDirtyFields = DirtyFields & { currentPassword: boolean };
+
+    type NewPasswordError = Errors & { newPassword: FieldError };
+    type NewPasswordDirtyFields = DirtyFields & { newPassword: boolean };
+
+    type ConfirmPasswordError = Errors & { confirmPassword: FieldError };
+    type ConfirmPasswordDirtyFields = DirtyFields & { confirmPassword: boolean };
+
+    type PasswordError = Errors & { password: FieldError };
+    type PasswordDirtyFields = DirtyFields & { password: boolean };
+
     const shouldShowChangePasswordButton = isEditing && !showPasswordFields;
 
     if (shouldShowChangePasswordButton) {
