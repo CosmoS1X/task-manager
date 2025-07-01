@@ -74,8 +74,8 @@ Task Manager is a full-stack application for efficient task management with a mo
 1. Clone the repository:
 
     ```bash
-    git clone https://github.com/CosmoS1X/new-typescript-project.git
-    cd new-typescript-project
+    git clone git@github.com:CosmoS1X/task-manager.git
+    cd task-manager
     ```
 
 2. Install dependencies:
@@ -133,7 +133,7 @@ npm test <path-to-test-file>
 npm run test:coverage
 ```
 
-### Deployment
+### 🚀 Deployment
 
 The application can be deployed to any Node.js hosting platform. For Render.com:
 
