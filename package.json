@@ -1,7 +1,7 @@
 {
-  "name": "new-typescript-project",
-  "version": "0.1.0",
-  "description": "New Typescript Project Template",
+  "name": "task-manager",
+  "version": "1.0.0",
+  "description": "A task management application built with TypeScript, React, and Node.js",
   "main": "dist/server/index.js",
   "type": "commonjs",
   "scripts": {
@@ -27,7 +27,7 @@
     "url": "git+https://github.com/CosmoS1X/new-typescript-project.git"
   },
   "author": "Konstantin Korovin <cosmo.stan@yandex.com>",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/CosmoS1X/new-typescript-project/issues"
   },
