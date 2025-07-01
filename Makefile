@@ -34,7 +34,10 @@ start: build migrate
 dev:
 	npm run dev
 
-gen-session-key:
+session-key:
 	node -e "console.log(require('crypto').randomBytes(64).toString('hex'))"
+
+env-file:
+	cp .env.example .env
 
 .PHONY: test
