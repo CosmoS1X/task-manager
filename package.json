@@ -8,7 +8,7 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
-    "type-check": "tsc --noEmit -p server/tsconfig.json && tsc --noEmit -p src/tsconfig.json && tsc --noEmit -p bin/tsconfig.json",
+    "type-check": "tsc --noEmit -p server/tsconfig.json && tsc --noEmit -p client/tsconfig.json && tsc --noEmit -p bin/tsconfig.json",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "client": "webpack serve",

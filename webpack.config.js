@@ -11,7 +11,7 @@ const isProduction = process.env.NODE_ENV === 'production';
 module.exports = {
   mode: isProduction ? 'production' : 'development',
   devtool: isProduction ? false : 'source-map',
-  entry: './src/index.tsx',
+  entry: './client/index.tsx',
   output: {
     path: path.join(__dirname, 'dist'),
     filename: isProduction ? '[name].[contenthash].js' : 'bundle.js',
@@ -20,7 +20,7 @@ module.exports = {
   resolve: {
     extensions: ['.tsx', '.ts', '.js'],
     alias: {
-      '@': path.resolve(__dirname, 'src/'),
+      '@': path.resolve(__dirname, 'client/'),
     },
   },
   module: {
@@ -74,7 +74,7 @@ module.exports = {
   },
   plugins: [
     new HtmlWebpackPlugin({
-      template: './src/public/index.html',
+      template: './client/public/index.html',
     }),
     new MiniCssExtractPlugin({
       filename: '[name].[contenthash].css',
