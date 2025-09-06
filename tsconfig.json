@@ -2,17 +2,22 @@
   "compilerOptions": {
     "esModuleInterop": true,
     "strict": true,
-    "target": "ES5",
-    "module": "CommonJS",
+    "target": "esnext",
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
     "sourceMap": true,
     "declaration": true,
     "skipLibCheck": true,
-    "moduleResolution": "node",
     "forceConsistentCasingInFileNames": true,
-    "baseUrl": ".",
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "isolatedModules": true,
+    "outDir": "./dist",
+    "baseUrl": "./",
     "paths": {
       "@/*": ["./client/*"]
     }
   },
-  "exclude": ["*.test.ts"]
+  "include": ["server", "env", "knexfile.ts"],
+  "exclude": ["node_modules", "dist", "test", "**/*spec.ts"]
 }
