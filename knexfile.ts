@@ -48,7 +48,7 @@ const config: Record<EnvironmentUnion, Knex.Config> = {
   development: {
     client: 'sqlite3',
     connection: {
-      filename: path.resolve(__dirname, 'db.sqlite'),
+      filename: path.join(process.cwd(), 'db.sqlite'),
     },
     migrations: migrationsConfig.development,
     pool: {
