@@ -15,7 +15,8 @@
     "outDir": "./dist",
     "baseUrl": "./",
     "paths": {
-      "@/*": ["./client/*"]
+      "@/*": ["./client/*"],
+      "@server/*": ["./server/*"]
     }
   },
   "include": ["server", "env", "knexfile.ts"],
