@@ -26,10 +26,16 @@ export class UsersService {
     return this.userRepository.findById(id);
   }
 
+  async findByEmail(email: string): Promise<User | undefined> {
+    this.logger.log(`Fetching user with email: ${email}...`);
+
+    return this.userRepository.findByEmail(email);
+  }
+
   async create(createUserDto: CreateUserDto): Promise<User> {
     this.logger.log('Creating new user...');
 
-    const existingUser = await this.userRepository.findByEmail(createUserDto.email);
+    const existingUser = await this.findByEmail(createUserDto.email);
 
     if (existingUser) {
       this.logger.warn(`Email ${createUserDto.email} already exists`);
@@ -50,7 +56,7 @@ export class UsersService {
     const user = await this.findById(id);
 
     if (updateUserDto.email && updateUserDto.email !== user.email) {
-      const existingUser = await this.userRepository.findByEmail(updateUserDto.email);
+      const existingUser = await this.findByEmail(updateUserDto.email);
 
       if (existingUser) {
         this.logger.warn(`Email ${updateUserDto.email} already exists`);
