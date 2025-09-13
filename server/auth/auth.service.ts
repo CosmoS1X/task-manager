@@ -33,6 +33,8 @@ export class AuthService {
     const { userId } = session;
 
     if (!userId) {
+      this.logger.warn('User is not authenticated.');
+
       throw new UnauthorizedException('Not authenticated');
     }
 
