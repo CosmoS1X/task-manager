@@ -17,6 +17,7 @@ import type { Response } from 'express';
 import type { SessionData } from 'express-session';
 import { AuthService } from '@server/auth/auth.service';
 import { AuthGuard } from '@server/auth/guards/auth.guard';
+import { OwnerGuard } from '@server/auth/guards/owner.guard';
 import { Public } from '@server/auth/decorators/public.decorator';
 import { UsersService } from './users.service';
 import { User } from './entities/user.entity';
@@ -55,6 +56,7 @@ export class UsersController {
   }
 
   @Patch(':id')
+  @UseGuards(OwnerGuard) // Only allow owners to update their profile
   async update(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateUserDto: UpdateUserDto,
@@ -64,15 +66,13 @@ export class UsersController {
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
+  @UseGuards(OwnerGuard) // Only allow owners to delete their profile
   async delete(
     @Param('id', ParseIntPipe) id: number,
     @Session() session: SessionData,
     @Res({ passthrough: true }) res: Response,
   ): Promise<void> {
-    if (session.userId === id) {
-      await this.authService.logout(session, res);
-    }
-
+    await this.authService.logout(session, res);
     await this.usersService.delete(id);
   }
 }
