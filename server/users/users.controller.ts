@@ -11,16 +11,20 @@ import {
   HttpStatus,
   Session,
   Res,
+  UseGuards,
 } from '@nestjs/common';
 import type { Response } from 'express';
 import type { SessionData } from 'express-session';
 import { AuthService } from '@server/auth/auth.service';
+import { AuthGuard } from '@server/auth/guards/auth.guard';
+import { Public } from '@server/auth/decorators/public.decorator';
 import { UsersService } from './users.service';
 import { User } from './entities/user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 
 @Controller('users')
+@UseGuards(AuthGuard) // Protect all routes by default
 export class UsersController {
   constructor(
     private readonly usersService: UsersService,
@@ -38,6 +42,7 @@ export class UsersController {
   }
 
   @Post()
+  @Public() // Allow unauthenticated access for user creation
   async create(
     @Body() createUserDto: CreateUserDto,
     @Session() session: SessionData,
