@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Task } from './entities/task.entity';
 import { TaskRepository } from './repositories/task.repository';
+import { TaskFilterDto } from './dto/task-filter.dto';
 
 @Injectable()
 export class TasksService {
@@ -8,10 +9,10 @@ export class TasksService {
 
   constructor(private readonly taskRepository: TaskRepository) {}
 
-  async findAll(): Promise<Task[]> {
+  async findAll(taskFilterDto: TaskFilterDto, userId: number): Promise<Task[]> {
     this.logger.log('Fetching all tasks...');
 
-    const tasks = await this.taskRepository.findAll();
+    const tasks = await this.taskRepository.findAll(taskFilterDto, userId);
 
     this.logger.log(`Found ${tasks.length} tasks`);
 
