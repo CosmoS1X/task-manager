@@ -29,7 +29,7 @@ export const validatorConfig = {
   forbidNonWhitelisted: true,
   transform: true,
   transformOptions: {
-    enableImplicitConversion: true,
+    enableImplicitConversion: false,
   },
 };
 
