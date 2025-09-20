@@ -1,8 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Task } from './entities/task.entity';
 import { TaskRepository } from './repositories/task.repository';
-import { TaskFilterDto } from './dto/task-filter.dto';
-import { CreateTaskDto } from './dto/create-task.dto';
+import type { TaskFilterData, TaskCreateData } from './repositories/task.repository';
 
 @Injectable()
 export class TasksService {
@@ -10,10 +9,10 @@ export class TasksService {
 
   constructor(private readonly taskRepository: TaskRepository) {}
 
-  async findAll(taskFilterDto: TaskFilterDto, userId: number): Promise<Task[]> {
+  async findAll(taskFilterData: TaskFilterData): Promise<Task[]> {
     this.logger.log('Fetching all tasks...');
 
-    const tasks = await this.taskRepository.findAll(taskFilterDto, userId);
+    const tasks = await this.taskRepository.findAll(taskFilterData);
 
     this.logger.log(`Found ${tasks.length} tasks`);
 
@@ -26,10 +25,10 @@ export class TasksService {
     return this.taskRepository.findById(id);
   }
 
-  async create(taskData: CreateTaskDto & { creatorId: number }): Promise<Task> {
+  async create(taskCreateData: TaskCreateData): Promise<Task> {
     this.logger.log('Creating a new task...');
 
-    const newTask = await this.taskRepository.create(taskData);
+    const newTask = await this.taskRepository.create(taskCreateData);
 
     this.logger.log(`Successfully created task with ID: ${newTask.id}`);
 

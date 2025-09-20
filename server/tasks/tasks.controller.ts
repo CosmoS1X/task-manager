@@ -26,7 +26,12 @@ export class TasksController {
     @Query() taskFilterDto: TaskFilterDto,
     @Session() session: SessionData,
   ): Promise<Task[]> {
-    return this.tasksService.findAll(taskFilterDto, session.userId as number);
+    const taskFilterData = {
+      ...taskFilterDto,
+      creatorId: session.userId as number,
+    };
+
+    return this.tasksService.findAll(taskFilterData);
   }
 
   @Get(':id')

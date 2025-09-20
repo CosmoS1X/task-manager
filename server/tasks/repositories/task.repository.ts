@@ -5,6 +5,14 @@ import { TaskLabel } from '../entities/task-label.entity';
 import { TaskFilterDto } from '../dto/task-filter.dto';
 import { CreateTaskDto } from '../dto/create-task.dto';
 
+export interface TaskFilterData extends TaskFilterDto {
+  creatorId: number;
+}
+
+export interface TaskCreateData extends CreateTaskDto {
+  creatorId: number;
+}
+
 @Injectable()
 export class TaskRepository extends BaseRepository<Task> {
   protected model = Task;
@@ -12,17 +20,19 @@ export class TaskRepository extends BaseRepository<Task> {
   private readonly relations = '[status, creator, executor, labels]';
 
   // eslint-disable-next-line class-methods-use-this
-  private createFilters(taskFilterDto: TaskFilterDto, userId?: number) {
+  private createFilters(taskFilterData: TaskFilterData) {
+    const { status, executor, label, isCreator, creatorId } = taskFilterData;
+
     return {
-      ...taskFilterDto.status && { statusId: taskFilterDto.status },
-      ...taskFilterDto.executor && { executorId: taskFilterDto.executor },
-      ...taskFilterDto.label && { labelId: taskFilterDto.label },
-      ...taskFilterDto.isCreator && userId && { creatorId: userId },
+      ...status && { statusId: status },
+      ...executor && { executorId: executor },
+      ...label && { labelId: label },
+      ...isCreator && { creatorId },
     };
   }
 
-  async findAll(taskFilterDto?: TaskFilterDto, userId?: number): Promise<Task[]> {
-    const filters = taskFilterDto ? this.createFilters(taskFilterDto, userId) : {};
+  async findAll(taskFilterData?: TaskFilterData): Promise<Task[]> {
+    const filters = taskFilterData ? this.createFilters(taskFilterData) : {};
 
     const tasks = await this.model.query()
       .withGraphJoined(this.relations)
@@ -44,8 +54,8 @@ export class TaskRepository extends BaseRepository<Task> {
     return task;
   }
 
-  async create(taskData: CreateTaskDto & { creatorId: number }): Promise<Task> {
-    const { labelIds, ...taskFields } = taskData;
+  async create(taskCreateData: TaskCreateData): Promise<Task> {
+    const { labelIds, ...taskFields } = taskCreateData;
     const transaction = await this.model.startTransaction();
 
     try {
