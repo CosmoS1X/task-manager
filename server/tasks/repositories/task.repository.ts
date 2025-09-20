@@ -1,7 +1,9 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { BaseRepository } from '@server/common/repositories/base.repository';
 import { Task } from '../entities/task.entity';
+import { TaskLabel } from '../entities/task-label.entity';
 import { TaskFilterDto } from '../dto/task-filter.dto';
+import { CreateTaskDto } from '../dto/create-task.dto';
 
 @Injectable()
 export class TaskRepository extends BaseRepository<Task> {
@@ -40,5 +42,28 @@ export class TaskRepository extends BaseRepository<Task> {
     }
 
     return task;
+  }
+
+  async create(taskData: CreateTaskDto & { creatorId: number }): Promise<Task> {
+    const { labelIds, ...taskFields } = taskData;
+    const transaction = await this.model.startTransaction();
+
+    try {
+      const createdTask = await this.model.query(transaction).insertAndFetch(taskFields);
+
+      if (labelIds && labelIds.length > 0) {
+        await Promise.all(labelIds.map((labelId) => (
+          TaskLabel.query(transaction).insert({ taskId: createdTask.id, labelId })
+        )));
+      }
+
+      await transaction.commit();
+
+      return createdTask;
+    } catch (error) {
+      await transaction.rollback();
+
+      throw error;
+    }
   }
 }
