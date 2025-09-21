@@ -18,7 +18,7 @@ export class User extends Model {
     return 'users';
   }
 
-  setPassword(password: string) {
+  set password(password: string) {
     this.passwordDigest = encrypt(password);
   }
 
