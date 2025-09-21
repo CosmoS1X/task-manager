@@ -9,20 +9,12 @@ export class LabelRepository extends BaseRepository<Label> {
   protected model = Label;
 
   async create(createLabelDto: CreateLabelDto): Promise<Label> {
-    const label = new Label();
-
-    label.name = createLabelDto.name;
-
-    return this.model.query().insert(label);
+    return this.model.query().insertAndFetch(createLabelDto);
   }
 
   async update(id: number, updateLabelDto: UpdateLabelDto): Promise<Label> {
     const label = await this.findById(id);
 
-    if (updateLabelDto.name) {
-      label.name = updateLabelDto.name;
-    }
-
-    return label.$query().patchAndFetch(label);
+    return label.$query().patchAndFetch(updateLabelDto);
   }
 }

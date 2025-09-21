@@ -9,20 +9,12 @@ export class StatusRepository extends BaseRepository<Status> {
   protected model = Status;
 
   async create(createStatusDto: CreateStatusDto): Promise<Status> {
-    const status = new Status();
-
-    status.name = createStatusDto.name;
-
-    return this.model.query().insert(status);
+    return this.model.query().insertAndFetch(createStatusDto);
   }
 
   async update(id: number, updateStatusDto: UpdateStatusDto): Promise<Status> {
     const status = await this.findById(id);
 
-    if (updateStatusDto.name) {
-      status.name = updateStatusDto.name;
-    }
-
-    return status.$query().patchAndFetch(status);
+    return status.$query().patchAndFetch(updateStatusDto);
   }
 }

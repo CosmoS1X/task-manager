@@ -13,42 +13,25 @@ export class UserRepository extends BaseRepository<User> {
   }
 
   async create(createUserDto: CreateUserDto): Promise<User> {
-    const user = new User();
-
-    user.firstName = createUserDto.firstName;
-    user.lastName = createUserDto.lastName;
-    user.email = createUserDto.email;
-    user.setPassword(createUserDto.password);
-
-    return this.model.query().insert(user);
+    return this.model.query().insertAndFetch(createUserDto);
   }
 
   async update(id: number, updateUserDto: UpdateUserDto): Promise<User> {
     const user = await this.findById(id);
+    const { newPassword, currentPassword, ...userFields } = updateUserDto;
 
-    if (updateUserDto.firstName) {
-      user.firstName = updateUserDto.firstName;
+    if (newPassword && (!currentPassword || !user.verifyPassword(currentPassword))) {
+      throw new ForbiddenException({
+        error: 'InvalidPassword',
+        message: 'Current password is incorrect',
+      });
     }
 
-    if (updateUserDto.lastName) {
-      user.lastName = updateUserDto.lastName;
-    }
+    const updatedData = {
+      ...userFields,
+      ...(newPassword && { password: newPassword }),
+    };
 
-    if (updateUserDto.email) {
-      user.email = updateUserDto.email;
-    }
-
-    if (updateUserDto.newPassword) {
-      if (!updateUserDto.currentPassword || !user.verifyPassword(updateUserDto.currentPassword)) {
-        throw new ForbiddenException({
-          error: 'InvalidPassword',
-          message: 'Current password is incorrect',
-        });
-      }
-
-      user.setPassword(updateUserDto.newPassword);
-    }
-
-    return user.$query().patchAndFetch(user);
+    return user.$query().patchAndFetch(updatedData);
   }
 }
