@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Task } from './entities/task.entity';
 import { TaskRepository } from './repositories/task.repository';
-import type { TaskFilterData, TaskCreateData } from './repositories/task.repository';
+import type { TaskFilterData, TaskCreateData, TaskUpdateData } from './repositories/task.repository';
 
 @Injectable()
 export class TasksService {
@@ -33,5 +33,15 @@ export class TasksService {
     this.logger.log(`Successfully created task with ID: ${newTask.id}`);
 
     return newTask;
+  }
+
+  async update(taskUpdateData: TaskUpdateData): Promise<Task> {
+    this.logger.log(`Updating task with ID: ${taskUpdateData.id}...`);
+
+    const updatedTask = await this.taskRepository.update(taskUpdateData);
+
+    this.logger.log(`Successfully updated task with ID: ${taskUpdateData.id}`);
+
+    return updatedTask;
   }
 }

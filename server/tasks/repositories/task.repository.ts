@@ -4,6 +4,7 @@ import { Task } from '../entities/task.entity';
 import { TaskLabel } from '../entities/task-label.entity';
 import { TaskFilterDto } from '../dto/task-filter.dto';
 import { CreateTaskDto } from '../dto/create-task.dto';
+import { UpdateTaskDto } from '../dto/update-task.dto';
 
 export interface TaskFilterData extends TaskFilterDto {
   creatorId: number;
@@ -11,6 +12,10 @@ export interface TaskFilterData extends TaskFilterDto {
 
 export interface TaskCreateData extends CreateTaskDto {
   creatorId: number;
+}
+
+export interface TaskUpdateData extends UpdateTaskDto {
+  id: number;
 }
 
 @Injectable()
@@ -70,6 +75,34 @@ export class TaskRepository extends BaseRepository<Task> {
       await transaction.commit();
 
       return createdTask;
+    } catch (error) {
+      await transaction.rollback();
+
+      throw error;
+    }
+  }
+
+  async update(taskUpdateData: TaskUpdateData): Promise<Task> {
+    const { id, labelIds, ...taskFields } = taskUpdateData;
+    const task = await this.findById(id);
+    const transaction = await this.model.startTransaction();
+
+    try {
+      const updatedTask = await task.$query(transaction).patchAndFetch(taskFields);
+
+      if (labelIds) {
+        await TaskLabel.query(transaction).delete().where('taskId', task.id);
+
+        if (labelIds.length > 0) {
+          await Promise.all(labelIds.map((labelId) => (
+            TaskLabel.query(transaction).insert({ taskId: task.id, labelId })
+          )));
+        }
+      }
+
+      await transaction.commit();
+
+      return updatedTask;
     } catch (error) {
       await transaction.rollback();
 

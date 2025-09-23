@@ -3,6 +3,7 @@ import {
   UseGuards,
   Get,
   Post,
+  Patch,
   Param,
   ParseIntPipe,
   Query,
@@ -15,6 +16,7 @@ import { TasksService } from './tasks.service';
 import { Task } from './entities/task.entity';
 import { TaskFilterDto } from './dto/task-filter.dto';
 import { CreateTaskDto } from './dto/create-task.dto';
+import { UpdateTaskDto } from './dto/update-task.dto';
 
 @Controller('tasks')
 @UseGuards(AuthGuard) // Protect all routes
@@ -50,5 +52,13 @@ export class TasksController {
     };
 
     return this.tasksService.create(taskData);
+  }
+
+  @Patch(':id')
+  async update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateTaskDto: UpdateTaskDto,
+  ): Promise<Task> {
+    return this.tasksService.update({ id, ...updateTaskDto });
   }
 }
