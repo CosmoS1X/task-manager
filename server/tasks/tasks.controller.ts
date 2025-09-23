@@ -4,11 +4,14 @@ import {
   Get,
   Post,
   Patch,
+  Delete,
   Param,
   ParseIntPipe,
   Query,
   Body,
   Session,
+  HttpCode,
+  HttpStatus,
 } from '@nestjs/common';
 import type { SessionData } from 'express-session';
 import { AuthGuard } from '@server/auth/guards/auth.guard';
@@ -60,5 +63,11 @@ export class TasksController {
     @Body() updateTaskDto: UpdateTaskDto,
   ): Promise<Task> {
     return this.tasksService.update({ id, ...updateTaskDto });
+  }
+
+  @Delete(':id')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async delete(@Param('id', ParseIntPipe) id: number): Promise<void> {
+    await this.tasksService.delete(id);
   }
 }
