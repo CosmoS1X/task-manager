@@ -20,6 +20,7 @@ import { Task } from './entities/task.entity';
 import { TaskFilterDto } from './dto/task-filter.dto';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
+import { TaskCreatorGuard } from './guards/task-creator.guard';
 
 @Controller('tasks')
 @UseGuards(AuthGuard) // Protect all routes
@@ -67,6 +68,7 @@ export class TasksController {
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
+  @UseGuards(TaskCreatorGuard) // Only a creator of the task can delete it
   async delete(@Param('id', ParseIntPipe) id: number): Promise<void> {
     await this.tasksService.delete(id);
   }
