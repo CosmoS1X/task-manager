@@ -53,12 +53,11 @@ export class StatusesService {
   }
 
   async delete(id: number): Promise<void> {
-    this.logger.log(`Attempting to delete status with ID: ${id}`);
+    this.logger.log(`Attempting to delete status with ID: ${id}...`);
 
-    const deletedCount = await this.statusRepository.delete(id);
-    const isDeleted = deletedCount === 1;
+    const deletedRows = await this.statusRepository.delete(id);
 
-    if (!isDeleted) {
+    if (deletedRows === 0) {
       this.logger.error(`Failed to delete status with ID: ${id}`);
 
       throw new NotFoundException(`Status with ID ${id} not found or already deleted`);

@@ -55,10 +55,9 @@ export class LabelsService {
   async delete(id: number): Promise<void> {
     this.logger.log(`Attempting to delete label with ID: ${id}...`);
 
-    const deletedCount = await this.labelRepository.delete(id);
-    const isDeleted = deletedCount === 1;
+    const deletedRows = await this.labelRepository.delete(id);
 
-    if (!isDeleted) {
+    if (deletedRows === 0) {
       this.logger.error(`Failed to delete label with ID: ${id}`);
 
       throw new NotFoundException(`Label with ID ${id} not found or already deleted`);

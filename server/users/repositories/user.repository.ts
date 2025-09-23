@@ -29,16 +29,18 @@ export class UserRepository extends BaseRepository<User> {
     const user = await this.findById(id);
     const { newPassword, currentPassword, ...userFields } = updateUserDto;
 
-    if (newPassword && (!currentPassword || !user.verifyPassword(currentPassword))) {
-      throw new ForbiddenException({
-        error: 'InvalidPassword',
-        message: 'Current password is incorrect',
-      });
+    const isPasswordChangeRequested = !!newPassword;
+    const isCurrentPasswordProvided = !!currentPassword;
+    const isCurrentPasswordValid = isCurrentPasswordProvided
+      && user.verifyPassword(currentPassword);
+
+    if (isPasswordChangeRequested && !isCurrentPasswordValid) {
+      throw new ForbiddenException('Current password is incorrect');
     }
 
     const updatedData = {
       ...userFields,
-      ...(newPassword && { password: newPassword }),
+      ...newPassword && { password: newPassword },
     };
 
     return user.$query().patchAndFetch(updatedData);

@@ -81,10 +81,9 @@ export class UsersService {
   async delete(id: number): Promise<void> {
     this.logger.log(`Attempting to delete user with ID: ${id}`);
 
-    const deletedCount = await this.userRepository.delete(id);
-    const isDeleted = deletedCount === 1;
+    const deletedRows = await this.userRepository.delete(id);
 
-    if (!isDeleted) {
+    if (deletedRows === 0) {
       this.logger.error(`Failed to delete user with ID: ${id}`);
 
       throw new NotFoundException(`User with ID ${id} not found or already deleted`);
