@@ -19,7 +19,7 @@ export class UpdateUserDto {
 
   @IsString()
   @MaxLength(255)
-  @ValidateIf((obj) => obj.newPassword !== undefined)
+  @ValidateIf(({ newPassword }) => newPassword !== undefined)
   currentPassword?: string;
 
   @IsString()
