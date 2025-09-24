@@ -72,7 +72,7 @@ export class UsersController {
     @Session() session: SessionData,
     @Res({ passthrough: true }) res: Response,
   ): Promise<void> {
-    await this.authService.logout(session, res);
     await this.usersService.delete(id);
+    await this.authService.logout(session, res);
   }
 }
