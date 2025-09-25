@@ -8,8 +8,7 @@ import Button from './Button';
 
 export default function Header() {
   const { t } = useTranslation();
-  const { isAuthenticated } = useAuth();
-  const { logout } = useAuth();
+  const { isAuthenticated, logout } = useAuth();
   const navigate = useNavigate();
   const linkClasses = cn('nav-link', 'px-2', 'link-dark');
 
