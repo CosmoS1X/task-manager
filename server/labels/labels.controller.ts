@@ -42,7 +42,7 @@ export class LabelsController {
     @Param('id', ParseIntPipe) id: number,
     @Body() updateLabelDto: UpdateLabelDto,
   ): Promise<Label> {
-    return this.labelsService.update(id, updateLabelDto);
+    return this.labelsService.update({ id, ...updateLabelDto });
   }
 
   @Delete(':id')

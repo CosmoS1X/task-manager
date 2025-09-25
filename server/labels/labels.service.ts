@@ -1,8 +1,6 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { Label } from './entities/label.entity';
-import { LabelRepository } from './repositories/label.repository';
-import { CreateLabelDto } from './dto/create-label.dto';
-import { UpdateLabelDto } from './dto/update-label.dto';
+import { LabelRepository, LabelCreateData, LabelUpdateData } from './repositories/label.repository';
 
 @Injectable()
 export class LabelsService {
@@ -26,28 +24,22 @@ export class LabelsService {
     return this.labelRepository.findById(id);
   }
 
-  async create(createLabelDto: CreateLabelDto): Promise<Label> {
+  async create(labelCreateData: LabelCreateData): Promise<Label> {
     this.logger.log('Creating new label...');
 
-    const newLabel = await this.labelRepository.create(createLabelDto);
+    const newLabel = await this.labelRepository.create(labelCreateData);
 
     this.logger.log(`Successfully created label with ID: ${newLabel.id}`);
 
     return newLabel;
   }
 
-  async update(id: number, updateLabelDto: UpdateLabelDto): Promise<Label> {
-    this.logger.log(`Updating label with ID: ${id}...`);
+  async update(labelUpdateData: LabelUpdateData): Promise<Label> {
+    this.logger.log(`Updating label with ID: ${labelUpdateData.id}...`);
 
-    const updatedLabel = await this.labelRepository.update(id, updateLabelDto);
+    const updatedLabel = await this.labelRepository.update(labelUpdateData);
 
-    if (!updatedLabel) {
-      this.logger.error(`Failed to update label with ID: ${id}`);
-
-      throw new NotFoundException(`Label with ID ${id} not found`);
-    }
-
-    this.logger.log(`Successfully updated label with ID: ${id}`);
+    this.logger.log(`Successfully updated label with ID: ${labelUpdateData.id}`);
 
     return updatedLabel;
   }
