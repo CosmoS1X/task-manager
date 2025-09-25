@@ -4,6 +4,12 @@ import { User } from '../entities/user.entity';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { UpdateUserDto } from '../dto/update-user.dto';
 
+export interface UserCreateData extends CreateUserDto {}
+
+export interface UserUpdateData extends UpdateUserDto {
+  id: number;
+}
+
 @Injectable()
 export class UserRepository extends BaseRepository<User> {
   protected model = User;
@@ -12,8 +18,8 @@ export class UserRepository extends BaseRepository<User> {
     return this.model.query().findOne({ email });
   }
 
-  async create(createUserDto: CreateUserDto): Promise<User> {
-    const existingUser = await this.findByEmail(createUserDto.email);
+  async create(userCreateData: UserCreateData): Promise<User> {
+    const existingUser = await this.findByEmail(userCreateData.email);
 
     if (existingUser) {
       throw new ConflictException({
@@ -22,12 +28,13 @@ export class UserRepository extends BaseRepository<User> {
       });
     }
 
-    return this.model.query().insertAndFetch(createUserDto);
+    return this.model.query().insertAndFetch(userCreateData);
   }
 
-  async update(id: number, updateUserDto: UpdateUserDto): Promise<User> {
+  async update(userUpdateData: UserUpdateData): Promise<User> {
+    const { id, newPassword, currentPassword, ...userFields } = userUpdateData;
+
     const user = await this.findById(id);
-    const { newPassword, currentPassword, ...userFields } = updateUserDto;
 
     const isPasswordChangeRequested = !!newPassword;
     const isCurrentPasswordProvided = !!currentPassword;

@@ -1,8 +1,6 @@
 import { Injectable, Logger, NotFoundException, ConflictException } from '@nestjs/common';
 import { User } from './entities/user.entity';
-import { UserRepository } from './repositories/user.repository';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { UserRepository, UserCreateData, UserUpdateData } from './repositories/user.repository';
 
 @Injectable()
 export class UsersService {
@@ -32,48 +30,42 @@ export class UsersService {
     return this.userRepository.findByEmail(email);
   }
 
-  async create(createUserDto: CreateUserDto): Promise<User> {
+  async create(userCreateData: UserCreateData): Promise<User> {
     this.logger.log('Creating new user...');
 
-    const existingUser = await this.findByEmail(createUserDto.email);
+    const existingUser = await this.findByEmail(userCreateData.email);
 
     if (existingUser) {
-      this.logger.warn(`Email ${createUserDto.email} already exists`);
+      this.logger.warn(`Email ${userCreateData.email} already exists`);
 
       throw new ConflictException('User with this email already exists');
     }
 
-    const newUser = await this.userRepository.create(createUserDto);
+    const newUser = await this.userRepository.create(userCreateData);
 
     this.logger.log(`Successfully created user with ID: ${newUser.id}`);
 
     return newUser;
   }
 
-  async update(id: number, updateUserDto: UpdateUserDto): Promise<User> {
-    this.logger.log(`Updating user with ID: ${id}...`);
+  async update(userUpdateData: UserUpdateData): Promise<User> {
+    this.logger.log(`Updating user with ID: ${userUpdateData.id}...`);
 
-    const user = await this.findById(id);
+    const user = await this.findById(userUpdateData.id);
 
-    if (updateUserDto.email && updateUserDto.email !== user.email) {
-      const existingUser = await this.findByEmail(updateUserDto.email);
+    if (userUpdateData.email && userUpdateData.email !== user.email) {
+      const existingUser = await this.findByEmail(userUpdateData.email);
 
       if (existingUser) {
-        this.logger.warn(`Email ${updateUserDto.email} already exists`);
+        this.logger.warn(`Email ${userUpdateData.email} already exists`);
 
         throw new ConflictException('User with this email already exists');
       }
     }
 
-    const updatedUser = await this.userRepository.update(id, updateUserDto);
+    const updatedUser = await this.userRepository.update(userUpdateData);
 
-    if (!updatedUser) {
-      this.logger.error(`Failed to update user with ID: ${id}`);
-
-      throw new NotFoundException(`User with ID ${id} not found`);
-    }
-
-    this.logger.log(`Successfully updated user with ID: ${id}`);
+    this.logger.log(`Successfully updated user with ID: ${userUpdateData.id}`);
 
     return updatedUser;
   }
