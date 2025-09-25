@@ -7,7 +7,6 @@ import {
   Logger,
 } from '@nestjs/common';
 import type { Response, Request } from 'express';
-import { ForeignKeyViolationError } from 'objection';
 import Rollbar from 'rollbar';
 import env from '../../../env';
 
@@ -26,20 +25,6 @@ export class AllExceptionsFilter implements ExceptionFilter {
     const context = host.switchToHttp();
     const response = context.getResponse<Response>();
     const request = context.getRequest<Request>();
-
-    if (error instanceof ForeignKeyViolationError) {
-      this.logger.warn('Foreign key violation');
-
-      const status = HttpStatus.CONFLICT;
-
-      response.status(status).json({
-        statusCode: status,
-        error: 'ForeignKeyViolation',
-        message: 'Cannot delete resource because it is referenced by other records',
-      });
-
-      return;
-    }
 
     if (error instanceof HttpException) {
       const status = error.getStatus();
