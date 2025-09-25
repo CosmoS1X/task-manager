@@ -13,7 +13,7 @@ module.exports = {
   devtool: isProduction ? false : 'source-map',
   entry: './client/index.tsx',
   output: {
-    path: path.join(__dirname, 'dist'),
+    path: path.join(__dirname, 'dist', 'client'),
     filename: isProduction ? '[name].[contenthash].js' : 'bundle.js',
     publicPath: '/',
   },
