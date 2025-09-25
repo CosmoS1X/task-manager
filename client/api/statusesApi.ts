@@ -1,5 +1,6 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import type { Status } from '@/types';
+import { transformErrorResponse } from './helpers';
 
 export const statusesApi = createApi({
   reducerPath: 'statuses',
@@ -31,6 +32,7 @@ export const statusesApi = createApi({
         url: `/${id}`,
         method: 'DELETE',
       }),
+      transformErrorResponse,
     }),
   }),
 });
