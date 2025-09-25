@@ -1,8 +1,6 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { Status } from './entities/status.entity';
-import { StatusRepository } from './repositories/status.repository';
-import { CreateStatusDto } from './dto/create-status.dto';
-import { UpdateStatusDto } from './dto/update-status.dto';
+import { StatusRepository, StatusCreateData, StatusUpdateData } from './repositories/status.repository';
 
 @Injectable()
 export class StatusesService {
@@ -26,28 +24,22 @@ export class StatusesService {
     return this.statusRepository.findById(id);
   }
 
-  async create(createStatusDto: CreateStatusDto): Promise<Status> {
+  async create(statusCreateData: StatusCreateData): Promise<Status> {
     this.logger.log('Creating new status...');
 
-    const newStatus = await this.statusRepository.create(createStatusDto);
+    const newStatus = await this.statusRepository.create(statusCreateData);
 
     this.logger.log(`Successfully created status with ID: ${newStatus.id}`);
 
     return newStatus;
   }
 
-  async update(id: number, updateStatusDto: UpdateStatusDto): Promise<Status> {
-    this.logger.log(`Updating status with ID: ${id}...`);
+  async update(statusUpdateData: StatusUpdateData): Promise<Status> {
+    this.logger.log(`Updating status with ID: ${statusUpdateData.id}...`);
 
-    const updatedStatus = await this.statusRepository.update(id, updateStatusDto);
+    const updatedStatus = await this.statusRepository.update(statusUpdateData);
 
-    if (!updatedStatus) {
-      this.logger.error(`Failed to update status with ID: ${id}`);
-
-      throw new NotFoundException(`Status with ID ${id} not found`);
-    }
-
-    this.logger.log(`Successfully updated status with ID: ${id}`);
+    this.logger.log(`Successfully updated status with ID: ${statusUpdateData.id}`);
 
     return updatedStatus;
   }
