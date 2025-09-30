@@ -14,10 +14,7 @@ export abstract class BaseRepository<T extends Model> {
     const result = await this.model.query().findById(id);
 
     if (!result) {
-      throw new NotFoundException({
-        error: 'NotFound',
-        message: `Resource with ID ${id} not found`,
-      });
+      throw new NotFoundException(`Resource with ID ${id} not found`);
     }
 
     return result as T;
@@ -27,10 +24,7 @@ export abstract class BaseRepository<T extends Model> {
     const result = await this.model.query().deleteById(id);
 
     if (result === 0) {
-      throw new NotFoundException({
-        error: 'NotFound',
-        message: `Resource with ID ${id} not found`,
-      });
+      throw new NotFoundException(`Resource with ID ${id} not found`);
     }
 
     return result;
