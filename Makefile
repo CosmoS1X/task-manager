@@ -16,11 +16,14 @@ lint:
 check: type-check test lint
 	@echo "All checks passed!"
 
-build:
-	npm run build
+clean:
+	npm run clean
+
+build: clean
+	npm run build:full
 
 migrate:
-	npm run migrate
+	npm run migrate:prod
 
 migrate-dev:
 	npm run migrate:dev
@@ -29,10 +32,10 @@ migration:
 	npx tsx node_modules/.bin/knex migrate:make $(N)
 
 start: build migrate
-	npm run start
+	npm run start:prod
 
 dev:
-	npm run dev
+	npm run start:dev
 
 session-key:
 	node -e "console.log(require('crypto').randomBytes(64).toString('hex'))"
