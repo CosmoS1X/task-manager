@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException, Logger } from '@nestjs/common';
+import { Injectable, UnauthorizedException, NotFoundException, ForbiddenException, Logger } from '@nestjs/common';
 import type { Response } from 'express';
 import type { SessionData } from 'express-session';
 import { UsersService } from '@server/users/users.service';
@@ -20,8 +20,12 @@ export class AuthService {
   async validateUser(email: string, password: string): Promise<User> {
     const user = await this.usersService.findByEmail(email);
 
-    if (!user || !user.verifyPassword(password)) {
-      throw new UnauthorizedException('Invalid email or password');
+    if (!user) {
+      throw new NotFoundException('User with this email not found');
+    }
+
+    if (!user.verifyPassword(password)) {
+      throw new ForbiddenException('Incorrect password');
     }
 
     return user;
