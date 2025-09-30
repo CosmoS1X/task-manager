@@ -20,6 +20,7 @@ export class UpdateUserDto {
   @IsString()
   @MaxLength(255)
   @ValidateIf(({ newPassword }) => newPassword !== undefined)
+  @IsOptional()
   currentPassword?: string;
 
   @IsString()

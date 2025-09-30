@@ -1,4 +1,4 @@
-import { Injectable, Logger, NotFoundException, ConflictException } from '@nestjs/common';
+import { Injectable, Logger, ConflictException, ForbiddenException } from '@nestjs/common';
 import { User } from './entities/user.entity';
 import { UserRepository, UserCreateData, UserUpdateData } from './repositories/user.repository';
 
@@ -49,6 +49,8 @@ export class UsersService {
   }
 
   async update(userUpdateData: UserUpdateData): Promise<User> {
+    const { newPassword, currentPassword, ...restData } = userUpdateData;
+
     this.logger.log(`Updating user with ID: ${userUpdateData.id}...`);
 
     const user = await this.findById(userUpdateData.id);
@@ -63,7 +65,31 @@ export class UsersService {
       }
     }
 
-    const updatedUser = await this.userRepository.update(userUpdateData);
+    const isPasswordChangeRequested = !!newPassword;
+    const isCurrentPasswordProvided = !!currentPassword;
+    const isCurrentPasswordValid = isCurrentPasswordProvided
+      && user.verifyPassword(currentPassword);
+
+    if (isPasswordChangeRequested && !isCurrentPasswordProvided) {
+      throw new ForbiddenException({
+        error: 'CurrentPasswordRequired',
+        message: 'Current password is required to change password',
+      });
+    }
+
+    if (isPasswordChangeRequested && !isCurrentPasswordValid) {
+      throw new ForbiddenException({
+        error: 'InvalidPassword',
+        message: 'Current password is incorrect',
+      });
+    }
+
+    const updatedData = {
+      ...restData,
+      ...newPassword && { password: newPassword },
+    };
+
+    const updatedUser = await this.userRepository.update(updatedData);
 
     this.logger.log(`Successfully updated user with ID: ${userUpdateData.id}`);
 
@@ -73,13 +99,7 @@ export class UsersService {
   async delete(id: number): Promise<void> {
     this.logger.log(`Attempting to delete user with ID: ${id}`);
 
-    const deletedRows = await this.userRepository.delete(id);
-
-    if (deletedRows === 0) {
-      this.logger.error(`Failed to delete user with ID: ${id}`);
-
-      throw new NotFoundException(`User with ID ${id} not found or already deleted`);
-    }
+    await this.userRepository.delete(id);
 
     this.logger.log(`Successfully deleted user with ID: ${id}`);
   }
