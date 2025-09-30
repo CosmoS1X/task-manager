@@ -24,7 +24,7 @@ export abstract class BaseRepository<T extends Model> {
     const result = await this.model.query().deleteById(id);
 
     if (result === 0) {
-      throw new NotFoundException(`Resource with ID ${id} not found`);
+      throw new NotFoundException(`Resource with ID ${id} not found or already deleted`);
     }
 
     return result;
