@@ -38,6 +38,7 @@ export class UsersController {
   }
 
   @Get(':id')
+  @UseGuards(OwnerGuard) // Only allow owners to access their profile
   async findOne(@Param('id', ParseIntPipe) id: number): Promise<User> {
     return this.usersService.findById(id);
   }
