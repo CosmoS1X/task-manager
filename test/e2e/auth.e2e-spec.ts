@@ -2,7 +2,7 @@ import request from 'supertest';
 import type { Server } from 'http';
 import { getTestServer } from '../test-server';
 import { User } from '../../server/users/entities/user.entity';
-import { createUserData } from '../helpers';
+import { createUserData, getCheckEmailQueryString } from '../helpers';
 import Endpoints from '../endpoints';
 
 describe('Auth (E2E)', () => {
@@ -99,6 +99,22 @@ describe('Auth (E2E)', () => {
 
       expect(response1.status).toBe(200);
       expect(response2.status).toBe(200);
+    });
+  });
+
+  describe(`GET ${Endpoints.CheckEmail}`, () => {
+    it('should check email availability', async () => {
+      const takenResponse = await request(httpServer).get(getCheckEmailQueryString(testUser.email));
+
+      expect(takenResponse.status).toBe(200);
+      expect(takenResponse.body.isAvailable).toBeFalsy();
+
+      const availableResponse = await request(httpServer).get(
+        getCheckEmailQueryString('new@example.com'),
+      );
+
+      expect(availableResponse.status).toBe(200);
+      expect(availableResponse.body.isAvailable).toBeTruthy();
     });
   });
 });
