@@ -1,4 +1,4 @@
-import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { Label } from './entities/label.entity';
 import { LabelRepository, LabelCreateData, LabelUpdateData } from './repositories/label.repository';
 
@@ -47,13 +47,7 @@ export class LabelsService {
   async delete(id: number): Promise<void> {
     this.logger.log(`Attempting to delete label with ID: ${id}...`);
 
-    const deletedRows = await this.labelRepository.delete(id);
-
-    if (deletedRows === 0) {
-      this.logger.error(`Failed to delete label with ID: ${id}`);
-
-      throw new NotFoundException(`Label with ID ${id} not found or already deleted`);
-    }
+    await this.labelRepository.delete(id);
 
     this.logger.log(`Successfully deleted label with ID: ${id}`);
   }

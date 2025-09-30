@@ -1,4 +1,4 @@
-import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { Status } from './entities/status.entity';
 import { StatusRepository, StatusCreateData, StatusUpdateData } from './repositories/status.repository';
 
@@ -47,13 +47,7 @@ export class StatusesService {
   async delete(id: number): Promise<void> {
     this.logger.log(`Attempting to delete status with ID: ${id}...`);
 
-    const deletedRows = await this.statusRepository.delete(id);
-
-    if (deletedRows === 0) {
-      this.logger.error(`Failed to delete status with ID: ${id}`);
-
-      throw new NotFoundException(`Status with ID ${id} not found or already deleted`);
-    }
+    await this.statusRepository.delete(id);
 
     this.logger.log(`Successfully deleted status with ID: ${id}`);
   }
