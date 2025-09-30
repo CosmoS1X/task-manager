@@ -30,6 +30,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
       const status = error.getStatus();
       const errorResponse = error.getResponse();
 
+      /* istanbul ignore next */
       if (status >= 500) {
         this.logger.error(`Error ${status}:`, error.stack);
         this.rollbar.error(error, request);
@@ -42,6 +43,12 @@ export class AllExceptionsFilter implements ExceptionFilter {
       return;
     }
 
+    /* istanbul ignore next */
+    this.handleUncaughtError(error, request, response);
+  }
+
+  /* istanbul ignore next */
+  private handleUncaughtError(error: Error, request: Request, response: Response) {
     this.logger.error('An unexpected error occurred', error.stack);
     this.rollbar.error(error, request);
 
