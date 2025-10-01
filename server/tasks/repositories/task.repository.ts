@@ -29,17 +29,18 @@ export class TaskRepository extends BaseRepository<Task> {
     const { status, executor, label, isCreator, creatorId } = taskFilterData;
 
     return {
-      ...status && { statusId: status },
-      ...executor && { executorId: executor },
-      ...label && { labelId: label },
-      ...isCreator && { creatorId },
+      ...(status && { statusId: status }),
+      ...(executor && { executorId: executor }),
+      ...(label && { labelId: label }),
+      ...(isCreator && { creatorId }),
     };
   }
 
   async findAll(taskFilterData?: TaskFilterData): Promise<Task[]> {
     const filters = taskFilterData ? this.createFilters(taskFilterData) : {};
 
-    const tasks = await this.model.query()
+    const tasks = await this.model
+      .query()
       .withGraphJoined(this.relations)
       .where(filters)
       .orderBy('createdAt', 'desc');
@@ -48,9 +49,7 @@ export class TaskRepository extends BaseRepository<Task> {
   }
 
   async findById(id: number): Promise<Task> {
-    const task = await this.model.query()
-      .findById(id)
-      .withGraphJoined(this.relations);
+    const task = await this.model.query().findById(id).withGraphJoined(this.relations);
 
     if (!task) {
       throw new NotFoundException(`Task with ID ${id} not found`);
@@ -60,16 +59,18 @@ export class TaskRepository extends BaseRepository<Task> {
   }
 
   async create(taskCreateData: TaskCreateData): Promise<Task> {
-    const { labelIds, ...taskFields } = taskCreateData;
+    const { labelIds = [], ...taskFields } = taskCreateData;
     const transaction = await this.model.startTransaction();
 
     try {
       const createdTask = await this.model.query(transaction).insertAndFetch(taskFields);
 
-      if (labelIds && labelIds.length > 0) {
-        await Promise.all(labelIds.map((labelId) => (
-          TaskLabel.query(transaction).insert({ taskId: createdTask.id, labelId })
-        )));
+      if (labelIds.length > 0) {
+        await Promise.all(
+          labelIds.map((labelId) => (
+            createdTask.$relatedQuery('labels', transaction).relate(labelId)
+          )),
+        );
       }
 
       await transaction.commit();
@@ -83,21 +84,21 @@ export class TaskRepository extends BaseRepository<Task> {
   }
 
   async update(taskUpdateData: TaskUpdateData): Promise<Task> {
-    const { id, labelIds, ...taskFields } = taskUpdateData;
+    const { id, labelIds = [], ...taskFields } = taskUpdateData;
     const task = await this.findById(id);
     const transaction = await this.model.startTransaction();
 
     try {
       const updatedTask = await task.$query(transaction).patchAndFetch(taskFields);
 
-      if (labelIds) {
-        await TaskLabel.query(transaction).delete().where('taskId', task.id);
+      await TaskLabel.query(transaction).delete().where('taskId', task.id);
 
-        if (labelIds.length > 0) {
-          await Promise.all(labelIds.map((labelId) => (
-            TaskLabel.query(transaction).insert({ taskId: task.id, labelId })
-          )));
-        }
+      if (labelIds.length > 0) {
+        await Promise.all(
+          labelIds.map((labelId) => (
+            updatedTask.$relatedQuery('labels', transaction).relate(labelId)
+          )),
+        );
       }
 
       await transaction.commit();
