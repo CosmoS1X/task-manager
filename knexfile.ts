@@ -31,6 +31,12 @@ const commonConfig: Knex.Config = {
   ...knexSnakeCaseMappers(),
 };
 
+const sqlitePoolConfig = {
+  afterCreate: (connection: Database, done: (error: Error) => void) => {
+    connection.run('PRAGMA foreign_keys = ON', done);
+  },
+};
+
 const config: Record<EnvironmentUnion, Knex.Config> = {
   production: {
     client: 'pg',
@@ -51,11 +57,7 @@ const config: Record<EnvironmentUnion, Knex.Config> = {
       filename: path.join(process.cwd(), 'db.sqlite'),
     },
     migrations: migrationsConfig.development,
-    pool: {
-      afterCreate: (connection: Database, done: (error?: Error) => void) => {
-        connection.run('PRAGMA foreign_keys = ON', done);
-      },
-    },
+    pool: sqlitePoolConfig,
     ...commonConfig,
   },
   test: {
@@ -63,6 +65,7 @@ const config: Record<EnvironmentUnion, Knex.Config> = {
     connection: ':memory:',
     // debug: true,
     migrations: migrationsConfig.test,
+    pool: sqlitePoolConfig,
     ...commonConfig,
   },
 };
