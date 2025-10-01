@@ -16,7 +16,7 @@ export class ObjectionFilter implements ExceptionFilter {
 
     if (error instanceof ForeignKeyViolationError) {
       status = HttpStatus.CONFLICT;
-      message = 'Cannot delete resource because it is referenced by other records';
+      message = 'Referenced resource is in use by other records or does not exist';
     } else if (error instanceof UniqueViolationError) {
       status = HttpStatus.CONFLICT;
       message = 'Duplicate entry violates unique constraint';
@@ -31,7 +31,7 @@ export class ObjectionFilter implements ExceptionFilter {
       statusCode: status,
       error: error.name,
       message,
-      ...env.isDevelopment && { details: error.message },
+      ...(!env.isProduction && { details: error.message }),
     });
   }
 }
