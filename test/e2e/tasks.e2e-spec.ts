@@ -24,16 +24,27 @@ describe('Tasks (E2E)', () => {
   let testTask: Task;
   let agent: request.Agent;
 
+  const nonExistentId = 99999;
+
   beforeAll(async () => {
-    const statusData = createStatusData();
     const creatorData = createUserData();
     const executorData = createUserData();
-    const labelData = createLabelData();
     const creatorCredentials = { email: creatorData.email, password: creatorData.password };
     httpServer = await getTestServer();
-    testStatus = await Status.query().insert(statusData);
     testCreator = await User.query().insert(creatorData);
     testExecutor = await User.query().insert(executorData);
+    agent = request.agent(httpServer);
+    await agent.post(Endpoints.Login).send(creatorCredentials);
+  });
+
+  afterAll(async () => {
+    await User.query().delete();
+  });
+
+  beforeEach(async () => {
+    const statusData = createStatusData();
+    const labelData = createLabelData();
+    testStatus = await Status.query().insert(statusData);
     testLabel = await Label.query().insert(labelData);
     testTask = await Task.query().insert({
       ...createTaskData(),
@@ -41,15 +52,11 @@ describe('Tasks (E2E)', () => {
       creatorId: testCreator.id,
       executorId: testExecutor.id,
     });
-
-    agent = request.agent(httpServer);
-    await agent.post(Endpoints.Login).send(creatorCredentials);
   });
 
-  afterAll(async () => {
+  afterEach(async () => {
     await Task.query().delete();
     await Status.query().delete();
-    await User.query().delete();
     await Label.query().delete();
     await TaskLabel.query().delete();
   });
@@ -74,7 +81,7 @@ describe('Tasks (E2E)', () => {
       expect(existentStatusResponse.status).toBe(200);
       expect(existentStatusResponse.body).toHaveLength(1);
 
-      const nonExistentStatusResponse = await agent.get(`${Endpoints.Tasks}?status=${99999}`);
+      const nonExistentStatusResponse = await agent.get(`${Endpoints.Tasks}?status=${nonExistentId}`);
 
       expect(nonExistentStatusResponse.status).toBe(200);
       expect(nonExistentStatusResponse.body).toHaveLength(0);
@@ -95,7 +102,7 @@ describe('Tasks (E2E)', () => {
       expect(existentExecutorResponse.status).toBe(200);
       expect(existentExecutorResponse.body).toHaveLength(1);
 
-      const nonExistentExecutorResponse = await agent.get(`${Endpoints.Tasks}?executor=${99999}`);
+      const nonExistentExecutorResponse = await agent.get(`${Endpoints.Tasks}?executor=${nonExistentId}`);
 
       expect(nonExistentExecutorResponse.status).toBe(200);
       expect(nonExistentExecutorResponse.body).toHaveLength(0);
@@ -120,7 +127,7 @@ describe('Tasks (E2E)', () => {
     });
 
     it('should return 404 for non-existent task', async () => {
-      const response = await agent.get(getTaskPath(99999));
+      const response = await agent.get(getTaskPath(nonExistentId));
 
       expect(response.status).toBe(404);
     });
@@ -187,7 +194,7 @@ describe('Tasks (E2E)', () => {
     });
 
     it('should return 404 for non-existent task', async () => {
-      const response = await agent.patch(getTaskPath(99999)).send(createTaskData());
+      const response = await agent.patch(getTaskPath(nonExistentId)).send(createTaskData());
 
       expect(response.status).toBe(404);
     });
@@ -229,9 +236,49 @@ describe('Tasks (E2E)', () => {
     });
 
     it('should return 404 for non-existent task', async () => {
-      const response = await agent.delete(getTaskPath(99999));
+      const response = await agent.delete(getTaskPath(nonExistentId));
 
       expect(response.status).toBe(404);
+    });
+  });
+
+  describe('Transaction rollback scenarios', () => {
+    it('should rollback transaction when label creation fails', async () => {
+      const invalidTaskData = {
+        ...createTaskData(),
+        statusId: testStatus.id,
+        executorId: null,
+        labelIds: [nonExistentId],
+      };
+
+      const initialTaskCount = await Task.query().resultSize();
+      const response = await agent.post(Endpoints.Tasks).send(invalidTaskData);
+
+      expect(response.status).toBe(409);
+      expect(response.body.error).toBe('ForeignKeyViolationError');
+
+      const finalTaskCount = await Task.query().resultSize();
+
+      expect(finalTaskCount).toBe(initialTaskCount);
+    });
+
+    it('should rollback transaction when label update fails', async () => {
+      const originalName = testTask.name;
+
+      const invalidUpdateData = {
+        name: 'This should be rolled back',
+        description: 'This should be rolled back too',
+        labelIds: [nonExistentId],
+      };
+
+      const response = await agent.patch(getTaskPath(testTask.id)).send(invalidUpdateData);
+
+      expect(response.status).toBe(409);
+      expect(response.body.error).toBe('ForeignKeyViolationError');
+
+      const updatedTask = await Task.query().findById(testTask.id);
+
+      expect(updatedTask?.name).toBe(originalName);
     });
   });
 });
