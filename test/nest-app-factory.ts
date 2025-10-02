@@ -1,4 +1,4 @@
-import { Test } from '@nestjs/testing';
+import { Test, TestingModule } from '@nestjs/testing';
 import { ValidationPipe } from '@nestjs/common';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import knex from 'knex';
@@ -15,14 +15,14 @@ export const getNestApp = async (): Promise<NestExpressApplication> => {
 
   if (app) return app;
 
-  const moduleFixture = await Test.createTestingModule({
+  const module: TestingModule = await Test.createTestingModule({
     imports: [AppModule],
   })
     .overrideProvider('KnexConnection')
     .useValue(testDb)
     .compile();
 
-  app = moduleFixture.createNestApplication<NestExpressApplication>();
+  app = module.createNestApplication<NestExpressApplication>();
 
   app.use(sessionConfig);
   app.setGlobalPrefix('api');
