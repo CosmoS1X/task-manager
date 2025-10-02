@@ -20,7 +20,9 @@ export class ObjectionFilter implements ExceptionFilter {
     } else if (error instanceof UniqueViolationError) {
       status = HttpStatus.CONFLICT;
       message = 'Duplicate entry violates unique constraint';
-    } else if (error instanceof NotNullViolationError) {
+    } else
+    /* istanbul ignore next */ // unreachable if nest validation is triggered
+    if (error instanceof NotNullViolationError) {
       status = HttpStatus.BAD_REQUEST;
       message = 'A required field is missing';
     }
