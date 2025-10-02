@@ -11,6 +11,8 @@ describe('Statuses (E2E)', () => {
   let testStatus: Status;
   let agent: request.Agent;
 
+  const nonExistentId = 99999;
+
   beforeAll(async () => {
     const userData = createUserData();
     const credentials = { email: userData.email, password: userData.password };
@@ -59,7 +61,7 @@ describe('Statuses (E2E)', () => {
     });
 
     it('should return 404 for non-existent status', async () => {
-      const response = await agent.get(getStatusPath(99999));
+      const response = await agent.get(getStatusPath(nonExistentId));
 
       expect(response.status).toBe(404);
     });
@@ -128,7 +130,7 @@ describe('Statuses (E2E)', () => {
     });
 
     it('should return 404 for non-existent status', async () => {
-      const response = await agent.patch(getStatusPath(99999)).send(createStatusData());
+      const response = await agent.patch(getStatusPath(nonExistentId)).send(createStatusData());
 
       expect(response.status).toBe(404);
     });
@@ -146,7 +148,7 @@ describe('Statuses (E2E)', () => {
     });
 
     it('should return 404 for non-existent status', async () => {
-      const response = await agent.delete(getStatusPath(99999));
+      const response = await agent.delete(getStatusPath(nonExistentId));
 
       expect(response.status).toBe(404);
     });

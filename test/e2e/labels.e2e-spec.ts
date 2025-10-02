@@ -11,6 +11,8 @@ describe('Labels (E2E)', () => {
   let testLabel: Label;
   let agent: request.Agent;
 
+  const nonExistentId = 99999;
+
   beforeAll(async () => {
     const userData = createUserData();
     const credentials = { email: userData.email, password: userData.password };
@@ -59,7 +61,7 @@ describe('Labels (E2E)', () => {
     });
 
     it('should return 404 for non-existent label', async () => {
-      const response = await agent.get(getLabelPath(99999));
+      const response = await agent.get(getLabelPath(nonExistentId));
 
       expect(response.status).toBe(404);
     });
@@ -126,7 +128,7 @@ describe('Labels (E2E)', () => {
     });
 
     it('should return 404 for non-existent label', async () => {
-      const response = await agent.patch(getLabelPath(99999)).send(createLabelData());
+      const response = await agent.patch(getLabelPath(nonExistentId)).send(createLabelData());
 
       expect(response.status).toBe(404);
     });
@@ -144,7 +146,7 @@ describe('Labels (E2E)', () => {
     });
 
     it('should return 404 for non-existent label', async () => {
-      const response = await agent.delete(getLabelPath(99999));
+      const response = await agent.delete(getLabelPath(nonExistentId));
 
       expect(response.status).toBe(404);
     });
