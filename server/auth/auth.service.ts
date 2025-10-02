@@ -59,7 +59,7 @@ export class AuthService {
 
     session.destroy((error: Error) => {
       if (error) {
-        this.logger.error('Error destroying session during logout', error.stack);
+        this.logger.warn('Error destroying session during logout', error.stack);
 
         throw new UnauthorizedException('Error during logout');
       }
