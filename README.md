@@ -43,11 +43,9 @@ Task Manager is a full-stack application for efficient task management with a mo
 ### Backend
 
 - **TypeScript** with **Node.js**
-- **Express.js** for RESTful API
-- **Morgan** for logging HTTP requests
+- **NestJS** for RESTful API
 - **Objection.js** as ORM
-- **Knex.js** for database configuration and migrations
-- **Passport.js** for authentication
+- **Knex.js** for database connection and migrations
 - **Zod** for environment variable validation
 - **dotenv** for environment variable management
 
@@ -65,9 +63,9 @@ Task Manager is a full-stack application for efficient task management with a mo
 
 ### Prerequisites
 
-- Node.js 18+
+- Node.js 20+
 - PostgreSQL 14+ (for production)
-- npm 9+
+- npm 10+
 
 ### Installation
 
@@ -99,12 +97,6 @@ Task Manager is a full-stack application for efficient task management with a mo
 6. Run migrations:
 
     ```bash
-    # for development
-    npm run migrate:dev
-    ```
-
-    ```bash
-    # for production
     npm run migrate
     ```
 
@@ -113,10 +105,10 @@ Task Manager is a full-stack application for efficient task management with a mo
 | Command | Description |
 | ------- | ----------- |
 | `npm run dev` | Start development server (client + server) |
-| `npm build` | Build the application for production |
-| `npm start` | Start the production server |
 | `npm run client` | Frontend only (port 3000) |
 | `npm run server` | Backend only (port 5000) |
+| `npm run build` | Build the application for production |
+| `npm start` | Start the production server |
 
 ### 🧪 Testing
 
