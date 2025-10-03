@@ -6,21 +6,22 @@ import env from './env';
 
 type EnvironmentUnion = 'production' | 'development' | 'test';
 
-const migrationsDirectory = path.resolve(__dirname, 'server', 'migrations');
+const prodMigrationsPath = path.resolve(__dirname, 'dist', 'server', 'migrations');
+const devMigrationsPath = path.resolve(__dirname, 'server', 'migrations');
 
 const migrationsConfig: Record<EnvironmentUnion, Knex.MigratorConfig> = {
   production: {
-    directory: migrationsDirectory,
+    directory: prodMigrationsPath,
     extension: 'js',
     loadExtensions: ['.js'],
   },
   development: {
-    directory: migrationsDirectory,
+    directory: devMigrationsPath,
     extension: 'ts',
     loadExtensions: ['.ts'],
   },
   test: {
-    directory: migrationsDirectory,
+    directory: devMigrationsPath,
     extension: 'ts',
     loadExtensions: ['.ts'],
   },
