@@ -20,22 +20,19 @@ clean:
 	npm run clean
 
 build: clean
-	npm run build:full
+	npm run build
 
 migrate:
-	npm run migrate:prod
-
-migrate-dev:
-	npm run migrate:dev
+	npm run migrate
 
 migration:
-	npx tsx node_modules/.bin/knex migrate:make $(N)
+	npm run migrate:make $(N)
 
 start: build migrate
-	npm run start:prod
+	npm start
 
 dev:
-	npm run start:dev
+	npm run dev
 
 session-key:
 	node -e "console.log(require('crypto').randomBytes(64).toString('hex'))"
