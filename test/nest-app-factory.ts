@@ -4,8 +4,7 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 import knex from 'knex';
 import { AppModule } from '../server/app.module';
 import { sessionConfig, validatorConfig } from '../server/configs';
-import { AllExceptionsFilter } from '../server/common/filters/all-exceptions.filter';
-import { ObjectionFilter } from '../server/common/filters/objection.filter';
+import { AllExceptionsFilter, DbExceptionsFilter } from '../server/common/filters';
 import config from '../knexfile';
 
 let app: NestExpressApplication;
@@ -27,13 +26,13 @@ export const getNestApp = async (): Promise<NestExpressApplication> => {
   app.use(sessionConfig);
   app.setGlobalPrefix('api');
   app.useGlobalPipes(new ValidationPipe(validatorConfig));
-  app.useGlobalFilters(new AllExceptionsFilter(), new ObjectionFilter());
+  app.useGlobalFilters(new AllExceptionsFilter(), new DbExceptionsFilter());
 
   return app.init();
 };
 
 export const closeNestApp = async (): Promise<void> => {
-  if (app) {
-    await app.close();
-  }
+  if (!app) return;
+
+  await app.close();
 };

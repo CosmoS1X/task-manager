@@ -5,8 +5,7 @@ import type { Request, Response, NextFunction } from 'express';
 import { join } from 'path';
 import { AppModule } from './app.module';
 import { loggerConfig, corsConfig, validatorConfig, sessionConfig } from './configs';
-import { AllExceptionsFilter } from './common/filters/all-exceptions.filter';
-import { ObjectionFilter } from './common/filters/objection.filter';
+import { AllExceptionsFilter, DbExceptionsFilter } from './common/filters';
 import env from '../env';
 
 async function bootstrap() {
@@ -16,7 +15,7 @@ async function bootstrap() {
   app.enableCors(corsConfig);
   app.setGlobalPrefix('api');
   app.useGlobalPipes(new ValidationPipe(validatorConfig));
-  app.useGlobalFilters(new AllExceptionsFilter(), new ObjectionFilter());
+  app.useGlobalFilters(new AllExceptionsFilter(), new DbExceptionsFilter());
 
   if (env.isProduction) {
     const clientPath = join(__dirname, '..', 'client');
