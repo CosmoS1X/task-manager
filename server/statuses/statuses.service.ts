@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, ConflictException } from '@nestjs/common';
 import { Status } from './entities/status.entity';
 import { StatusRepository, StatusCreateData, StatusUpdateData } from './repositories/status.repository';
 
@@ -27,6 +27,14 @@ export class StatusesService {
   async create(statusCreateData: StatusCreateData): Promise<Status> {
     this.logger.log('Creating new status...');
 
+    const existingStatus = await this.statusRepository.findByName(statusCreateData.name);
+
+    if (existingStatus) {
+      this.logger.warn(`Status ${statusCreateData.name} already exists`);
+
+      throw new ConflictException('Status with this name already exists');
+    }
+
     const newStatus = await this.statusRepository.create(statusCreateData);
 
     this.logger.log(`Successfully created status with ID: ${newStatus.id}`);
@@ -36,6 +44,18 @@ export class StatusesService {
 
   async update(statusUpdateData: StatusUpdateData): Promise<Status> {
     this.logger.log(`Updating status with ID: ${statusUpdateData.id}...`);
+
+    const status = await this.statusRepository.findById(statusUpdateData.id);
+
+    if (statusUpdateData.name && statusUpdateData.name !== status.name) {
+      const existingStatus = await this.statusRepository.findByName(statusUpdateData.name);
+
+      if (existingStatus) {
+        this.logger.warn(`Status ${statusUpdateData.name} already exists`);
+
+        throw new ConflictException('Status with this name already exists');
+      }
+    }
 
     const updatedStatus = await this.statusRepository.update(statusUpdateData);
 

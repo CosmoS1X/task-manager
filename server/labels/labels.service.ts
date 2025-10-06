@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, ConflictException } from '@nestjs/common';
 import { Label } from './entities/label.entity';
 import { LabelRepository, LabelCreateData, LabelUpdateData } from './repositories/label.repository';
 
@@ -27,6 +27,14 @@ export class LabelsService {
   async create(labelCreateData: LabelCreateData): Promise<Label> {
     this.logger.log('Creating new label...');
 
+    const existingLabel = await this.labelRepository.findByName(labelCreateData.name);
+
+    if (existingLabel) {
+      this.logger.warn(`Label ${labelCreateData.name} already exists`);
+
+      throw new ConflictException('Label with this name already exists');
+    }
+
     const newLabel = await this.labelRepository.create(labelCreateData);
 
     this.logger.log(`Successfully created label with ID: ${newLabel.id}`);
@@ -36,6 +44,18 @@ export class LabelsService {
 
   async update(labelUpdateData: LabelUpdateData): Promise<Label> {
     this.logger.log(`Updating label with ID: ${labelUpdateData.id}...`);
+
+    const label = await this.labelRepository.findById(labelUpdateData.id);
+
+    if (labelUpdateData.name && labelUpdateData.name !== label.name) {
+      const existingLabel = await this.labelRepository.findByName(labelUpdateData.name);
+
+      if (existingLabel) {
+        this.logger.warn(`Label ${labelUpdateData.name} already exists`);
+
+        throw new ConflictException('Label with this name already exists');
+      }
+    }
 
     const updatedLabel = await this.labelRepository.update(labelUpdateData);
 
