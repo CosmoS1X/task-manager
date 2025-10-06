@@ -14,6 +14,10 @@ export interface StatusUpdateData extends UpdateStatusDto {
 export class StatusRepository extends BaseRepository<Status> {
   protected model = Status;
 
+  async findByName(name: string): Promise<Status | undefined> {
+    return this.model.query().findOne({ name });
+  }
+
   async create(statusCreateData: StatusCreateData): Promise<Status> {
     return this.model.query().insertAndFetch(statusCreateData);
   }

@@ -14,6 +14,10 @@ export interface LabelUpdateData extends UpdateLabelDto {
 export class LabelRepository extends BaseRepository<Label> {
   protected model = Label;
 
+  async findByName(name: string): Promise<Label | undefined> {
+    return this.model.query().findOne({ name });
+  }
+
   async create(labelCreateData: LabelCreateData): Promise<Label> {
     return this.model.query().insertAndFetch(labelCreateData);
   }
