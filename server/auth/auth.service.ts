@@ -46,13 +46,17 @@ export class AuthService {
     return this.usersService.findById(userId);
   }
 
+  setSessionUserId(userId: number, session: SessionData): void {
+    // eslint-disable-next-line no-param-reassign
+    session.userId = userId;
+  }
+
   async login(loginDto: LoginDto, session: SessionData): Promise<User> {
     this.logger.log(`Attempting login for user with email: ${loginDto.email}...`);
 
     const user = await this.validateUser(loginDto.email, loginDto.password);
 
-    // eslint-disable-next-line no-param-reassign
-    session.userId = user.id;
+    this.setSessionUserId(user.id, session);
 
     this.logger.log(`User with ID: ${user.id} logged in successfully`);
 
