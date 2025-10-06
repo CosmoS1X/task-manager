@@ -51,7 +51,7 @@ export class UsersController {
   ): Promise<User> {
     const user = await this.usersService.create(createUserDto);
 
-    await this.authService.login(user.id, session);
+    this.authService.setSessionUserId(user.id, session);
 
     return user;
   }
@@ -71,9 +71,9 @@ export class UsersController {
   async delete(
     @Param('id', ParseIntPipe) id: number,
     @Session() session: SessionData,
-    @Res({ passthrough: true }) res: Response,
+    @Res({ passthrough: true }) response: Response,
   ): Promise<void> {
     await this.usersService.delete(id);
-    await this.authService.logout(session, res);
+    await this.authService.logout(session, response);
   }
 }
