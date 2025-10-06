@@ -84,7 +84,8 @@ describe('Statuses (E2E)', () => {
       const response = await agent.post(Endpoints.Statuses).send({ name: testStatus.name });
 
       expect(response.status).toBe(409);
-      expect(response.body.error).toBe('UniqueViolationError');
+      expect(response.body.error).toBe('Conflict');
+      expect(response.body.message).toBe('Status with this name already exists');
     });
 
     it('should validate input data', async () => {
@@ -117,7 +118,8 @@ describe('Statuses (E2E)', () => {
       const response = await agent.patch(getStatusPath(testStatus.id)).send(anotherStatusData);
 
       expect(response.status).toBe(409);
-      expect(response.body.error).toBe('UniqueViolationError');
+      expect(response.body.error).toBe('Conflict');
+      expect(response.body.message).toBe('Status with this name already exists');
     });
 
     it('should return 200 if name not changed', async () => {
