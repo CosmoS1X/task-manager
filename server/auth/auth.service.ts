@@ -3,6 +3,7 @@ import type { Response } from 'express';
 import type { SessionData } from 'express-session';
 import { UsersService } from '@server/users/users.service';
 import { User } from '@server/users/entities/user.entity';
+import { LoginDto } from './dto/login.dto';
 import env from '../../env';
 
 @Injectable()
@@ -45,13 +46,17 @@ export class AuthService {
     return this.usersService.findById(userId);
   }
 
-  async login(userId: number, session: SessionData): Promise<void> {
-    this.logger.log(`Attempting login for user with ID: ${userId}...`);
+  async login(loginDto: LoginDto, session: SessionData): Promise<User> {
+    this.logger.log(`Attempting login for user with email: ${loginDto.email}...`);
+
+    const user = await this.validateUser(loginDto.email, loginDto.password);
 
     // eslint-disable-next-line no-param-reassign
-    session.userId = userId;
+    session.userId = user.id;
 
-    this.logger.log(`User with ID: ${userId} logged in successfully`);
+    this.logger.log(`User with ID: ${user.id} logged in successfully`);
+
+    return user;
   }
 
   async logout(session: SessionData, response: Response): Promise<void> {

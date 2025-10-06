@@ -22,11 +22,7 @@ export class AuthController {
     @Body() loginDto: LoginDto,
     @Session() session: SessionData,
   ): Promise<User> {
-    const user = await this.authService.validateUser(loginDto.email, loginDto.password);
-
-    await this.authService.login(user.id, session);
-
-    return user;
+    return this.authService.login(loginDto, session);
   }
 
   @Get('check-auth')
