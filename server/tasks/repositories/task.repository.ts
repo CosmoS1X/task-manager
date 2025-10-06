@@ -24,7 +24,6 @@ export class TaskRepository extends BaseRepository<Task> {
 
   private readonly relations = '[status, creator, executor, labels]';
 
-  // eslint-disable-next-line class-methods-use-this
   private createFilters(taskFilterData: TaskFilterData) {
     const { status, executor, label, isCreator, creatorId } = taskFilterData;
 

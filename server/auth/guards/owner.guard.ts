@@ -2,7 +2,6 @@ import { Injectable, CanActivate, ExecutionContext, ForbiddenException } from '@
 
 @Injectable()
 export class OwnerGuard implements CanActivate {
-  // eslint-disable-next-line class-methods-use-this
   canActivate(context: ExecutionContext): boolean {
     const request = context.switchToHttp().getRequest();
     const userIdFromSession = request.session.userId;

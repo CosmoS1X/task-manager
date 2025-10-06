@@ -18,7 +18,6 @@ import { LoggingMiddleware } from './common/middlewares/logging.middleware';
   ],
 })
 export class AppModule {
-  // eslint-disable-next-line class-methods-use-this
   configure(consumer: MiddlewareConsumer) {
     consumer.apply(LoggingMiddleware).forRoutes('*path');
   }
