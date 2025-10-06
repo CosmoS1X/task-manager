@@ -11,20 +11,28 @@ export class ObjectionFilter implements ExceptionFilter {
     const context = host.switchToHttp();
     const response = context.getResponse<Response>();
 
-    let status = HttpStatus.BAD_REQUEST;
-    let message = 'Database error occurred';
+    let status;
+    let message;
 
-    if (error instanceof ForeignKeyViolationError) {
-      status = HttpStatus.CONFLICT;
-      message = 'Referenced resource is in use by other records or does not exist';
-    } else if (error instanceof UniqueViolationError) {
-      status = HttpStatus.CONFLICT;
-      message = 'Duplicate entry violates unique constraint';
-    } else
-    /* istanbul ignore next */ // unreachable if nest validation is triggered
-    if (error instanceof NotNullViolationError) {
-      status = HttpStatus.BAD_REQUEST;
-      message = 'A required field is missing';
+    switch (error.constructor) {
+      case ForeignKeyViolationError:
+        status = HttpStatus.CONFLICT;
+        message = 'Referenced resource is in use by other records or does not exist';
+        break;
+      /* istanbul ignore next */ // unreachable if services have passed all checks
+      case UniqueViolationError:
+        status = HttpStatus.CONFLICT;
+        message = 'Duplicate entry violates unique constraint';
+        break;
+      /* istanbul ignore next */ // unreachable if nest validation is triggered
+      case NotNullViolationError:
+        status = HttpStatus.BAD_REQUEST;
+        message = 'A required field is missing';
+        break;
+      /* istanbul ignore next */
+      default:
+        status = HttpStatus.BAD_REQUEST;
+        message = 'Database error occurred';
     }
 
     this.logger.warn(`${error.name}: ${message}`);
