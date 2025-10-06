@@ -4,8 +4,8 @@ import { ForeignKeyViolationError, UniqueViolationError, NotNullViolationError }
 import env from '../../../env';
 
 @Catch(ForeignKeyViolationError, UniqueViolationError, NotNullViolationError)
-export class ObjectionFilter implements ExceptionFilter {
-  private readonly logger = new Logger(ObjectionFilter.name);
+export class DbExceptionsFilter implements ExceptionFilter {
+  private readonly logger = new Logger(DbExceptionsFilter.name);
 
   catch(error: Error, host: ArgumentsHost) {
     const context = host.switchToHttp();
