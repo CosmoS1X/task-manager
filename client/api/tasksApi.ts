@@ -1,5 +1,6 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import type { Task, TaskFilterParams } from '@/types';
+import { transformErrorResponse } from './helpers';
 
 export const tasksApi = createApi({
   reducerPath: 'tasks',
@@ -40,6 +41,7 @@ export const tasksApi = createApi({
         method: 'DELETE',
       }),
       invalidatesTags: ['Tasks'],
+      transformErrorResponse,
     }),
   }),
 });

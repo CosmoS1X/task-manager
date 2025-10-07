@@ -22,6 +22,8 @@ rules:
   no-console: 'warn'
   object-curly-newline: 'off'
   import/extensions: 'off'
+  import/prefer-default-export: 'off'
+  class-methods-use-this: 'off'
   jsx-a11y/label-has-associated-control:
   - error
   - controlComponents:
@@ -31,3 +33,4 @@ rules:
   '@typescript-eslint/no-unused-vars':
     - error
     - argsIgnorePattern: '^_'
+  '@typescript-eslint/indent': 'off'

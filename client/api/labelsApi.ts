@@ -1,5 +1,6 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import type { Label } from '@/types';
+import { transformErrorResponse } from './helpers';
 
 export const labelsApi = createApi({
   reducerPath: 'labels',
@@ -31,6 +32,7 @@ export const labelsApi = createApi({
         url: `/${id}`,
         method: 'DELETE',
       }),
+      transformErrorResponse,
     }),
   }),
 });

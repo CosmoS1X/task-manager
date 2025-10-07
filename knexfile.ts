@@ -6,21 +6,22 @@ import env from './env';
 
 type EnvironmentUnion = 'production' | 'development' | 'test';
 
-const migrationsDirectory = path.resolve(__dirname, 'server', 'migrations');
+const prodMigrationsPath = path.resolve(__dirname, 'dist', 'server', 'migrations');
+const devMigrationsPath = path.resolve(__dirname, 'server', 'migrations');
 
 const migrationsConfig: Record<EnvironmentUnion, Knex.MigratorConfig> = {
   production: {
-    directory: migrationsDirectory,
+    directory: prodMigrationsPath,
     extension: 'js',
     loadExtensions: ['.js'],
   },
   development: {
-    directory: migrationsDirectory,
+    directory: devMigrationsPath,
     extension: 'ts',
     loadExtensions: ['.ts'],
   },
   test: {
-    directory: migrationsDirectory,
+    directory: devMigrationsPath,
     extension: 'ts',
     loadExtensions: ['.ts'],
   },
@@ -29,6 +30,12 @@ const migrationsConfig: Record<EnvironmentUnion, Knex.MigratorConfig> = {
 const commonConfig: Knex.Config = {
   useNullAsDefault: true,
   ...knexSnakeCaseMappers(),
+};
+
+const sqlitePoolConfig = {
+  afterCreate: (connection: Database, done: (error: Error) => void) => {
+    connection.run('PRAGMA foreign_keys = ON', done);
+  },
 };
 
 const config: Record<EnvironmentUnion, Knex.Config> = {
@@ -48,14 +55,10 @@ const config: Record<EnvironmentUnion, Knex.Config> = {
   development: {
     client: 'sqlite3',
     connection: {
-      filename: path.resolve(__dirname, 'db.sqlite'),
+      filename: path.join(process.cwd(), 'db.sqlite'),
     },
     migrations: migrationsConfig.development,
-    pool: {
-      afterCreate: (connection: Database, done: (error?: Error) => void) => {
-        connection.run('PRAGMA foreign_keys = ON', done);
-      },
-    },
+    pool: sqlitePoolConfig,
     ...commonConfig,
   },
   test: {
@@ -63,6 +66,7 @@ const config: Record<EnvironmentUnion, Knex.Config> = {
     connection: ':memory:',
     // debug: true,
     migrations: migrationsConfig.test,
+    pool: sqlitePoolConfig,
     ...commonConfig,
   },
 };

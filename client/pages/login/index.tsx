@@ -34,7 +34,7 @@ export default function LoginPage() {
   const onSubmit = async (data: FormValues) => {
     try {
       const isSuccess = await login(data);
-      if (isSuccess) navigate(Endpoints.Home);
+      if (isSuccess) navigate(Endpoints.Tasks);
     } catch (error) {
       showError(t('errors.server'));
       throw error;

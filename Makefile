@@ -16,20 +16,20 @@ lint:
 check: type-check test lint
 	@echo "All checks passed!"
 
-build:
+clean:
+	npm run clean
+
+build: clean
 	npm run build
 
 migrate:
 	npm run migrate
 
-migrate-dev:
-	npm run migrate:dev
-
 migration:
-	npx tsx node_modules/.bin/knex migrate:make $(N)
+	npm run migrate:make $(N)
 
 start: build migrate
-	npm run start
+	npm start
 
 dev:
 	npm run dev

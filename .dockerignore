@@ -6,3 +6,5 @@ coverage
 Dockerfile
 .dockerignore
 README.md
+.vscode
+*.sqlite
