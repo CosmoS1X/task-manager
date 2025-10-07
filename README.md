@@ -65,9 +65,9 @@ Task Manager is a full-stack application for efficient task management with a mo
 
 ### Prerequisites
 
-- Node.js 20+
-- PostgreSQL 14+ (for production)
-- npm 10+
+- Node.js 24+
+- PostgreSQL 16+ (for production)
+- npm 11+
 
 ### Installation
 
