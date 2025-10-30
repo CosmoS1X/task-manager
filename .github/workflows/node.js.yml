@@ -25,7 +25,7 @@ jobs:
         cache: 'npm'
     - name: Create .env file
       run: printf '%s\n' "${{ secrets.ENV_FILE }}" > .env
-    - run: npm ci
+    - run: npm install
     - run: npm run type-check
     - run: npm run test:coverage
     - run: npm run lint
