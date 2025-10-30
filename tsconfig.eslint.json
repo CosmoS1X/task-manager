@@ -1,14 +1,9 @@
 {
   "extends": "./tsconfig.json",
   "include": [
-    "server",
-    "client",
-    "env",
-    "test",
-    "knexfile.ts",
-    "webpack.config.js",
-    "jest.config.js",
-    "**/*spec.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    "**/*.js"
   ],
   "exclude": ["node_modules", "dist"]
 }
