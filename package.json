@@ -39,6 +39,7 @@
     "@nestjs/config": "^4.0.2",
     "@nestjs/core": "^11.1.6",
     "@nestjs/platform-express": "^11.1.6",
+    "@nestjs/typeorm": "^11.0.0",
     "@reduxjs/toolkit": "^2.7.0",
     "bootstrap": "^5.3.5",
     "bootstrap-icons": "^1.11.3",
@@ -63,6 +64,8 @@
     "reflect-metadata": "^0.2.2",
     "rollbar": "^3.0.0-alpha.1",
     "sqlite3": "^5.1.7",
+    "typeorm": "^0.3.28",
+    "typeorm-naming-strategies": "^4.1.0",
     "use-debounce": "^10.0.4",
     "zod": "^3.24.3"
   },
