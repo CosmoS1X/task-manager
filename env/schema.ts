@@ -35,6 +35,8 @@ export const envSchema = z.object({
     .default(process.env.NODE_ENV === 'production'),
   isDevelopment: z.boolean()
     .default(process.env.NODE_ENV === 'development'),
+  isTest: z.boolean()
+    .default(process.env.NODE_ENV === 'test'),
 });
 
 export type Env = z.infer<typeof envSchema>;
