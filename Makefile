@@ -25,8 +25,11 @@ build: clean
 migrate:
 	npm run migrate
 
-migration:
-	npm run migrate:make $(N)
+migration-generate:
+	npm run migration:generate server/migrations/$(N)
+
+migration-create:
+	npm run migration:create server/migrations/$(N)
 
 start: build migrate
 	npm start
