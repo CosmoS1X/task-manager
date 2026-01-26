@@ -25,7 +25,7 @@ export class AuthService {
       throw new NotFoundException('User with this email not found');
     }
 
-    if (!user.verifyPassword(password)) {
+    if (!this.usersService.verifyPassword(user, password)) {
       throw new ForbiddenException('Incorrect password');
     }
 
