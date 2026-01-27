@@ -1,13 +1,16 @@
-import { Model } from 'objection';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 
-export class Label extends Model {
+@Entity('labels')
+export class Label {
+  @PrimaryGeneratedColumn()
   id!: number;
 
+  @Column({ unique: true })
   name!: string;
 
-  createdAt!: string;
+  @CreateDateColumn()
+  createdAt!: Date;
 
-  static get tableName() {
-    return 'labels';
-  }
+  @UpdateDateColumn()
+  updatedAt!: Date;
 }
