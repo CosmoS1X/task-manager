@@ -1,6 +1,7 @@
 import { Injectable, Logger, ConflictException } from '@nestjs/common';
 import { Status } from './entities/status.entity';
-import { StatusRepository, StatusCreateData, StatusUpdateData } from './repositories/status.repository';
+import { StatusRepository } from './repositories/status.repository';
+import { CreateStatusDto, UpdateStatusDto } from './dto';
 
 @Injectable()
 export class StatusesService {
@@ -24,42 +25,42 @@ export class StatusesService {
     return this.statusRepository.findById(id);
   }
 
-  async create(statusCreateData: StatusCreateData): Promise<Status> {
+  async create(createStatusDto: CreateStatusDto): Promise<Status> {
     this.logger.log('Creating new status...');
 
-    const existingStatus = await this.statusRepository.findByName(statusCreateData.name);
+    const existingStatus = await this.statusRepository.findByName(createStatusDto.name);
 
     if (existingStatus) {
-      this.logger.warn(`Status ${statusCreateData.name} already exists`);
+      this.logger.warn(`Status ${createStatusDto.name} already exists`);
 
       throw new ConflictException('Status with this name already exists');
     }
 
-    const newStatus = await this.statusRepository.create(statusCreateData);
+    const newStatus = await this.statusRepository.save(createStatusDto);
 
     this.logger.log(`Successfully created status with ID: ${newStatus.id}`);
 
     return newStatus;
   }
 
-  async update(statusUpdateData: StatusUpdateData): Promise<Status> {
-    this.logger.log(`Updating status with ID: ${statusUpdateData.id}...`);
+  async update(id: number, updateStatusDto: UpdateStatusDto): Promise<Status> {
+    this.logger.log(`Updating status with ID: ${id}...`);
 
-    const status = await this.statusRepository.findById(statusUpdateData.id);
+    const status = await this.statusRepository.findById(id);
 
-    if (statusUpdateData.name && statusUpdateData.name !== status.name) {
-      const existingStatus = await this.statusRepository.findByName(statusUpdateData.name);
+    if (updateStatusDto.name && updateStatusDto.name !== status.name) {
+      const existingStatus = await this.statusRepository.findByName(updateStatusDto.name);
 
       if (existingStatus) {
-        this.logger.warn(`Status ${statusUpdateData.name} already exists`);
+        this.logger.warn(`Status ${updateStatusDto.name} already exists`);
 
         throw new ConflictException('Status with this name already exists');
       }
     }
 
-    const updatedStatus = await this.statusRepository.update(statusUpdateData);
+    const updatedStatus = await this.statusRepository.patchAndFetch(id, updateStatusDto);
 
-    this.logger.log(`Successfully updated status with ID: ${statusUpdateData.id}`);
+    this.logger.log(`Successfully updated status with ID: ${id}`);
 
     return updatedStatus;
   }
@@ -67,7 +68,7 @@ export class StatusesService {
   async delete(id: number): Promise<void> {
     this.logger.log(`Attempting to delete status with ID: ${id}...`);
 
-    await this.statusRepository.delete(id);
+    await this.statusRepository.deleteById(id);
 
     this.logger.log(`Successfully deleted status with ID: ${id}`);
   }

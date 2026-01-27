@@ -42,7 +42,7 @@ export class StatusesController {
     @Param('id', ParseIntPipe) id: number,
     @Body() updateStatusDto: UpdateStatusDto,
   ): Promise<Status> {
-    return this.statusesService.update({ id, ...updateStatusDto });
+    return this.statusesService.update(id, updateStatusDto);
   }
 
   @Delete(':id')
