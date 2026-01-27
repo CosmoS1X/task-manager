@@ -1,13 +1,16 @@
-import { Model } from 'objection';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 
-export class Status extends Model {
+@Entity('statuses')
+export class Status {
+  @PrimaryGeneratedColumn()
   id!: number;
 
+  @Column({ unique: true })
   name!: string;
 
-  createdAt!: string;
+  @CreateDateColumn()
+  createdAt!: Date;
 
-  static get tableName() {
-    return 'statuses';
-  }
+  @UpdateDateColumn()
+  updatedAt!: Date;
 }
