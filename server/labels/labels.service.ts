@@ -1,6 +1,7 @@
 import { Injectable, Logger, ConflictException } from '@nestjs/common';
 import { Label } from './entities/label.entity';
-import { LabelRepository, LabelCreateData, LabelUpdateData } from './repositories/label.repository';
+import { LabelRepository } from './repositories/label.repository';
+import { CreateLabelDto, UpdateLabelDto } from './dto';
 
 @Injectable()
 export class LabelsService {
@@ -24,42 +25,42 @@ export class LabelsService {
     return this.labelRepository.findById(id);
   }
 
-  async create(labelCreateData: LabelCreateData): Promise<Label> {
+  async create(createLabelDto: CreateLabelDto): Promise<Label> {
     this.logger.log('Creating new label...');
 
-    const existingLabel = await this.labelRepository.findByName(labelCreateData.name);
+    const existingLabel = await this.labelRepository.findByName(createLabelDto.name);
 
     if (existingLabel) {
-      this.logger.warn(`Label ${labelCreateData.name} already exists`);
+      this.logger.warn(`Label ${createLabelDto.name} already exists`);
 
       throw new ConflictException('Label with this name already exists');
     }
 
-    const newLabel = await this.labelRepository.create(labelCreateData);
+    const newLabel = await this.labelRepository.save(createLabelDto);
 
     this.logger.log(`Successfully created label with ID: ${newLabel.id}`);
 
     return newLabel;
   }
 
-  async update(labelUpdateData: LabelUpdateData): Promise<Label> {
-    this.logger.log(`Updating label with ID: ${labelUpdateData.id}...`);
+  async update(id: number, updateLabelDto: UpdateLabelDto): Promise<Label> {
+    this.logger.log(`Updating label with ID: ${id}...`);
 
-    const label = await this.labelRepository.findById(labelUpdateData.id);
+    const label = await this.labelRepository.findById(id);
 
-    if (labelUpdateData.name && labelUpdateData.name !== label.name) {
-      const existingLabel = await this.labelRepository.findByName(labelUpdateData.name);
+    if (updateLabelDto.name && updateLabelDto.name !== label.name) {
+      const existingLabel = await this.labelRepository.findByName(updateLabelDto.name);
 
       if (existingLabel) {
-        this.logger.warn(`Label ${labelUpdateData.name} already exists`);
+        this.logger.warn(`Label ${updateLabelDto.name} already exists`);
 
         throw new ConflictException('Label with this name already exists');
       }
     }
 
-    const updatedLabel = await this.labelRepository.update(labelUpdateData);
+    const updatedLabel = await this.labelRepository.patchAndFetch(id, updateLabelDto);
 
-    this.logger.log(`Successfully updated label with ID: ${labelUpdateData.id}`);
+    this.logger.log(`Successfully updated label with ID: ${id}`);
 
     return updatedLabel;
   }
@@ -67,7 +68,7 @@ export class LabelsService {
   async delete(id: number): Promise<void> {
     this.logger.log(`Attempting to delete label with ID: ${id}...`);
 
-    await this.labelRepository.delete(id);
+    await this.labelRepository.deleteById(id);
 
     this.logger.log(`Successfully deleted label with ID: ${id}`);
   }

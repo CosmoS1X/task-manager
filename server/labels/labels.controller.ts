@@ -14,8 +14,7 @@ import {
 import { AuthGuard } from '@server/auth/guards/auth.guard';
 import { LabelsService } from './labels.service';
 import { Label } from './entities/label.entity';
-import { CreateLabelDto } from './dto/create-label.dto';
-import { UpdateLabelDto } from './dto/update-label.dto';
+import { CreateLabelDto, UpdateLabelDto } from './dto';
 
 @Controller('labels')
 @UseGuards(AuthGuard) // Protect all routes
@@ -42,7 +41,7 @@ export class LabelsController {
     @Param('id', ParseIntPipe) id: number,
     @Body() updateLabelDto: UpdateLabelDto,
   ): Promise<Label> {
-    return this.labelsService.update({ id, ...updateLabelDto });
+    return this.labelsService.update(id, updateLabelDto);
   }
 
   @Delete(':id')
