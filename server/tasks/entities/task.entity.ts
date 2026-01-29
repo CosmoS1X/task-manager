@@ -1,75 +1,80 @@
-import { Model, RelationMappings } from 'objection';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  OneToMany,
+  ManyToOne,
+  JoinColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
+  AfterLoad,
+} from 'typeorm';
 import { Status } from '@server/statuses/entities/status.entity';
 import { User } from '@server/users/entities/user.entity';
 import { Label } from '@server/labels/entities/label.entity';
+// eslint-disable-next-line import/no-cycle
 import { TaskLabel } from './task-label.entity';
 
-export class Task extends Model {
+@Entity('tasks')
+export class Task {
+  @PrimaryGeneratedColumn()
   id!: number;
 
+  @Column()
   name!: string;
 
+  @Column({ type: 'text', nullable: true })
   description!: string | null;
 
+  @Column()
   statusId!: number;
 
+  @Column()
   creatorId!: number;
 
+  @Column({ nullable: true })
   executorId!: number | null;
 
-  createdAt!: string;
+  @CreateDateColumn()
+  createdAt!: Date;
 
+  @UpdateDateColumn()
+  updatedAt!: Date;
+
+  @ManyToOne(() => Status, (status) => status.tasks, {
+    nullable: false,
+    onDelete: 'RESTRICT',
+  })
+  @JoinColumn({ name: 'status_id' })
   status?: Status;
 
+  @ManyToOne(() => User, (user) => user.createdTasks, {
+    nullable: false,
+    onDelete: 'RESTRICT',
+  })
+  @JoinColumn({ name: 'creator_id' })
   creator?: User;
 
+  @ManyToOne(() => User, (user) => user.assignedTasks, {
+    nullable: true,
+    onDelete: 'RESTRICT',
+  })
+  @JoinColumn({ name: 'executor_id' })
   executor?: User | null;
 
-  labels?: Label[];
+  @OneToMany(() => TaskLabel, (taskLabel) => taskLabel.task, {
+    cascade: true,
+  })
+  taskLabels?: TaskLabel[];
 
-  static get tableName() {
-    return 'tasks';
-  }
+  labels?: Label[] = [];
 
-  static get relationMappings(): RelationMappings {
-    return {
-      status: {
-        relation: Model.BelongsToOneRelation,
-        modelClass: Status,
-        join: {
-          from: 'tasks.statusId',
-          to: 'statuses.id',
-        },
-      },
-      creator: {
-        relation: Model.BelongsToOneRelation,
-        modelClass: User,
-        join: {
-          from: 'tasks.creatorId',
-          to: 'users.id',
-        },
-      },
-      executor: {
-        relation: Model.BelongsToOneRelation,
-        modelClass: User,
-        join: {
-          from: 'tasks.executorId',
-          to: 'users.id',
-        },
-      },
-      labels: {
-        relation: Model.ManyToManyRelation,
-        modelClass: Label,
-        join: {
-          from: 'tasks.id',
-          through: {
-            modelClass: TaskLabel,
-            from: 'tasks_labels.taskId',
-            to: 'tasks_labels.labelId',
-          },
-          to: 'labels.id',
-        },
-      },
-    };
+  @AfterLoad()
+  transformLabels() {
+    if (this.taskLabels) {
+      this.labels = this.taskLabels
+        .map(({ label }) => label)
+        .filter((label) => !!label);
+    }
   }
 }
