@@ -1,4 +1,13 @@
-import { Entity, PrimaryGeneratedColumn, Column, Index, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  Index,
+  OneToMany,
+  CreateDateColumn,
+  UpdateDateColumn,
+} from 'typeorm';
+import { Task } from '@server/tasks/entities/task.entity';
 
 @Entity('users')
 export class User {
@@ -23,6 +32,12 @@ export class User {
 
   @UpdateDateColumn()
   updatedAt!: Date;
+
+  @OneToMany(() => Task, (task) => task.creator)
+  createdTasks?: Task[];
+
+  @OneToMany(() => Task, (task) => task.executor)
+  assignedTasks?: Task[];
 
   get fullName(): string {
     return `${this.firstName} ${this.lastName}`;

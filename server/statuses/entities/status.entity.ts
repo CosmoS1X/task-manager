@@ -1,4 +1,12 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  OneToMany,
+  CreateDateColumn,
+  UpdateDateColumn,
+} from 'typeorm';
+import { Task } from '@server/tasks/entities/task.entity';
 
 @Entity('statuses')
 export class Status {
@@ -13,4 +21,7 @@ export class Status {
 
   @UpdateDateColumn()
   updatedAt!: Date;
+
+  @OneToMany(() => Task, (task) => task.status)
+  tasks?: Task[];
 }

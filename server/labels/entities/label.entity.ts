@@ -1,4 +1,12 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  OneToMany,
+  CreateDateColumn,
+  UpdateDateColumn,
+} from 'typeorm';
+import { TaskLabel } from '@server/tasks/entities/task-label.entity';
 
 @Entity('labels')
 export class Label {
@@ -13,4 +21,7 @@ export class Label {
 
   @UpdateDateColumn()
   updatedAt!: Date;
+
+  @OneToMany(() => TaskLabel, (taskLabel) => taskLabel.label)
+  taskLabels?: TaskLabel[];
 }
