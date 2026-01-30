@@ -1,10 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
+import { DataSource } from 'typeorm';
 import { BaseRepository } from '@server/common/repositories/base.repository';
 import { Task } from '../entities/task.entity';
-import { TaskLabel } from '../entities/task-label.entity';
-import { TaskFilterDto } from '../dto/task-filter.dto';
-import { CreateTaskDto } from '../dto/create-task.dto';
-import { UpdateTaskDto } from '../dto/update-task.dto';
+import { TaskFilterDto, CreateTaskDto } from '../dto';
 
 export interface TaskFilterData extends TaskFilterDto {
   creatorId: number;
@@ -14,99 +12,39 @@ export interface TaskCreateData extends CreateTaskDto {
   creatorId: number;
 }
 
-export interface TaskUpdateData extends UpdateTaskDto {
-  id: number;
-}
-
 @Injectable()
 export class TaskRepository extends BaseRepository<Task> {
-  protected model = Task;
+  constructor(dataSource: DataSource) {
+    super(Task, dataSource.createEntityManager());
+  }
 
-  private readonly relations = '[status, creator, executor, labels]';
-
-  private createFilters(taskFilterData: TaskFilterData) {
+  async findAllWithFilters(taskFilterData: TaskFilterData): Promise<Task[]> {
     const { status, executor, label, isCreator, creatorId } = taskFilterData;
 
-    return {
-      ...(status && { statusId: status }),
-      ...(executor && { executorId: executor }),
-      ...(label && { labelId: label }),
-      ...(isCreator && { creatorId }),
-    };
-  }
+    const query = this.createQueryBuilder('task')
+      .leftJoinAndSelect('task.status', 'status')
+      .leftJoinAndSelect('task.creator', 'creator')
+      .leftJoinAndSelect('task.executor', 'executor')
+      .leftJoinAndSelect('task.taskLabels', 'taskLabel')
+      .leftJoinAndSelect('taskLabel.label', 'label')
+      .orderBy('task.createdAt', 'DESC');
 
-  async findAll(taskFilterData?: TaskFilterData): Promise<Task[]> {
-    const filters = taskFilterData ? this.createFilters(taskFilterData) : {};
-
-    const tasks = await this.model
-      .query()
-      .withGraphJoined(this.relations)
-      .where(filters)
-      .orderBy('createdAt', 'desc');
-
-    return tasks;
-  }
-
-  async findById(id: number): Promise<Task> {
-    const task = await this.model.query().findById(id).withGraphJoined(this.relations);
-
-    if (!task) {
-      throw new NotFoundException(`Task with ID ${id} not found`);
+    if (status) {
+      query.andWhere('task.statusId = :status', { status });
     }
 
-    return task;
-  }
-
-  async create(taskCreateData: TaskCreateData): Promise<Task> {
-    const { labelIds = [], ...taskFields } = taskCreateData;
-    const transaction = await this.model.startTransaction();
-
-    try {
-      const createdTask = await this.model.query(transaction).insertAndFetch(taskFields);
-
-      if (labelIds.length > 0) {
-        await Promise.all(
-          labelIds.map((labelId) => (
-            createdTask.$relatedQuery('labels', transaction).relate(labelId)
-          )),
-        );
-      }
-
-      await transaction.commit();
-
-      return createdTask;
-    } catch (error) {
-      await transaction.rollback();
-
-      throw error;
+    if (executor) {
+      query.andWhere('task.executorId = :executor', { executor });
     }
-  }
 
-  async update(taskUpdateData: TaskUpdateData): Promise<Task> {
-    const { id, labelIds = [], ...taskFields } = taskUpdateData;
-    const task = await this.findById(id);
-    const transaction = await this.model.startTransaction();
-
-    try {
-      const updatedTask = await task.$query(transaction).patchAndFetch(taskFields);
-
-      await TaskLabel.query(transaction).delete().where('taskId', task.id);
-
-      if (labelIds.length > 0) {
-        await Promise.all(
-          labelIds.map((labelId) => (
-            updatedTask.$relatedQuery('labels', transaction).relate(labelId)
-          )),
-        );
-      }
-
-      await transaction.commit();
-
-      return updatedTask;
-    } catch (error) {
-      await transaction.rollback();
-
-      throw error;
+    if (label) {
+      query.andWhere('label.id = :label', { label });
     }
+
+    if (isCreator) {
+      query.andWhere('task.creatorId = :creatorId', { creatorId });
+    }
+
+    return query.getMany();
   }
 }
