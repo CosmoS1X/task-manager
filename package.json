@@ -20,7 +20,7 @@
     "migration:show": "npm run typeorm -- migration:show -d data-source.ts",
     "migrate": "npm run migration:run",
     "type-check": "tsc --noEmit -p tsconfig.json && tsc --noEmit -p client/tsconfig.json",
-    "test": "jest",
+    "test": "DEBUG=app:test:* jest --runInBand",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
     "lint": "eslint .",
