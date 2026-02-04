@@ -86,6 +86,8 @@ export class TasksService {
   async update(id: number, updateTaskDto: UpdateTaskDto): Promise<Task> {
     this.logger.log(`Updating task with ID: ${id}...`);
 
+    await this.taskRepository.findById(id);
+
     const { labelIds, ...restData } = updateTaskDto;
     const queryRunner = this.dataSource.createQueryRunner();
 
