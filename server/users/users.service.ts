@@ -1,5 +1,5 @@
 import { Injectable, Logger, ConflictException, ForbiddenException } from '@nestjs/common';
-import encrypt from '@server/lib/secure';
+import { encrypt, verifyPassword } from '@server/lib/secure';
 import { User } from './entities/user.entity';
 import { UserRepository } from './repositories/user.repository';
 import { CreateUserDto, UpdateUserDto } from './dto';
@@ -30,10 +30,6 @@ export class UsersService {
     this.logger.log(`Fetching user with email: ${email}...`);
 
     return this.userRepository.findByEmail(email);
-  }
-
-  verifyPassword(user: User, password: string): boolean {
-    return user.passwordDigest === encrypt(password);
   }
 
   async create(createUserDto: CreateUserDto): Promise<User> {
@@ -76,8 +72,8 @@ export class UsersService {
     const { newPassword, currentPassword, ...restData } = updateUserDto;
     const isPasswordChangeRequested = !!newPassword;
     const isCurrentPasswordProvided = !!currentPassword;
-    const isCurrentPasswordValid =
-      isCurrentPasswordProvided && this.verifyPassword(user, currentPassword);
+    const isCurrentPasswordValid = isCurrentPasswordProvided
+      && verifyPassword(currentPassword, user.passwordDigest);
 
     if (isPasswordChangeRequested && !isCurrentPasswordProvided) {
       throw new ForbiddenException({
