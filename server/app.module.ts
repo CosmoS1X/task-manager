@@ -1,6 +1,6 @@
 import { Module, MiddlewareConsumer } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { databaseConfig } from '../data-source';
+import { AppDataSource } from '../data-source';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { StatusesModule } from './statuses/statuses.module';
@@ -10,7 +10,7 @@ import { LoggingMiddleware } from './common/middlewares/logging.middleware';
 
 @Module({
   imports: [
-    TypeOrmModule.forRoot(databaseConfig),
+    TypeOrmModule.forRoot(AppDataSource.options),
     UsersModule,
     AuthModule,
     StatusesModule,
