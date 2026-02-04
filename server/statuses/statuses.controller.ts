@@ -14,8 +14,7 @@ import {
 import { AuthGuard } from '@server/auth/guards/auth.guard';
 import { StatusesService } from './statuses.service';
 import { Status } from './entities/status.entity';
-import { CreateStatusDto } from './dto/create-status.dto';
-import { UpdateStatusDto } from './dto/update-status.dto';
+import { CreateStatusDto, UpdateStatusDto } from './dto';
 
 @Controller('statuses')
 @UseGuards(AuthGuard) // Protect all routes
