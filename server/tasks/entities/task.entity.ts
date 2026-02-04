@@ -12,8 +12,7 @@ import {
 import { Status } from '@server/statuses/entities/status.entity';
 import { User } from '@server/users/entities/user.entity';
 import { Label } from '@server/labels/entities/label.entity';
-// eslint-disable-next-line import/no-cycle
-import { TaskLabel } from './task-label.entity';
+import { TaskLabel } from '@server/tasks/entities/task-label.entity';
 
 @Entity('tasks')
 export class Task {

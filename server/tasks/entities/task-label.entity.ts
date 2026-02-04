@@ -9,8 +9,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { Label } from '@server/labels/entities/label.entity';
-// eslint-disable-next-line import/no-cycle
-import { Task } from './task.entity';
+import { Task } from '@server/tasks/entities/task.entity';
 
 @Entity('tasks_labels')
 @Unique(['taskId', 'labelId'])
