@@ -5,9 +5,9 @@
   "private": true,
   "scripts": {
     "client": "webpack serve",
-    "server": "nest start --watch",
+    "server": "DEBUG=app:env:* nest start --watch",
     "dev": "concurrently \"npm run server\" \"npm run client\"",
-    "start": "node dist/server/main",
+    "start": "DEBUG=app:env:* node dist/server/main",
     "clean": "rm -rf dist",
     "build:client": "webpack",
     "build:server": "nest build",
