@@ -1,8 +1,10 @@
 import request from 'supertest';
 import type { Server } from 'http';
+import { AppDataSource } from '../../data-source';
 import { getTestServer } from '../test-server';
 import { User } from '../../server/users/entities/user.entity';
-import { createUserData, getUserPath } from '../helpers';
+import { verifyPassword } from '../../server/lib/secure';
+import { createUserData, hashUserPassword, getUserPath } from '../helpers';
 import Endpoints from '../endpoints';
 
 describe('Users (E2E)', () => {
@@ -15,12 +17,12 @@ describe('Users (E2E)', () => {
     const userData = createUserData();
     httpServer = await getTestServer();
     credentials = { email: userData.email, password: userData.password };
-    testUser = await User.query().insert(userData);
+    testUser = await AppDataSource.getRepository(User).save(hashUserPassword(userData));
     agent = request.agent(httpServer);
   });
 
   afterEach(async () => {
-    await User.query().delete();
+    await AppDataSource.query('DELETE FROM users');
   });
 
   describe(`GET ${Endpoints.Users}`, () => {
@@ -60,8 +62,8 @@ describe('Users (E2E)', () => {
 
   describe(`GET ${Endpoints.User}`, () => {
     it('should return 403 if user tries to access another user', async () => {
-      const anotherUserData = createUserData();
-      const anotherUser = await User.query().insert(anotherUserData);
+      const anotherUserData = hashUserPassword(createUserData());
+      const anotherUser = await AppDataSource.getRepository(User).save((anotherUserData));
 
       await agent.post(Endpoints.Login).send(credentials);
 
@@ -108,10 +110,11 @@ describe('Users (E2E)', () => {
 
       expect(response.status).toBe(200);
 
-      const updatedUser = await User.query().findById(testUser.id);
+      const updatedUser = await AppDataSource.getRepository(User)
+        .findOneBy({ id: testUser.id }) as User;
 
-      expect(updatedUser?.verifyPassword(updates.newPassword)).toBeTruthy();
-      expect(updatedUser?.verifyPassword(updates.currentPassword)).toBeFalsy();
+      expect(verifyPassword(updates.newPassword, updatedUser.passwordDigest)).toBeTruthy();
+      expect(verifyPassword(updates.currentPassword, updatedUser.passwordDigest)).toBeFalsy();
     });
 
     it('should return 403 when new password provided without current password', async () => {
@@ -154,14 +157,15 @@ describe('Users (E2E)', () => {
       expect(response.status).toBe(200);
       expect(response.body.firstName).toBe(updates.firstName);
 
-      const updatedUser = await User.query().findById(testUser.id);
+      const updatedUser = await AppDataSource.getRepository(User)
+        .findOneBy({ id: testUser.id }) as User;
 
-      expect(updatedUser?.verifyPassword(updates.newPassword)).toBeTruthy();
+      expect(verifyPassword(updates.newPassword, updatedUser.passwordDigest)).toBeTruthy();
     });
 
     it('should not allow changing email to an existing one', async () => {
-      const anotherUserData = createUserData();
-      const anotherUser = await User.query().insert(anotherUserData);
+      const anotherUserData = hashUserPassword(createUserData());
+      const anotherUser = await AppDataSource.getRepository(User).save(anotherUserData);
 
       await agent.post(Endpoints.Login).send(credentials);
 
@@ -181,14 +185,14 @@ describe('Users (E2E)', () => {
 
       expect(response.status).toBe(204);
 
-      const deletedUser = await User.query().findById(testUser.id);
+      const deletedUser = await AppDataSource.getRepository(User).findOneBy({ id: testUser.id });
 
-      expect(deletedUser).toBeUndefined();
+      expect(deletedUser).toBeNull();
     });
 
     it('should return 403 when trying to delete another user', async () => {
-      const anotherUserData = createUserData();
-      const anotherUser = await User.query().insert(anotherUserData);
+      const anotherUserData = hashUserPassword(createUserData());
+      const anotherUser = await AppDataSource.getRepository(User).save((anotherUserData));
 
       await agent.post(Endpoints.Login).send(credentials);
 
