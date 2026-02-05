@@ -1,9 +1,10 @@
 import request from 'supertest';
 import type { Server } from 'http';
 import { getTestServer } from '../test-server';
+import { AppDataSource } from '../../data-source';
 import { Status } from '../../server/statuses/entities/status.entity';
 import { User } from '../../server/users/entities/user.entity';
-import { createUserData, createStatusData, getStatusPath } from '../helpers';
+import { createUserData, hashUserPassword, createStatusData, getStatusPath } from '../helpers';
 import Endpoints from '../endpoints';
 
 describe('Statuses (E2E)', () => {
@@ -17,22 +18,22 @@ describe('Statuses (E2E)', () => {
     const userData = createUserData();
     const credentials = { email: userData.email, password: userData.password };
     httpServer = await getTestServer();
-    await User.query().insert(userData);
+    await AppDataSource.getRepository(User).save(hashUserPassword(userData));
     agent = request.agent(httpServer);
     await agent.post(Endpoints.Login).send(credentials);
   });
 
   afterAll(async () => {
-    await User.query().delete();
+    await AppDataSource.query('DELETE FROM users');
   });
 
   beforeEach(async () => {
     const statusData = createStatusData();
-    testStatus = await Status.query().insert(statusData);
+    testStatus = await AppDataSource.getRepository(Status).save(statusData);
   });
 
   afterEach(async () => {
-    await Status.query().delete();
+    await AppDataSource.query('DELETE FROM statuses');
   });
 
   describe(`GET ${Endpoints.Statuses}`, () => {
@@ -75,7 +76,8 @@ describe('Statuses (E2E)', () => {
       expect(response.status).toBe(201);
       expect(response.body.name).toBe(newStatusData.name);
 
-      const createdStatus = await Status.query().findById(response.body.id);
+      const createdStatus = await AppDataSource.getRepository(Status)
+        .findOneBy({ id: response.body.id });
 
       expect(createdStatus).toBeDefined();
     });
@@ -105,7 +107,8 @@ describe('Statuses (E2E)', () => {
       expect(response.status).toBe(200);
       expect(response.body.name).toBe(updates.name);
 
-      const updatedStatus = await Status.query().findById(testStatus.id);
+      const updatedStatus = await AppDataSource.getRepository(Status)
+        .findOneBy({ id: testStatus.id });
 
       expect(updatedStatus?.name).toBe(updates.name);
     });
@@ -113,7 +116,7 @@ describe('Statuses (E2E)', () => {
     it('should return 409 for duplicate status name', async () => {
       const anotherStatusData = createStatusData();
 
-      await Status.query().insert(anotherStatusData);
+      await AppDataSource.getRepository(Status).save({ name: anotherStatusData.name });
 
       const response = await agent.patch(getStatusPath(testStatus.id)).send(anotherStatusData);
 
@@ -144,9 +147,10 @@ describe('Statuses (E2E)', () => {
 
       expect(response.status).toBe(204);
 
-      const deletedStatus = await Status.query().findById(testStatus.id);
+      const deletedStatus = await AppDataSource.getRepository(Status)
+        .findOneBy({ id: testStatus.id });
 
-      expect(deletedStatus).toBeUndefined();
+      expect(deletedStatus).toBeNull();
     });
 
     it('should return 404 for non-existent status', async () => {
