@@ -10,6 +10,6 @@ export class StatusRepository extends BaseRepository<Status> {
   }
 
   async findByName(name: string): Promise<Status | null> {
-    return this.findOne({ where: { name } });
+    return this.findOneBy({ name });
   }
 }

@@ -10,6 +10,6 @@ export class LabelRepository extends BaseRepository<Label> {
   }
 
   async findByName(name: string): Promise<Label | null> {
-    return this.findOne({ where: { name } });
+    return this.findOneBy({ name });
   }
 }
