@@ -11,6 +11,8 @@ export const envSchema = z.object({
     .default(5000),
   PG_DB: z.string()
     .min(1, 'DB name cannot be empty'),
+  PG_DB_TEST: z.string()
+    .default('test_db'),
   PG_HOST: z.string()
     .min(1, 'DB host cannot be empty'),
   PG_PORT: z.number({ coerce: true })
@@ -22,12 +24,6 @@ export const envSchema = z.object({
     .min(1, 'DB username cannot be empty'),
   PG_PASSWORD: z.string()
     .min(1, 'DB password cannot be empty'),
-  PG_DB_TEST: z.string()
-    .default('task_manager_test'),
-  PG_USER_TEST: z.string()
-    .default('postgres'),
-  PG_PASSWORD_TEST: z.string()
-    .default('postgres'),
   SESSION_KEY: z.string()
     .min(32, 'The secret key must be at least 32 characters long')
     .refine(
