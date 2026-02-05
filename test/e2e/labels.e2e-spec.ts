@@ -1,9 +1,10 @@
 import request from 'supertest';
 import type { Server } from 'http';
 import { getTestServer } from '../test-server';
+import { AppDataSource } from '../../data-source';
 import { Label } from '../../server/labels/entities/label.entity';
 import { User } from '../../server/users/entities/user.entity';
-import { createUserData, createLabelData, getLabelPath } from '../helpers';
+import { createUserData, hashUserPassword, createLabelData, getLabelPath } from '../helpers';
 import Endpoints from '../endpoints';
 
 describe('Labels (E2E)', () => {
@@ -17,22 +18,22 @@ describe('Labels (E2E)', () => {
     const userData = createUserData();
     const credentials = { email: userData.email, password: userData.password };
     httpServer = await getTestServer();
-    await User.query().insert(userData);
+    await AppDataSource.getRepository(User).save(hashUserPassword(userData));
     agent = request.agent(httpServer);
     await agent.post(Endpoints.Login).send(credentials);
   });
 
   afterAll(async () => {
-    await User.query().delete();
+    await AppDataSource.query('DELETE FROM users');
   });
 
   beforeEach(async () => {
     const labelData = createLabelData();
-    testLabel = await Label.query().insert(labelData);
+    testLabel = await AppDataSource.getRepository(Label).save(labelData);
   });
 
   afterEach(async () => {
-    await Label.query().delete();
+    await AppDataSource.query('DELETE FROM labels');
   });
 
   describe(`GET ${Endpoints.Labels}`, () => {
@@ -75,7 +76,8 @@ describe('Labels (E2E)', () => {
       expect(response.status).toBe(201);
       expect(response.body.name).toBe(newLabeData.name);
 
-      const createdLabel = await Label.query().findById(response.body.id);
+      const createdLabel = await AppDataSource.getRepository(Label)
+        .findOneBy({ id: response.body.id });
 
       expect(createdLabel).toBeDefined();
     });
@@ -105,7 +107,7 @@ describe('Labels (E2E)', () => {
       expect(response.status).toBe(200);
       expect(response.body.name).toBe(updates.name);
 
-      const updatedLabel = await Label.query().findById(testLabel.id);
+      const updatedLabel = await AppDataSource.getRepository(Label).findOneBy({ id: testLabel.id });
 
       expect(updatedLabel?.name).toBe(updates.name);
     });
@@ -113,7 +115,7 @@ describe('Labels (E2E)', () => {
     it('should return 409 for duplicate label name', async () => {
       const anotherLabelData = createLabelData();
 
-      await Label.query().insert(anotherLabelData);
+      await AppDataSource.getRepository(Label).save({ name: anotherLabelData.name });
 
       const response = await agent.patch(getLabelPath(testLabel.id)).send(anotherLabelData);
 
@@ -142,9 +144,9 @@ describe('Labels (E2E)', () => {
 
       expect(response.status).toBe(204);
 
-      const deletedLabel = await Label.query().findById(testLabel.id);
+      const deletedLabel = await AppDataSource.getRepository(Label).findOneBy({ id: testLabel.id });
 
-      expect(deletedLabel).toBeUndefined();
+      expect(deletedLabel).toBeNull();
     });
 
     it('should return 404 for non-existent label', async () => {
