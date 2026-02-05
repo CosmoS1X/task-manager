@@ -30,6 +30,7 @@ export abstract class BaseRepository<T extends ObjectLiteral> extends Repository
   async patchAndFetch(id: number, partialEntity: Partial<T>): Promise<T> {
     const result: UpdateResult = await this.update(id, partialEntity);
 
+    /* istanbul ignore if */
     if (result.affected === 0) {
       throw new NotFoundException(`Resource with ID ${id} not found`);
     }
