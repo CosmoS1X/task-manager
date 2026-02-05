@@ -38,8 +38,4 @@ export class User {
 
   @OneToMany(() => Task, (task) => task.executor)
   assignedTasks?: Task[];
-
-  get fullName(): string {
-    return `${this.firstName} ${this.lastName}`;
-  }
 }
