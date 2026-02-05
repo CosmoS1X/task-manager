@@ -16,7 +16,6 @@ module.exports = {
     '/types/',
     '/migrations/',
     '/database/',
-    'constructor.*private.*readonly',
   ],
   coverageDirectory: './coverage',
   coverageReporters: ['text', 'lcov', 'html', 'text-summary'],
