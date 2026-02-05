@@ -1,8 +1,9 @@
 import request from 'supertest';
 import type { Server } from 'http';
+import { AppDataSource } from '../../data-source';
 import { getTestServer } from '../test-server';
 import { User } from '../../server/users/entities/user.entity';
-import { createUserData, getCheckEmailQueryString } from '../helpers';
+import { createUserData, hashUserPassword, getCheckEmailQueryString } from '../helpers';
 import Endpoints from '../endpoints';
 
 describe('Auth (E2E)', () => {
@@ -15,12 +16,12 @@ describe('Auth (E2E)', () => {
     const userData = createUserData();
     httpServer = await getTestServer();
     credentials = { email: userData.email, password: userData.password };
-    testUser = await User.query().insert(userData);
+    testUser = await AppDataSource.getRepository(User).save(hashUserPassword(userData));
     agent = request.agent(httpServer);
   });
 
   afterEach(async () => {
-    await User.query().delete();
+    await AppDataSource.query('DELETE FROM users');
   });
 
   describe(`POST ${Endpoints.Login}`, () => {
