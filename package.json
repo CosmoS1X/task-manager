@@ -1,6 +1,6 @@
 {
   "name": "task-manager",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "description": "A task management application built with TypeScript, React, and NestJS",
   "private": true,
   "scripts": {
