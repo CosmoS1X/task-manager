@@ -11,23 +11,23 @@ Task Manager is a full-stack application for efficient task management with a mo
 
 🔗 [Live Demo](https://new-typescript-project.onrender.com/)
 
-## ✨ Key Features
+## Key Features
 
 ### Task Management
-- ✅ Create, edit, and delete tasks with rich metadata
-- 🔍 Advanced filtering by status, labels, assignee, and creator
-- 🏷️ Custom statuses and labels configuration
+- Create, edit, and delete tasks with rich metadata
+- Advanced filtering by status, labels, assignee, and creator
+- Custom statuses and labels configuration
 
 ### User Experience
-- 👤 User authentication and authorization
-- 📱 Responsive design for all devices
+- User authentication and authorization
+- Responsive design for all devices
 
 ### Technical Highlights
-- 🚀 RESTful API with TypeScript
-- 🛡️ Secure authentication
-- 📊 PostgreSQL (production) / SQLite (development)
-- 📦 Database migrations
-- 🧪 Comprehensive test coverage
+- RESTful API with TypeScript
+- Secure authentication
+- PostgreSQL database with TypeORM
+- Database migrations
+- Comprehensive test coverage
 
 ## Technology Stack
 
@@ -46,15 +46,13 @@ Task Manager is a full-stack application for efficient task management with a mo
 
 - **TypeScript** with **Node.js**
 - **NestJS** for RESTful API
-- **Objection.js** as ORM
-- **Knex.js** for database connection and migrations
+- **TypeORM** for database interactions
+- **PostgreSQL** as database
 - **Zod** for environment variable validation
 - **dotenv** for environment variable management
 
 ### Infrastructure
 
-- **PostgreSQL** for production database
-- **SQLite** for development/testing database
 - **Jest** for unit and integration tests
 - **ESLint** for code quality
 - **GitHub Actions** for CI/CD
@@ -66,7 +64,7 @@ Task Manager is a full-stack application for efficient task management with a mo
 ### Prerequisites
 
 - Node.js 24+
-- PostgreSQL 16+ (for production)
+- PostgreSQL 14+ (for production)
 - npm 11+
 
 ### Installation
@@ -91,18 +89,13 @@ Task Manager is a full-stack application for efficient task management with a mo
   
 4. Configure the `.env` file with your database credentials and other settings.
 
-5. Database Setup:
-
-    - For development, SQLite is used by default.
-    - For production, configure PostgreSQL in `.env`.
-
-6. Run migrations:
+5. Run migrations:
 
     ```bash
     npm run migrate
     ```
 
-### 🏃‍♂️ Running the App
+### Running the App
 
 | Command | Description |
 | ------- | ----------- |
@@ -112,7 +105,7 @@ Task Manager is a full-stack application for efficient task management with a mo
 | `npm run build` | Build the application for production |
 | `npm start` | Start the production server |
 
-### 🧪 Testing
+### Testing
 
 The test suite uses SQLite for fast execution:
 
@@ -127,7 +120,7 @@ npm test <path-to-test-file>
 npm run test:coverage
 ```
 
-### 🚀 Deployment
+### Deployment
 
 The application can be deployed to any Node.js hosting platform. For Render.com:
 
@@ -136,7 +129,7 @@ The application can be deployed to any Node.js hosting platform. For Render.com:
 3. Set environment variables
 4. Deploy!
 
-## 🤝 Contributing
+## Contributing
 
 Contributions are welcome! Please follow these steps:
 
@@ -146,6 +139,6 @@ Contributions are welcome! Please follow these steps:
 3. Push to the branch
 4. Open a Pull Request
 
-## 📄 License
+## License
 
 Distributed under the MIT License. See [LICENSE](./LICENSE) for more information.
