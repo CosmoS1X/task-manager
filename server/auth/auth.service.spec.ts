@@ -2,8 +2,8 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { UnauthorizedException } from '@nestjs/common';
 import type { Response } from 'express';
 import type { SessionData } from 'express-session';
-import { UsersService } from '@server/users/users.service';
-import { UserRepository } from '@server/users/repositories/user.repository';
+import { UsersService } from '../users/users.service';
+import { UserRepository } from '../users/repositories/user.repository';
 import { AuthService } from './auth.service';
 
 describe('Auth Service (Unit)', () => {
@@ -21,8 +21,18 @@ describe('Auth Service (Unit)', () => {
   let authService: AuthService;
 
   beforeEach(async () => {
+    const mockUserRepository = {
+      findAll: jest.fn(),
+      findById: jest.fn(),
+      findByEmail: jest.fn(),
+    };
+
     const module: TestingModule = await Test.createTestingModule({
-      providers: [AuthService, UsersService, UserRepository],
+      providers: [
+        AuthService,
+        UsersService,
+        { provide: UserRepository, useValue: mockUserRepository },
+      ],
     }).compile();
 
     authService = module.get<AuthService>(AuthService);
