@@ -1,6 +1,7 @@
 # Task Manager
 
 [![Node.js CI](https://github.com/CosmoS1X/new-typescript-project/actions/workflows/node.js.yml/badge.svg)](https://github.com/CosmoS1X/new-typescript-project/actions/workflows/node.js.yml)
+[![Snyk Security](https://github.com/CosmoS1X/task-manager/actions/workflows/snyk.yml/badge.svg)](https://github.com/CosmoS1X/task-manager/actions/workflows/snyk.yml)
 [![Maintainability](https://qlty.sh/gh/CosmoS1X/projects/task-manager/maintainability.svg)](https://qlty.sh/gh/CosmoS1X/projects/task-manager)
 [![Code Coverage](https://qlty.sh/gh/CosmoS1X/projects/task-manager/coverage.svg)](https://qlty.sh/gh/CosmoS1X/projects/task-manager)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
