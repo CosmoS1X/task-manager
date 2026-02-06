@@ -58,7 +58,7 @@ export class StatusesService {
       }
     }
 
-    const updatedStatus = await this.statusRepository.patchAndFetch(id, updateStatusDto);
+    const updatedStatus = await this.statusRepository.updateAndReturn(id, updateStatusDto);
 
     this.logger.log(`Successfully updated status with ID: ${id}`);
 

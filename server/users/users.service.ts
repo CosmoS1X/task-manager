@@ -94,7 +94,7 @@ export class UsersService {
       ...(newPassword && { passwordDigest: encrypt(newPassword) }),
     };
 
-    const updatedUser = await this.userRepository.patchAndFetch(id, updatedData);
+    const updatedUser = await this.userRepository.updateAndReturn(id, updatedData);
 
     this.logger.log(`Successfully updated user with ID: ${id}`);
 

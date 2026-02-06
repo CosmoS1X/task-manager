@@ -27,7 +27,7 @@ export abstract class BaseRepository<T extends ObjectLiteral> extends Repository
     return entity;
   }
 
-  async patchAndFetch(id: number, partialEntity: Partial<T>): Promise<T> {
+  async updateAndReturn(id: number, partialEntity: Partial<T>): Promise<T> {
     const result: UpdateResult = await this.update(id, partialEntity);
 
     /* istanbul ignore if */

@@ -16,6 +16,12 @@ interface DriverError {
   message?: string;
 }
 
+enum DbErrorCode {
+  ForeignKeyViolation = '23503',
+  UniqueViolation = '23505',
+  NotNullViolation = '23502',
+}
+
 @Catch(QueryFailedError)
 export class DbExceptionsFilter implements ExceptionFilter {
   private readonly logger = new Logger(DbExceptionsFilter.name);
@@ -32,19 +38,19 @@ export class DbExceptionsFilter implements ExceptionFilter {
     let errorName: string;
 
     switch (errorCode) {
-      case '23503':
+      case DbErrorCode.ForeignKeyViolation:
         status = HttpStatus.CONFLICT;
         message = 'Referenced resource is in use by other records or does not exist';
         errorName = 'ForeignKeyViolationError';
         break;
       /* istanbul ignore next */ // unreachable if services have passed all checks
-      case '23505':
+      case DbErrorCode.UniqueViolation:
         status = HttpStatus.CONFLICT;
         message = 'Duplicate entry violates unique constraint';
         errorName = 'UniqueViolationError';
         break;
       /* istanbul ignore next */ // unreachable if nest validation is triggered
-      case '23502':
+      case DbErrorCode.NotNullViolation:
         status = HttpStatus.BAD_REQUEST;
         message = 'A required field is missing';
         errorName = 'NotNullViolationError';

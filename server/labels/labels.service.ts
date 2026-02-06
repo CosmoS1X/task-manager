@@ -58,7 +58,7 @@ export class LabelsService {
       }
     }
 
-    const updatedLabel = await this.labelRepository.patchAndFetch(id, updateLabelDto);
+    const updatedLabel = await this.labelRepository.updateAndReturn(id, updateLabelDto);
 
     this.logger.log(`Successfully updated label with ID: ${id}`);
 

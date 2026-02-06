@@ -66,14 +66,14 @@ export class Task {
   })
   taskLabels?: TaskLabel[];
 
-  labels?: Label[] = [];
+  labels: Label[] = [];
 
   @AfterLoad()
   transformLabels() {
     if (this.taskLabels) {
       this.labels = this.taskLabels
         .map(({ label }) => label)
-        .filter((label) => !!label);
+        .filter(Boolean) as Label[];
     }
   }
 }
