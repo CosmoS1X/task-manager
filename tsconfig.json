@@ -19,6 +19,6 @@
       "@server/*": ["./server/*"]
     }
   },
-  "include": ["server", "env", "knexfile.ts"],
+  "include": ["server", "env", "data-source.ts"],
   "exclude": ["node_modules", "dist", "test", "**/*spec.ts"]
 }

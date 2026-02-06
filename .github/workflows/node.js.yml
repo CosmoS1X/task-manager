@@ -8,8 +8,29 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:14
+        env:
+          POSTGRES_USER: test_user
+          POSTGRES_PASSWORD: test_pass
+          POSTGRES_DB: test_db
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U test_user"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
+    env:
+      PG_DB_TEST: test_db
+      PG_USER: test_user
+      PG_PASSWORD: test_pass
+      PG_HOST: localhost
+      PG_PORT: 5432
 
     strategy:
       matrix:
@@ -17,20 +38,33 @@ jobs:
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
-    - uses: actions/checkout@v4
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v4
-      with:
-        node-version: ${{ matrix.node-version }}
-        cache: 'npm'
-    - name: Create .env file
-      run: printf '%s\n' "${{ secrets.ENV_FILE }}" > .env
-    - run: npm install
-    - run: npm run type-check
-    - run: npm run test:coverage
-    - run: npm run lint
-    - run: npm run build
-    - uses: qltysh/qlty-action/coverage@v2
-      with:
-        token: ${{ secrets.QLTY_COVERAGE_TOKEN }}
-        files: coverage/lcov.info
+      - uses: actions/checkout@v4
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: "npm"
+      - name: Create .env file
+        run: printf '%s\n' "${{ secrets.ENV_FILE }}" > .env
+      - name: Install dependencies
+        run: npm install
+      - name: Run type checks
+        run: npm run type-check
+      - name: Wait for Postgres
+        run: |
+          until pg_isready -h localhost -p 5432 -U test_user; do
+            sleep 1
+          done
+      - name: Run migrations
+        run: npm run migrate
+      - name: Run tests with coverage
+        run: npm run test:coverage
+      - name: Run linting
+        run: npm run lint
+      - name: Build project
+        run: npm run build
+      - name: Upload coverage to Qlty
+        uses: qltysh/qlty-action/coverage@v2
+        with:
+          token: ${{ secrets.QLTY_COVERAGE_TOKEN }}
+          files: coverage/lcov.info

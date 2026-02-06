@@ -3,6 +3,7 @@ import type { Response } from 'express';
 import type { SessionData } from 'express-session';
 import { UsersService } from '@server/users/users.service';
 import { User } from '@server/users/entities/user.entity';
+import { verifyPassword } from '@server/lib/secure';
 import { LoginDto } from './dto/login.dto';
 import env from '../../env';
 
@@ -25,7 +26,7 @@ export class AuthService {
       throw new NotFoundException('User with this email not found');
     }
 
-    if (!user.verifyPassword(password)) {
+    if (!verifyPassword(password, user.passwordDigest)) {
       throw new ForbiddenException('Incorrect password');
     }
 

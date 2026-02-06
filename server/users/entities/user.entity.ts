@@ -1,28 +1,41 @@
-import { Model } from 'objection';
-import encrypt from '@server/lib/secure';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  Index,
+  OneToMany,
+  CreateDateColumn,
+  UpdateDateColumn,
+} from 'typeorm';
+import { Task } from '@server/tasks/entities/task.entity';
 
-export class User extends Model {
+@Entity('users')
+export class User {
+  @PrimaryGeneratedColumn()
   id!: number;
 
+  @Column()
   firstName!: string;
 
+  @Column()
   lastName!: string;
 
+  @Column()
+  @Index('IDX_USER_EMAIL', { unique: true })
   email!: string;
 
+  @Column()
   passwordDigest!: string;
 
-  createdAt!: string;
+  @CreateDateColumn()
+  createdAt!: Date;
 
-  static get tableName() {
-    return 'users';
-  }
+  @UpdateDateColumn()
+  updatedAt!: Date;
 
-  set password(password: string) {
-    this.passwordDigest = encrypt(password);
-  }
+  @OneToMany(() => Task, (task) => task.creator)
+  createdTasks?: Task[];
 
-  verifyPassword(password: string) {
-    return encrypt(password) === this.passwordDigest;
-  }
+  @OneToMany(() => Task, (task) => task.executor)
+  assignedTasks?: Task[];
 }

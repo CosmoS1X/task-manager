@@ -1,4 +1,5 @@
 import { faker } from '@faker-js/faker';
+import { encrypt } from '../server/lib/secure';
 import Endpoints from './endpoints';
 
 export const createUserData = () => ({
@@ -6,6 +7,11 @@ export const createUserData = () => ({
   lastName: faker.person.lastName(),
   email: faker.internet.email().toLowerCase(),
   password: faker.internet.password({ length: 10 }),
+});
+
+export const hashUserPassword = ({ password, ...restData }: ReturnType<typeof createUserData>) => ({
+  ...restData,
+  passwordDigest: encrypt(password),
 });
 
 export const createStatusData = () => ({

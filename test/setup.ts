@@ -1,16 +1,35 @@
-import { Model } from 'objection';
-import knex from 'knex';
-import config from '../knexfile';
+import debug from 'debug';
+import { AppDataSource } from '../data-source';
 import { closeNestApp } from './nest-app-factory';
 
-beforeAll(async () => {
-  const testDb = knex(config.test);
-  Model.knex(testDb);
+export const log = debug('app:test:setup');
 
-  await testDb.migrate.latest();
+beforeAll(async () => {
+  log('Setting up test database...');
+
+  if (!AppDataSource.isInitialized) {
+    await AppDataSource.initialize();
+
+    log('Test database initialized');
+  }
+
+  await AppDataSource.synchronize();
+
+  log('Database synchronized');
 });
 
 afterAll(async () => {
+  log('Tearing down test database...');
+
+  if (AppDataSource.isInitialized) {
+    await AppDataSource.destroy();
+
+    log('Test database connection closed');
+  }
+
+  log('Tests completed. Closing Nest application...');
+
   await closeNestApp();
-  await Model.knex().destroy();
+
+  log('Nest application closed');
 });

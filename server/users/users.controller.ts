@@ -21,8 +21,7 @@ import { OwnerGuard } from '@server/auth/guards/owner.guard';
 import { Public } from '@server/auth/decorators/public.decorator';
 import { UsersService } from './users.service';
 import { User } from './entities/user.entity';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { CreateUserDto, UpdateUserDto } from './dto';
 
 @Controller('users')
 @UseGuards(AuthGuard) // Protect all routes by default
@@ -62,7 +61,7 @@ export class UsersController {
     @Param('id', ParseIntPipe) id: number,
     @Body() updateUserDto: UpdateUserDto,
   ): Promise<User> {
-    return this.usersService.update({ id, ...updateUserDto });
+    return this.usersService.update(id, updateUserDto);
   }
 
   @Delete(':id')

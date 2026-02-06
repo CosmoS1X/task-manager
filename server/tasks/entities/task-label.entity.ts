@@ -1,15 +1,45 @@
-import { Model } from 'objection';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  JoinColumn,
+  Unique,
+  CreateDateColumn,
+  UpdateDateColumn,
+} from 'typeorm';
+import { Label } from '@server/labels/entities/label.entity';
+import { Task } from '@server/tasks/entities/task.entity';
 
-export class TaskLabel extends Model {
+@Entity('tasks_labels')
+@Unique(['taskId', 'labelId'])
+export class TaskLabel {
+  @PrimaryGeneratedColumn()
   id!: number;
 
+  @Column()
   taskId!: number;
 
+  @Column()
   labelId!: number;
 
-  createdAt!: string;
+  @CreateDateColumn()
+  createdAt!: Date;
 
-  static get tableName() {
-    return 'tasks_labels';
-  }
+  @UpdateDateColumn()
+  updatedAt!: Date;
+
+  @ManyToOne(() => Task, (task) => task.taskLabels, {
+    nullable: false,
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn({ name: 'task_id' })
+  task?: Task;
+
+  @ManyToOne(() => Label, (label) => label.taskLabels, {
+    nullable: false,
+    onDelete: 'RESTRICT',
+  })
+  @JoinColumn({ name: 'label_id' })
+  label?: Label;
 }

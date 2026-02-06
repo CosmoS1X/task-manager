@@ -1,32 +1,48 @@
-import { Model, ModelClass } from 'objection';
+import {
+  Repository,
+  ObjectLiteral,
+  UpdateResult,
+  DeleteResult,
+  FindManyOptions,
+  FindOneOptions,
+  FindOptionsWhere,
+} from 'typeorm';
 import { NotFoundException } from '@nestjs/common';
 
-export abstract class BaseRepository<T extends Model> {
-  protected abstract model: ModelClass<T>;
-
-  async findAll(): Promise<T[]> {
-    const result = await this.model.query();
-
-    return result as T[];
+export abstract class BaseRepository<T extends ObjectLiteral> extends Repository<T> {
+  async findAll(options?: FindManyOptions<T>): Promise<T[]> {
+    return this.find(options);
   }
 
-  async findById(id: number): Promise<T> {
-    const result = await this.model.query().findById(id);
+  async findById(id: number, options?: FindOneOptions<T>): Promise<T> {
+    const entity = await this.findOne({
+      where: { id } as unknown as FindOptionsWhere<T>,
+      ...options,
+    });
 
-    if (!result) {
+    if (!entity) {
       throw new NotFoundException(`Resource with ID ${id} not found`);
     }
 
-    return result as T;
+    return entity;
   }
 
-  async delete(id: number): Promise<number> { // returns number of rows deleted
-    const result = await this.model.query().deleteById(id);
+  async updateAndReturn(id: number, partialEntity: Partial<T>): Promise<T> {
+    const result: UpdateResult = await this.update(id, partialEntity);
 
-    if (result === 0) {
-      throw new NotFoundException(`Resource with ID ${id} not found or already deleted`);
+    /* istanbul ignore if */
+    if (result.affected === 0) {
+      throw new NotFoundException(`Resource with ID ${id} not found`);
     }
 
-    return result;
+    return this.findById(id);
+  }
+
+  async deleteById(id: number): Promise<void> {
+    const result: DeleteResult = await this.delete(id);
+
+    if (result.affected === 0) {
+      throw new NotFoundException(`Resource with ID ${id} not found or already deleted`);
+    }
   }
 }

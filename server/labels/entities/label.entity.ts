@@ -1,13 +1,27 @@
-import { Model } from 'objection';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  OneToMany,
+  CreateDateColumn,
+  UpdateDateColumn,
+} from 'typeorm';
+import { TaskLabel } from '@server/tasks/entities/task-label.entity';
 
-export class Label extends Model {
+@Entity('labels')
+export class Label {
+  @PrimaryGeneratedColumn()
   id!: number;
 
+  @Column({ unique: true })
   name!: string;
 
-  createdAt!: string;
+  @CreateDateColumn()
+  createdAt!: Date;
 
-  static get tableName() {
-    return 'labels';
-  }
+  @UpdateDateColumn()
+  updatedAt!: Date;
+
+  @OneToMany(() => TaskLabel, (taskLabel) => taskLabel.label)
+  taskLabels?: TaskLabel[];
 }

@@ -1,15 +1,16 @@
 import request from 'supertest';
 import type { Server } from 'http';
 import { getTestServer } from '../test-server';
+import { AppDataSource } from '../../data-source';
 import { Task } from '../../server/tasks/entities/task.entity';
 import { Status } from '../../server/statuses/entities/status.entity';
 import { Label } from '../../server/labels/entities/label.entity';
 import { User } from '../../server/users/entities/user.entity';
-import { TaskLabel } from '../../server/tasks/entities/task-label.entity';
 import Endpoints from '../endpoints';
 import {
-  createStatusData,
   createUserData,
+  hashUserPassword,
+  createStatusData,
   createLabelData,
   createTaskData,
   getTaskPath,
@@ -31,22 +32,22 @@ describe('Tasks (E2E)', () => {
     const executorData = createUserData();
     const creatorCredentials = { email: creatorData.email, password: creatorData.password };
     httpServer = await getTestServer();
-    testCreator = await User.query().insert(creatorData);
-    testExecutor = await User.query().insert(executorData);
+    testCreator = await AppDataSource.getRepository(User).save(hashUserPassword(creatorData));
+    testExecutor = await AppDataSource.getRepository(User).save(hashUserPassword(executorData));
     agent = request.agent(httpServer);
     await agent.post(Endpoints.Login).send(creatorCredentials);
   });
 
   afterAll(async () => {
-    await User.query().delete();
+    await AppDataSource.query('DELETE FROM tasks');
   });
 
   beforeEach(async () => {
     const statusData = createStatusData();
     const labelData = createLabelData();
-    testStatus = await Status.query().insert(statusData);
-    testLabel = await Label.query().insert(labelData);
-    testTask = await Task.query().insert({
+    testStatus = await AppDataSource.getRepository(Status).save(statusData);
+    testLabel = await AppDataSource.getRepository(Label).save(labelData);
+    testTask = await AppDataSource.getRepository(Task).save({
       ...createTaskData(),
       statusId: testStatus.id,
       creatorId: testCreator.id,
@@ -55,10 +56,10 @@ describe('Tasks (E2E)', () => {
   });
 
   afterEach(async () => {
-    await Task.query().delete();
-    await Status.query().delete();
-    await Label.query().delete();
-    await TaskLabel.query().delete();
+    await AppDataSource.query('DELETE FROM tasks');
+    await AppDataSource.query('DELETE FROM statuses');
+    await AppDataSource.query('DELETE FROM labels');
+    await AppDataSource.query('DELETE FROM tasks_labels');
   });
 
   describe(`GET ${Endpoints.Tasks}`, () => {
@@ -148,7 +149,10 @@ describe('Tasks (E2E)', () => {
       expect(response.body.name).toBe(newTaskData.name);
       expect(response.body.creatorId).toBe(testCreator.id);
 
-      const createdTask = await Task.query().findById(response.body.id).withGraphFetched('labels');
+      const createdTask = await AppDataSource.getRepository(Task).findOne({
+        where: { id: response.body.id },
+        relations: { taskLabels: { label: true } },
+      });
 
       expect(createdTask?.labels).toHaveLength(1);
       expect(createdTask?.labels?.[0].name).toBe(testLabel.name);
@@ -169,8 +173,11 @@ describe('Tasks (E2E)', () => {
 
   describe(`PATCH ${Endpoints.Task}`, () => {
     it('should update task', async () => {
-      const anotherStatus = await Status.query().insert(createStatusData());
-      const anotherExecutor = await User.query().insert(createUserData());
+      const anotherStatusData = createStatusData();
+      const anotherExecutorData = createUserData();
+      const anotherStatus = await AppDataSource.getRepository(Status).save(anotherStatusData);
+      const anotherExecutor = await AppDataSource.getRepository(User)
+        .save(hashUserPassword(anotherExecutorData));
 
       const updates = {
         ...createTaskData(),
@@ -187,7 +194,10 @@ describe('Tasks (E2E)', () => {
       expect(response.body.statusId).toBe(anotherStatus.id);
       expect(response.body.executorId).toBe(anotherExecutor.id);
 
-      const updatedTask = await Task.query().findById(testTask.id).withGraphFetched('labels');
+      const updatedTask = await AppDataSource.getRepository(Task).findOne({
+        where: { id: testTask.id },
+        relations: { taskLabels: { label: true } },
+      });
 
       expect(updatedTask?.labels).toHaveLength(1);
       expect(updatedTask?.labels?.[0].name).toBe(testLabel.name);
@@ -204,7 +214,7 @@ describe('Tasks (E2E)', () => {
     let taskToDelete: Task;
 
     beforeEach(async () => {
-      taskToDelete = await Task.query().insert({
+      taskToDelete = await AppDataSource.getRepository(Task).save({
         ...createTaskData(),
         statusId: testStatus.id,
         creatorId: testCreator.id,
@@ -216,9 +226,10 @@ describe('Tasks (E2E)', () => {
 
       expect(response.status).toBe(204);
 
-      const deletedTask = await Task.query().findById(taskToDelete.id);
+      const deletedTask = await AppDataSource.getRepository(Task)
+        .findOneBy({ id: taskToDelete.id });
 
-      expect(deletedTask).toBeUndefined();
+      expect(deletedTask).toBeNull();
     });
 
     it('should not allow deletion by non-creator', async () => {
@@ -226,7 +237,7 @@ describe('Tasks (E2E)', () => {
       const otherUserCredentials = { email: otherUserData.email, password: otherUserData.password };
 
       await agent.post(Endpoints.Logout);
-      await User.query().insert(otherUserData);
+      await AppDataSource.getRepository(User).save(hashUserPassword(otherUserData));
       await agent.post(Endpoints.Login).send(otherUserCredentials);
 
       const response = await agent.delete(getTaskPath(taskToDelete.id));
@@ -251,13 +262,13 @@ describe('Tasks (E2E)', () => {
         labelIds: [nonExistentId],
       };
 
-      const initialTaskCount = await Task.query().resultSize();
+      const initialTaskCount = await AppDataSource.getRepository(Task).count();
       const response = await agent.post(Endpoints.Tasks).send(invalidTaskData);
 
       expect(response.status).toBe(409);
       expect(response.body.error).toBe('ForeignKeyViolationError');
 
-      const finalTaskCount = await Task.query().resultSize();
+      const finalTaskCount = await AppDataSource.getRepository(Task).count();
 
       expect(finalTaskCount).toBe(initialTaskCount);
     });
@@ -276,7 +287,7 @@ describe('Tasks (E2E)', () => {
       expect(response.status).toBe(409);
       expect(response.body.error).toBe('ForeignKeyViolationError');
 
-      const updatedTask = await Task.query().findById(testTask.id);
+      const updatedTask = await AppDataSource.getRepository(Task).findOneBy({ id: testTask.id });
 
       expect(updatedTask?.name).toBe(originalName);
     });

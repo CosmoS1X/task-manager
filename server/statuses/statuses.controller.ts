@@ -14,8 +14,7 @@ import {
 import { AuthGuard } from '@server/auth/guards/auth.guard';
 import { StatusesService } from './statuses.service';
 import { Status } from './entities/status.entity';
-import { CreateStatusDto } from './dto/create-status.dto';
-import { UpdateStatusDto } from './dto/update-status.dto';
+import { CreateStatusDto, UpdateStatusDto } from './dto';
 
 @Controller('statuses')
 @UseGuards(AuthGuard) // Protect all routes
@@ -42,7 +41,7 @@ export class StatusesController {
     @Param('id', ParseIntPipe) id: number,
     @Body() updateStatusDto: UpdateStatusDto,
   ): Promise<Status> {
-    return this.statusesService.update({ id, ...updateStatusDto });
+    return this.statusesService.update(id, updateStatusDto);
   }
 
   @Delete(':id')

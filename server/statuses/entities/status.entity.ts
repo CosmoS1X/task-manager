@@ -1,13 +1,27 @@
-import { Model } from 'objection';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  OneToMany,
+  CreateDateColumn,
+  UpdateDateColumn,
+} from 'typeorm';
+import { Task } from '@server/tasks/entities/task.entity';
 
-export class Status extends Model {
+@Entity('statuses')
+export class Status {
+  @PrimaryGeneratedColumn()
   id!: number;
 
+  @Column({ unique: true })
   name!: string;
 
-  createdAt!: string;
+  @CreateDateColumn()
+  createdAt!: Date;
 
-  static get tableName() {
-    return 'statuses';
-  }
+  @UpdateDateColumn()
+  updatedAt!: Date;
+
+  @OneToMany(() => Task, (task) => task.status)
+  tasks?: Task[];
 }

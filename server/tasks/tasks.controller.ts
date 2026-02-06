@@ -17,9 +17,7 @@ import type { SessionData } from 'express-session';
 import { AuthGuard } from '@server/auth/guards/auth.guard';
 import { TasksService } from './tasks.service';
 import { Task } from './entities/task.entity';
-import { TaskFilterDto } from './dto/task-filter.dto';
-import { CreateTaskDto } from './dto/create-task.dto';
-import { UpdateTaskDto } from './dto/update-task.dto';
+import { CreateTaskDto, UpdateTaskDto, TaskFilterDto } from './dto';
 import { TaskCreatorGuard } from './guards/task-creator.guard';
 
 @Controller('tasks')
@@ -63,7 +61,7 @@ export class TasksController {
     @Param('id', ParseIntPipe) id: number,
     @Body() updateTaskDto: UpdateTaskDto,
   ): Promise<Task> {
-    return this.tasksService.update({ id, ...updateTaskDto });
+    return this.tasksService.update(id, updateTaskDto);
   }
 
   @Delete(':id')

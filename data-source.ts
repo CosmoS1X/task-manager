@@ -1,0 +1,26 @@
+import { DataSource, DataSourceOptions } from 'typeorm';
+import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
+import path from 'path';
+import env from './env';
+
+export const databaseConfig: DataSourceOptions = {
+  type: 'postgres',
+  host: env.PG_HOST || 'localhost',
+  port: env.PG_PORT || 5432,
+  database: env.isTest ? env.PG_DB_TEST : env.PG_DB,
+  username: env.PG_USER,
+  password: env.PG_PASSWORD,
+  ssl: env.isProduction,
+  namingStrategy: new SnakeNamingStrategy(),
+  entities: [path.join(__dirname, 'server', '**', '*.entity{.ts,.js}')],
+  migrations: [path.join(__dirname, 'server', 'migrations', '*{.ts,.js}')],
+  migrationsTableName: 'typeorm_migrations',
+  dropSchema: env.isTest,
+  synchronize: env.isTest,
+  logging: env.isDevelopment,
+  extra: {
+    charset: 'utf8mb4',
+  },
+};
+
+export const AppDataSource = new DataSource(databaseConfig);

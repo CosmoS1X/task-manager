@@ -11,6 +11,8 @@ export const envSchema = z.object({
     .default(5000),
   PG_DB: z.string()
     .min(1, 'DB name cannot be empty'),
+  PG_DB_TEST: z.string()
+    .default('test_db'),
   PG_HOST: z.string()
     .min(1, 'DB host cannot be empty'),
   PG_PORT: z.number({ coerce: true })
@@ -35,6 +37,8 @@ export const envSchema = z.object({
     .default(process.env.NODE_ENV === 'production'),
   isDevelopment: z.boolean()
     .default(process.env.NODE_ENV === 'development'),
+  isTest: z.boolean()
+    .default(process.env.NODE_ENV === 'test'),
 });
 
 export type Env = z.infer<typeof envSchema>;
